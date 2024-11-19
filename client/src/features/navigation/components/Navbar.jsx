@@ -18,6 +18,7 @@ import { selectWishlistItems } from '../../wishlist/WishlistSlice';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import TuneIcon from '@mui/icons-material/Tune';
 import { selectProductIsFilterOpen, toggleFilters } from '../../products/ProductSlice';
+import navlogo from '../../../assets/images/navlogo.png'
 
 
 
@@ -58,9 +59,9 @@ export const Navbar=({isProductList=false})=> {
     <AppBar position="sticky" sx={{backgroundColor:"white",boxShadow:"none",color:"text.primary"}}>
         <Toolbar sx={{p:1,height:"4rem",display:"flex",justifyContent:"space-around"}}>
 
-          <Typography variant="h6" noWrap component="a" href="/" sx={{ mr: 2, display: { xs: 'none', md: 'flex' },fontWeight: 700, letterSpacing: '.3rem', color: 'inherit', textDecoration: 'none', }}>
-            MERN SHOP
-          </Typography>
+        <Stack direction="row" alignItems="center">
+        <img src={navlogo} alt="Logo" style={{ width: '200px', height: 'auto', marginRight: '8px' }} />
+         </Stack>
 
 
 
