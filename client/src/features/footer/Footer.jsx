@@ -33,19 +33,11 @@ export const Footer = () => {
 
                 <Stack rowGap={'1rem'} padding={'1rem'}>
                     <Typography variant='h6'>Support</Typography>
-                    <Typography sx={labelStyles}>11th Main Street, Dhaka,  DH 1515, California.</Typography>
+                    <Typography sx={labelStyles}>11th Main Street,  DH 1515, California.</Typography>
                     <Typography sx={labelStyles}>exclusive@gmail.com</Typography>
                     <Typography sx={labelStyles}>+88015-88888-9999</Typography>
                 </Stack>
 
-                <Stack rowGap={'1rem'} padding={'1rem'}>
-                    <Typography  variant='h6'>Account</Typography>
-                    <Typography sx={labelStyles}>My Account</Typography>
-                    <Typography sx={labelStyles}>Login / Register</Typography>
-                    <Typography sx={labelStyles}>Cart</Typography>
-                    <Typography sx={labelStyles}>Wishlist</Typography>
-                    <Typography sx={labelStyles}>Shop</Typography>
-                </Stack>
 
                 <Stack rowGap={'1rem'} padding={'1rem'}>
                     <Typography  variant='h6'>Quick Links</Typography>

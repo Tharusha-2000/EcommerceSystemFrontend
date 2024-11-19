@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form"
 import { ecommerceOutlookAnimation, shoppingBagAnimation} from '../../../assets'
 import {useDispatch,useSelector} from 'react-redux'
 import { LoadingButton } from '@mui/lab';
+import loginImage from '../../../assets/images/login.png';
+import logo from '../../../assets/images/logo.png';
 import {selectLoggedInUser, signupAsync,selectSignupStatus, selectSignupError, clearSignupError, resetSignupStatus} from '../AuthSlice'
 import { toast } from 'react-toastify'
 import { MotionConfig , motion} from 'framer-motion'
@@ -59,24 +61,23 @@ export const Signup = () => {
   }
 
   return (
-    <Stack width={'100vw'} height={'100vh'} flexDirection={'row'} sx={{overflowY:"hidden"}}>
+    <Stack width={'100vw'} height={'100vh'} flexDirection={'row'} sx={{ overflowY: "hidden" }}>
+    {
+      !is900 &&
+      <Stack flex={1} justifyContent={'center'} sx={{ position: 'relative' }}>
+        <img src={loginImage} alt="Login" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+      </Stack>
+    }
 
-      {
-        !is900 &&
-
-        <Stack bgcolor={'black'} flex={1} justifyContent={'center'} >
-          <Lottie animationData={ecommerceOutlookAnimation}/>
-        </Stack>
-        
-        }
-
-        <Stack flex={1} justifyContent={'center'} alignItems={'center'}>
+              <Stack flex={1} justifyContent={'center'} alignItems={'center'}>
 
               <Stack flexDirection={'row'} justifyContent={'center'} alignItems={'center'}>
-                  <Stack rowGap={'.4rem'}>
-                    <Typography variant='h2' sx={{wordBreak:"break-word"}} fontWeight={600}>Mern Shop</Typography>
-                    <Typography alignSelf={'flex-end'} color={'GrayText'} variant='body2'>- Shop Anything</Typography>
-                  </Stack>
+
+                   <Stack rowGap={'.4rem'} alignItems={'center'}>
+                     <img src={logo} alt="Logo" style={{ width: '500px', height: 'auto' }} />
+                     <Typography alignSelf={'flex-end'} color={'GrayText'} variant='body2'>- Fresh, Hot, and Delicious Pizza!</Typography>
+
+                   </Stack>
 
               </Stack>
 
@@ -107,7 +108,14 @@ export const Signup = () => {
                     </MotionConfig>
 
                     <motion.div whileHover={{scale:1.020}} whileTap={{scale:1}}>
-                      <LoadingButton sx={{height:'2.5rem'}} fullWidth loading={status==='pending'} type='submit' variant='contained'>Signup</LoadingButton>
+                      <LoadingButton    sx={{
+                            backgroundColor: '#d40f20',
+                            '&:hover': {
+                              backgroundColor: 'maroon',
+                            },
+                            height:'2.5rem'
+                        }} 
+                        fullWidth loading={status==='pending'} type='submit' variant='contained'>Signup</LoadingButton>
                     </motion.div>
 
                     <Stack flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'} flexWrap={'wrap-reverse'}>

@@ -101,7 +101,14 @@ export const OtpVerfication = () => {
                                 {errors?.otp && <FormHelperText sx={{color:"red"}}>{errors.otp.message}</FormHelperText>}
                             </Stack>
                        </Stack>
-                        <LoadingButton loading={otpVerificationStatus==='pending'}  type='submit' fullWidth variant='contained'>Verify</LoadingButton>
+                        <LoadingButton    sx={{
+                            backgroundColor: '#d40f20',
+                            '&:hover': {
+                              backgroundColor: 'maroon',
+                            },
+                            height:'2.5rem'
+                        }} 
+                        loading={otpVerificationStatus==='pending'}  type='submit' fullWidth variant='contained'>Verify</LoadingButton>
                     </Stack>
                 ):
                 <>
@@ -109,7 +116,15 @@ export const OtpVerfication = () => {
                     <Typography color={'GrayText'}>We will send you a OTP on</Typography>
                     <Typography fontWeight={'600'} color={'GrayText'}>{loggedInUser?.email}</Typography>
                 </Stack>
-                <LoadingButton onClick={handleSendOtp} loading={resendOtpStatus==='pending'} fullWidth variant='contained'>Get OTP</LoadingButton>
+                <LoadingButton 
+                   sx={{
+                    backgroundColor: '#d40f20',
+                    '&:hover': {
+                      backgroundColor: 'maroon',
+                    },
+                    height:'2.5rem'
+                }} 
+                onClick={handleSendOtp} loading={resendOtpStatus==='pending'} fullWidth variant='contained'>Get OTP</LoadingButton>
                 </>
              }
 

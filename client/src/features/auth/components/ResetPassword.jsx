@@ -81,7 +81,14 @@ export const ResetPassword = () => {
                         </Stack>
 
                         <motion.div whileHover={{scale:1.020}} whileTap={{scale:1}}>
-                            <LoadingButton sx={{height:"2.5rem"}} fullWidth loading={status==='pending'} type='submit' variant='contained'>Reset Password</LoadingButton>
+                            <LoadingButton    sx={{
+                            backgroundColor: '#d40f20',
+                            '&:hover': {
+                              backgroundColor: 'maroon',
+                            },
+                            height:'2.5rem'
+                        }} 
+                         fullWidth loading={status==='pending'} type='submit' variant='contained'>Reset Password</LoadingButton>
                         </motion.div>
                 </Stack>
             </Stack>
