@@ -27,7 +27,7 @@ export const Navbar=({isProductList=false})=> {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const userInfo=useSelector(selectUserInfo)
   const cartItems=useSelector(selectCartItems)
-  const loggedInUser=useSelector(selectLoggedInUser)
+  // const loggedInUser=useSelector(selectLoggedInUser)
   const navigate=useNavigate()
   const dispatch=useDispatch()
   const theme=useTheme()
@@ -47,6 +47,12 @@ export const Navbar=({isProductList=false})=> {
   const handleToggleFilters=()=>{
     dispatch(toggleFilters())
   }
+
+  // // Only to test
+  // const loggedInUser = {
+  //   name:"",
+  //   isAdmin:true
+  // }
 
   const settings = [
     {name:"Home",to:"/"},
@@ -92,7 +98,7 @@ export const Navbar=({isProductList=false})=> {
                 loggedInUser?.isAdmin && 
               
                 <MenuItem  onClick={handleCloseUserMenu}>
-                  <Typography component={Link} color={'text.primary'} sx={{textDecoration:"none"}} to="/admin/add-product" textAlign="center">Add new Product</Typography>
+                  <Typography component={Link} color={'text.primary'} sx={{textDecoration:"none"}} to="/admin/view-products" textAlign="center">Product</Typography>
                 </MenuItem>
               
               }
