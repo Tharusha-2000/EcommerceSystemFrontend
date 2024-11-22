@@ -5,7 +5,6 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AddIcon from '@mui/icons-material/Add';
-import { selectBrands } from '../../brands/BrandSlice'
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -25,7 +24,6 @@ const sortOptions=[
 export const AdminDashBoard = () => {
 
     const [filters,setFilters]=useState({})
-    const brands=useSelector(selectBrands)
     const categories=useSelector(selectCategories)
     const [sort,setSort]=useState(null)
     const [page,setPage]=useState(1)
@@ -56,16 +54,6 @@ export const AdminDashBoard = () => {
         
     },[filters,sort,page])
 
-    const handleBrandFilters=(e)=>{
-
-        const filterSet=new Set(filters.brand)
-
-        if(e.target.checked){filterSet.add(e.target.value)}
-        else{filterSet.delete(e.target.value)}
-
-        const filterArray = Array.from(filterSet);
-        setFilters({...filters,brand:filterArray})
-    }
 
     const handleCategoryFilters=(e)=>{
         const filterSet=new Set(filters.category)
@@ -108,35 +96,7 @@ export const AdminDashBoard = () => {
                 </IconButton>
 
 
-        <Stack rowGap={2} mt={4} >
-            <Typography sx={{cursor:"pointer"}} variant='body2'>Totes</Typography>
-            <Typography sx={{cursor:"pointer"}} variant='body2'>Backpacks</Typography>
-            <Typography sx={{cursor:"pointer"}} variant='body2'>Travel Bags</Typography>
-            <Typography sx={{cursor:"pointer"}} variant='body2'>Hip Bags</Typography>
-            <Typography sx={{cursor:"pointer"}} variant='body2'>Laptop Sleeves</Typography>
-        </Stack>
-
-        {/* brand filters */}
-        <Stack mt={2}>
-            <Accordion>
-                <AccordionSummary expandIcon={<AddIcon />}  aria-controls="brand-filters" id="brand-filters" >
-                        <Typography>Brands</Typography>
-                </AccordionSummary>
-
-                <AccordionDetails sx={{p:0}}>
-                    <FormGroup onChange={handleBrandFilters}>
-                        {
-                            brands?.map((brand)=>(
-                                <motion.div style={{width:"fit-content"}} whileHover={{x:5}} whileTap={{scale:0.9}}>
-                                    <FormControlLabel sx={{ml:1}} control={<Checkbox whileHover={{scale:1.1}} />} label={brand.name} value={brand._id} />
-                                </motion.div>
-                            ))
-                        }
-                    </FormGroup>
-                </AccordionDetails>
-            </Accordion>
-        </Stack>
-
+  
         {/* category filters */}
         <Stack mt={2}>
             <Accordion>
@@ -193,7 +153,7 @@ export const AdminDashBoard = () => {
                 products.map((product)=>(
                     <Stack>
                         <Stack sx={{opacity:product.isDeleted?.7:1}}>
-                            <ProductCard key={product._id} id={product._id} title={product.title} thumbnail={product.thumbnail} brand={product.brand.name} price={product.price} isAdminCard={true}/>
+                            <ProductCard key={product._id} id={product._id} title={product.title} thumbnail={product.thumbnail} price={product.price} isAdminCard={true}/>
                         </Stack>
                         <Stack paddingLeft={2} paddingRight={2} flexDirection={'row'} justifySelf={'flex-end'} alignSelf={'flex-end'} columnGap={is488?1:2}>
                             <Button component={Link} to={`/admin/product-update/${product._id}`} variant='contained'>Update</Button>

@@ -10,7 +10,7 @@ import { selectLoggedInUser } from '../../auth/AuthSlice';
 import { addToCartAsync,selectCartItems } from '../../cart/CartSlice';
 import {motion} from 'framer-motion'
 
-export const ProductCard = ({id,title,price,thumbnail,brand,stockQuantity,handleAddRemoveFromWishlist,isWishlistCard,isAdminCard}) => {
+export const ProductCard = ({id,title,price,thumbnail,stockQuantity,handleAddRemoveFromWishlist,isWishlistCard,isAdminCard}) => {
 
 
     const navigate=useNavigate()
@@ -67,7 +67,7 @@ export const ProductCard = ({id,title,price,thumbnail,brand,stockQuantity,handle
                     </motion.div>
                     }
                 </Stack>
-                <Typography color={"text.secondary"}>{brand}</Typography>
+              
             </Stack>
 
             <Stack sx={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>

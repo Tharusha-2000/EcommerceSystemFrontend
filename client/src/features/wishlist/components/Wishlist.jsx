@@ -170,7 +170,7 @@ export const Wishlist = () => {
                     wishlistItems.map((item,index)=>(
                       <Stack component={is480?"":Paper} elevation={1} >
 
-                          <ProductCard item key={item._id} brand={item.product.brand.name} id={item.product._id} price={item.product.price} stockQuantity={item.product.stockQuantity} thumbnail={item.product.thumbnail} title={item.product.title} handleAddRemoveFromWishlist={handleAddRemoveFromWishlist} isWishlistCard={true}/>
+                          <ProductCard item key={item._id} id={item.product._id} price={item.product.price} stockQuantity={item.product.stockQuantity} thumbnail={item.product.thumbnail} title={item.product.title} handleAddRemoveFromWishlist={handleAddRemoveFromWishlist} isWishlistCard={true}/>
                         
                         <Stack paddingLeft={2} paddingRight={2} paddingBottom={2}>
 

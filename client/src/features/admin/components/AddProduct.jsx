@@ -4,7 +4,6 @@ import { Link, useNavigate} from 'react-router-dom'
 import { addProductAsync, resetProductAddStatus, selectProductAddStatus,updateProductByIdAsync } from '../../products/ProductSlice'
 import { Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useForm } from "react-hook-form"
-import { selectBrands } from '../../brands/BrandSlice'
 import { selectCategories } from '../../categories/CategoriesSlice'
 import { toast } from 'react-toastify'
 
@@ -13,7 +12,6 @@ export const AddProduct = () => {
     const {register,handleSubmit,reset,formState: { errors }} = useForm()
 
     const dispatch=useDispatch()
-    const brands=useSelector(selectBrands)
     const categories=useSelector(selectCategories)
     const productAddStatus=useSelector(selectProductAddStatus)
     const navigate=useNavigate()
@@ -63,20 +61,6 @@ export const AddProduct = () => {
                 </Stack> 
 
                 <Stack flexDirection={'row'} >
-
-                    <FormControl fullWidth>
-                        <InputLabel id="brand-selection">Brand</InputLabel>
-                        <Select {...register("brand",{required:"Brand is required"})} labelId="brand-selection" label="Brand">
-                            
-                            {
-                                brands.map((brand)=>(
-                                    <MenuItem value={brand._id}>{brand.name}</MenuItem>
-                                ))
-                            }
-
-                        </Select>
-                    </FormControl>
-
 
                     <FormControl fullWidth>
                         <InputLabel id="category-selection">Category</InputLabel>

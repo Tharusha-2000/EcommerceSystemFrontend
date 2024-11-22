@@ -60,7 +60,7 @@ export const Navbar=({isProductList=false})=> {
         <Toolbar sx={{p:1,height:"4rem",display:"flex",justifyContent:"space-around"}}>
 
         <Stack direction="row" alignItems="center">
-        <img src={navlogo} alt="Logo" style={{ width: '200px', height: 'auto', marginRight: '8px' }} />
+        <img src={navlogo} alt="Logo" style={{ width: '240px', height: 'auto', marginRight: '8px' }} />
          </Stack>
 
 
