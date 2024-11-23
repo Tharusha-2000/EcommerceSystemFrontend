@@ -12,11 +12,6 @@ export const fetchProducts=async(filters)=>{
 
     let queryString=''
 
-    if(filters.brand){
-        filters.brand.map((brand)=>{
-            queryString+=`brand=${brand}&`
-        })
-    }
     if(filters.category){
         filters.category.map((category)=>{
             queryString+=`category=${category}&`
@@ -39,6 +34,7 @@ export const fetchProducts=async(filters)=>{
         const res=await axiosi.get(`/products?${queryString}`)
         const totalResults=await res.headers.get("X-Total-Count")
         return {data:res.data,totalResults:totalResults}
+        
     } catch (error) {
         throw error.response.data
     }

@@ -146,7 +146,7 @@ export const UserOrders = () => {
                                                         <Stack flexDirection={'row'} justifyContent={'space-between'}>
                                                             <Stack>
                                                                 <Typography variant='h6' fontSize={'1rem'} fontWeight={500}>{product.product.title}</Typography>
-                                                                <Typography variant='body1'  fontSize={'.9rem'}  color={'text.secondary'}>{product.product.brand.name}</Typography>
+                                                        
                                                                 <Typography color={'text.secondary'} fontSize={'.9rem'}>Qty: {product.quantity}</Typography>
                                                             </Stack>
                                                             <Typography>${product.product.price}</Typography>

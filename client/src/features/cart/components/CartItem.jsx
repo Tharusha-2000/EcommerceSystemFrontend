@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { deleteCartItemByIdAsync, updateCartItemByIdAsync } from '../CartSlice';
 import { Link } from 'react-router-dom';
 
-export const CartItem = ({id,thumbnail,title,category,brand,price,quantity,stockQuantity,productId}) => {
+export const CartItem = ({id,thumbnail,title,category,price,quantity,stockQuantity,productId}) => {
 
 
     const dispatch=useDispatch()
@@ -46,7 +46,7 @@ export const CartItem = ({id,thumbnail,title,category,brand,price,quantity,stock
 
             <Stack alignSelf={''}>
                 <Typography component={Link} to={`/product-details/${productId}`} sx={{textDecoration:"none",color:theme.palette.primary.main}} variant='h6' fontWeight={500}>{title}</Typography>
-                <Typography variant='body2' color={'text.secondary'}>{brand}</Typography>
+               
                 <Typography mt={1}>Quantity</Typography>
                 <Stack flexDirection={'row'} alignItems={'center'}>
                     <IconButton onClick={handleRemoveQty}><RemoveIcon fontSize='small'/></IconButton>
