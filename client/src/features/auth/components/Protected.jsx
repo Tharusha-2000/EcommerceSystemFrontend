@@ -10,6 +10,4 @@ export const Protected = ({children}) => {
         return children
     }
     return <Navigate to={'/login'} replace={true}/>
-
-    // return children;
 }
