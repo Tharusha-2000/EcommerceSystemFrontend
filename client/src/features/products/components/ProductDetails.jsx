@@ -52,8 +52,8 @@ export const ProductDetails = () => {
 
 
 
-    const isProductAlreadyInCart=cartItems.some((item)=>item.product._id===id)
-    const isProductAlreadyinWishlist=wishlistItems.some((item)=>item.product._id===id)
+    const isProductAlreadyInCart=cartItems.some((item)=>item.product.id===id)
+    const isProductAlreadyinWishlist=wishlistItems.some((item)=>item.product.id===id)
 
     const productFetchStatus=useSelector(selectProductFetchStatus)
     const reviewFetchStatus=useSelector(selectReviewFetchStatus)
@@ -134,7 +134,7 @@ export const ProductDetails = () => {
     },[])
 
     const handleAddToCart=()=>{
-        const item={user:loggedInUser._id,product:id,quantity}
+        const item={user:loggedInUser.id,product:id,quantity}
         dispatch(addToCartAsync(item))
         setQuantity(1)
     }
@@ -157,13 +157,13 @@ export const ProductDetails = () => {
 
     const handleAddRemoveFromWishlist=(e)=>{
         if(e.target.checked){
-            const data={user:loggedInUser?._id,product:id}
+            const data={user:loggedInUser?.id,product:id}
             dispatch(createWishlistItemAsync(data))
         }
 
         else if(!e.target.checked){
-            const index=wishlistItems.findIndex((item)=>item.product._id===id)
-            dispatch(deleteWishlistItemByIdAsync(wishlistItems[index]._id));
+            const index=wishlistItems.findIndex((item)=>item.product.id===id)
+            dispatch(deleteWishlistItemByIdAsync(wishlistItems[index].id));
         }
     }
 

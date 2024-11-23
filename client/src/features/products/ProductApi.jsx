@@ -34,7 +34,7 @@ export const fetchProducts=async(filters)=>{
         const res=await axiosi.get(`/products?${queryString}`)
         const totalResults=await res.headers.get("X-Total-Count")
         return {data:res.data,totalResults:totalResults}
-        
+
     } catch (error) {
         throw error.response.data
     }
@@ -49,7 +49,7 @@ export const fetchProductById=async(id)=>{
 }
 export const updateProductById=async(update)=>{
     try {
-        const res=await axiosi.patch(`/products/${update._id}`,update)
+        const res=await axiosi.patch(`/products/${update.id}`,update)
         return res.data
     } catch (error) {
         throw error.response.data
