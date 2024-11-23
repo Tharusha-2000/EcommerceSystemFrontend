@@ -47,7 +47,7 @@ export const ProductUpdate = () => {
     },[])
 
     const handleProductUpdate=(data)=>{
-        const productUpdate={...data,_id:selectedProduct._id,images:[data?.image0,data?.image1,data?.image2,data?.image3]}
+        const productUpdate={...data,id:selectedProduct.id,images:[data?.image0,data?.image1,data?.image2,data?.image3]}
         delete productUpdate?.image0
         delete productUpdate?.image1
         delete productUpdate?.image2
@@ -77,11 +77,11 @@ export const ProductUpdate = () => {
 
                     <FormControl fullWidth>
                         <InputLabel id="category-selection">Category</InputLabel>
-                        <Select defaultValue={selectedProduct.category._id} {...register("category",{required:"category is required"})} labelId="category-selection" label="Category">
+                        <Select defaultValue={selectedProduct.category.id} {...register("category",{required:"category is required"})} labelId="category-selection" label="Category">
                             
                             {
                                 categories.map((category)=>(
-                                    <MenuItem value={category._id}>{category.name}</MenuItem>
+                                    <MenuItem value={category.id}>{category.name}</MenuItem>
                                 ))
                             }
 

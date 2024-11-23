@@ -30,13 +30,13 @@ export const ProductCard = ({id,title,price,thumbnail,stockQuantity,handleAddRem
     const is488=useMediaQuery(theme.breakpoints.down(488))
     const is408=useMediaQuery(theme.breakpoints.down(408))
 
-    isProductAlreadyinWishlist=wishlistItems.some((item)=>item.product._id===id)
+    isProductAlreadyinWishlist=wishlistItems.some((item)=>item.product.id===id)
 
-    const isProductAlreadyInCart=cartItems.some((item)=>item.product._id===id)
+    const isProductAlreadyInCart=cartItems.some((item)=>item.product.id===id)
 
     const handleAddToCart=async(e)=>{
         e.stopPropagation()
-        const data={user:loggedInUser?._id,product:id}
+        const data={user:loggedInUser?.id,product:id}
         dispatch(addToCartAsync(data))
     }
 

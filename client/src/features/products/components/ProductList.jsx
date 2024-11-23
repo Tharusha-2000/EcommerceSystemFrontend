@@ -101,13 +101,13 @@ export const ProductList = () => {
 
     const handleAddRemoveFromWishlist=(e,productId)=>{
         if(e.target.checked){
-            const data={user:loggedInUser?._id,product:productId}
+            const data={user:loggedInUser?.id,product:productId}
             dispatch(createWishlistItemAsync(data))
         }
 
         else if(!e.target.checked){
-            const index=wishlistItems.findIndex((item)=>item.product._id===productId)
-            dispatch(deleteWishlistItemByIdAsync(wishlistItems[index]._id));
+            const index=wishlistItems.findIndex((item)=>item.product.id===productId)
+            dispatch(deleteWishlistItemByIdAsync(wishlistItems[index].id));
         }
     }
 
@@ -256,7 +256,7 @@ export const ProductList = () => {
                     <Grid gap={is700?1:2} container justifyContent={'center'} alignContent={'center'}>
                         {
                             products.map((product)=>(
-                                <ProductCard key={product._id} id={product._id} title={product.title} thumbnail={product.thumbnail}  price={product.price} handleAddRemoveFromWishlist={handleAddRemoveFromWishlist}/>
+                                <ProductCard key={product.id} id={product.id} title={product.title} thumbnail={product.thumbnail}  price={product.price} handleAddRemoveFromWishlist={handleAddRemoveFromWishlist}/>
                             ))
                         }
                     </Grid>

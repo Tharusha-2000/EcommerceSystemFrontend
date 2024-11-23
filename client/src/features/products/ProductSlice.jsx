@@ -113,7 +113,7 @@ const productSlice=createSlice({
             })
             .addCase(updateProductByIdAsync.fulfilled,(state,action)=>{
                 state.productUpdateStatus='fullfilled'
-                const index=state.products.findIndex((product)=>product._id===action.payload._id)
+                const index=state.products.findIndex((product)=>product.id===action.payload.id)
                 state.products[index]=action.payload
             })
             .addCase(updateProductByIdAsync.rejected,(state,action)=>{
@@ -126,7 +126,7 @@ const productSlice=createSlice({
             })
             .addCase(undeleteProductByIdAsync.fulfilled,(state,action)=>{
                 state.status='fullfilled'
-                const index=state.products.findIndex((product)=>product._id===action.payload._id)
+                const index=state.products.findIndex((product)=>product.id===action.payload.id)
                 state.products[index]=action.payload
             })
             .addCase(undeleteProductByIdAsync.rejected,(state,action)=>{
@@ -139,7 +139,7 @@ const productSlice=createSlice({
             })
             .addCase(deleteProductByIdAsync.fulfilled,(state,action)=>{
                 state.status='fullfilled'
-                const index=state.products.findIndex((product)=>product._id===action.payload._id)
+                const index=state.products.findIndex((product)=>product.id===action.payload.id)
                 state.products[index]=action.payload
             })
             .addCase(deleteProductByIdAsync.rejected,(state,action)=>{
