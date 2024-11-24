@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Customers from "./pages/Admin/Customers";
 import Orders from "./pages/Admin/Orders";
+import Products from "./pages/Admin/products";
 import Reports from "./pages/Admin/Reports";
 import Settings from "./pages/Admin/Settings";
 import PrivateRoute from "./components/PrivateRoute";
@@ -62,6 +63,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <Orders />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/products"
+              exact
+              element={
+                <PrivateRoute>
+                  <Products/>
                 </PrivateRoute>
               }
             />
