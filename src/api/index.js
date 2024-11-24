@@ -15,10 +15,14 @@ export const getAllProducts = async (filter) =>
 export const getProductDetails = async (id) => await API.get(`/food/${id}`);
 
 //Cart
-export const getCart = async (token) =>
-  await API.get(`/user/cart`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// export const getCart = async (token) =>
+//   await API.get(`/user/cart`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
+
+export const getCart = async () =>
+  await API.get('http://localhost:5126/api/Cart');
+  
 
 export const addToCart = async (token, data) =>
   await API.post(`/user/cart/`, data, {
