@@ -1,7 +1,6 @@
 import { Modal } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
-import LogoImage from "../utils/Images/Logo.png";
 import AuthImage from "../utils/Images/AuthImage.jpg";
 import { Close } from "@mui/icons-material";
 import SignIn from "../components/SignIn";
@@ -89,13 +88,14 @@ const Authentication = ({ openAuth, setOpenAuth }) => {
     <Modal open={openAuth} onClose={() => setOpenAuth(false)}>
       <Container>
         <Left>
-          <Logo src={LogoImage} />
+         
           <Image src={AuthImage} />
         </Left>
         <Right>
           <CloseButton>
             <Close onClick={() => setOpenAuth(false)} />
           </CloseButton>
+         
           {login ? (
             <>
               <SignIn setOpenAuth={setOpenAuth} />

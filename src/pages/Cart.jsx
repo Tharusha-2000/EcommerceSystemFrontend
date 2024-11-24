@@ -226,7 +226,7 @@ const Cart = () => {
   }, [reload]);
 
   const addCart = async (id) => {
-    const token = localStorage.getItem("krist-app-token");
+    // const token = localStorage.getItem("krist-app-token");
     await addToCart(token, { productId: id, quantity: 1 })
       .then((res) => {
         setReload(!reload);
@@ -263,6 +263,7 @@ const Cart = () => {
         );
       });
   };
+
   return (
     <Container>
       <Section>
