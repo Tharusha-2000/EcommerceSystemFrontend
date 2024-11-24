@@ -87,7 +87,7 @@ const SignUp = ({ setOpenAuth }) => {
   return (
     <Container>
       <div>
-        <Title>Create New Account 👋</Title>
+        <Title>Create New Acc👋</Title>
         <Span>Please enter details to create a new account</Span>
       </div>
       <div style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
