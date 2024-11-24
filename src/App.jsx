@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lightTheme } from "./utils/Themes";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import Order from "./pages/Order";
 import { useState } from "react";
 import Authentication from "./pages/Authentication";
 import Favourites from "./pages/Favourites";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/cart" exact element={<Cart />} />
             <Route path="/dishes/:id" exact element={<FoodDetails />} />
             <Route path="/dishes" exact element={<FoodListing />} />
+            <Route path="/orders" exact element={<Order />} />
           </Routes>
           {openAuth && (
             <Authentication setOpenAuth={setOpenAuth} openAuth={openAuth} />
