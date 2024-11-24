@@ -24,6 +24,7 @@
     "redux-persist": "^6.0.0",
     "styled-components": "^6.1.8",
     "sweetalert2": "^11.14.5",
+    "uuid": "^11.0.3",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
