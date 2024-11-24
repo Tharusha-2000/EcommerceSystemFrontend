@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { UserSignIn } from "../api";
 import { loginSuccess } from "../redux/reducers/UserSlice";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
+import LogoImage from "../utils/Images/Logo.png";
 
 const Container = styled.div`
   width: 100%;
@@ -36,6 +37,14 @@ const TextButton = styled.div`
     color: ${({ theme }) => theme.primary};
   }
 `;
+
+const Logo = styled.img`
+  position: absolute;
+  top: 100px;
+  left: 180px;
+  z-index: 10;
+`;
+
 
 const SignIn = ({ setOpenAuth }) => {
   const dispatch = useDispatch();
@@ -85,7 +94,7 @@ const SignIn = ({ setOpenAuth }) => {
   return (
     <Container>
       <div>
-        <Title>Welcome to Krist 👋</Title>
+        <Logo src={LogoImage} />
         <Span>Please login with your details here</Span>
       </div>
       <div style={{ display: "flex", gap: "20px", flexDirection: "column" }}>

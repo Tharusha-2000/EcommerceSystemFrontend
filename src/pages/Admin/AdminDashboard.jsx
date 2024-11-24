@@ -14,7 +14,7 @@ function AdminDashboard() {
           <Box sx={{ display: 'flex' }}>
             <AdminSidebar />
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-              <h1>this is admin dashboard </h1>
+              <h1>this is admin overview </h1>
             </Box>
           </Box>
         </Grid>
