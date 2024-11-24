@@ -11,6 +11,12 @@ import Cart from "./pages/Cart";
 import FoodDetails from "./pages/FoodDetails";
 import FoodListing from "./pages/FoodListing";
 import { useSelector } from "react-redux";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import Customers from "./pages/Admin/Customers";
+import Orders from "./pages/Admin/Orders";
+import Reports from "./pages/Admin/Reports";
+import Settings from "./pages/Admin/Settings";
+import PrivateRoute from "./components/PrivateRoute";
 
 const Container = styled.div``;
 
@@ -33,15 +39,64 @@ function App() {
             <Route path="/cart" exact element={<Cart />} />
             <Route path="/dishes/:id" exact element={<FoodDetails />} />
             <Route path="/dishes" exact element={<FoodListing />} />
+            
             <Route path="/orders" exact element={<Order />} />
+            <Route
+              path="/admin/dashboard"
+              exact
+              element={
+                <PrivateRoute>
+                  <AdminDashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/customers"
+              exact
+              element={
+                <PrivateRoute>
+                  <Customers />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/orders"
+              exact
+              element={
+                <PrivateRoute>
+                  <Orders />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/reports"
+              exact
+              element={
+                <PrivateRoute>
+                  <Reports />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              exact
+              element={
+                <PrivateRoute>
+                  <Settings />
+                </PrivateRoute>
+              }
+            />
+            
           </Routes>
           {openAuth && (
             <Authentication setOpenAuth={setOpenAuth} openAuth={openAuth} />
           )}
         </Container>
+
       </BrowserRouter>
     </ThemeProvider>
-  );
+ 
+ );
 }
 
 export default App;

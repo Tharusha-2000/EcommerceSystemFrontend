@@ -8,6 +8,7 @@ import { CircularProgress } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { DeleteOutline } from "@mui/icons-material";
+import PaymentDialog from "./Checkout";
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -151,13 +152,27 @@ const Cart = () => {
     completeAddress: "",
   });
 
+  const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
+
+  const handleOpenPaymentDialog = () => {
+    setOpenPaymentDialog(true);
+  };
+
+  const handleClosePaymentDialog = () => {
+    setOpenPaymentDialog(false);
+  };
+
+
+
   const getProducts = async () => {
     setLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await getCart(token).then((res) => {
+    // const token = localStorage.getItem("krist-app-token");
+    await getCart().then((res) => {
       setProducts(res.data);
+      console.log(res.data);
       setLoading(false);
     });
+
   };
 
   const calculateSubtotal = () => {
@@ -171,98 +186,99 @@ const Cart = () => {
     return `${addressObj.firstName} ${addressObj.lastName}, ${addressObj.completeAddress}, ${addressObj.phoneNumber}, ${addressObj.emailAddress}`;
   };
 
-  const PlaceOrder = async () => {
-    setButtonLoad(true);
-    try {
-      const isDeliveryDetailsFilled =
-        deliveryDetails.firstName &&
-        deliveryDetails.lastName &&
-        deliveryDetails.completeAddress &&
-        deliveryDetails.phoneNumber &&
-        deliveryDetails.emailAddress;
+  // const PlaceOrder = async () => {
+  //   setButtonLoad(true);
+  //   try {
+  //     const isDeliveryDetailsFilled =
+  //       deliveryDetails.firstName &&
+  //       deliveryDetails.lastName &&
+  //       deliveryDetails.completeAddress &&
+  //       deliveryDetails.phoneNumber &&
+  //       deliveryDetails.emailAddress;
 
-      if (!isDeliveryDetailsFilled) {
-        // Show an error message or handle the situation where delivery details are incomplete
-        dispatch(
-          openSnackbar({
-            message: "Please fill in all required delivery details.",
-            severity: "error",
-          })
-        );
-        return;
-      }
+  //     if (!isDeliveryDetailsFilled) {
+  //       // Show an error message or handle the situation where delivery details are incomplete
+  //       dispatch(
+  //         openSnackbar({
+  //           message: "Please fill in all required delivery details.",
+  //           severity: "error",
+  //         })
+  //       );
+  //       return;
+  //     }
 
-      const token = localStorage.getItem("krist-app-token");
-      const totalAmount = calculateSubtotal().toFixed(2);
-      const orderDetails = {
-        products,
-        address: convertAddressToString(deliveryDetails),
-        totalAmount,
-      };
+  //     // const token = localStorage.getItem("krist-app-token");
+  //     const totalAmount = calculateSubtotal().toFixed(2);
+  //     const orderDetails = {
+  //       products,
+  //       address: convertAddressToString(deliveryDetails),
+  //       totalAmount,
+  //     };
 
-      await placeOrder(token, orderDetails);
-      dispatch(
-        openSnackbar({
-          message: "Order placed successfully",
-          severity: "success",
-        })
-      );
-      setButtonLoad(false);
-      // Clear the cart and update the UI
-      setReload(!reload);
-    } catch (err) {
-      dispatch(
-        openSnackbar({
-          message: "Failed to place order. Please try again.",
-          severity: "error",
-        })
-      );
-      setButtonLoad(false);
-    }
-  };
+  //     await placeOrder(token, orderDetails);
+  //     dispatch(
+  //       openSnackbar({
+  //         message: "Order placed successfully",
+  //         severity: "success",
+  //       })
+  //     );
+  //     setButtonLoad(false);
+  //     // Clear the cart and update the UI
+  //     setReload(!reload);
+  //   } catch (err) {
+  //     dispatch(
+  //       openSnackbar({
+  //         message: "Failed to place order. Please try again.",
+  //         severity: "error",
+  //       })
+  //     );
+  //     setButtonLoad(false);
+  //   }
+  // };
 
   useEffect(() => {
     getProducts();
-  }, [reload]);
+  }, []);
 
-  const addCart = async (id) => {
-    const token = localStorage.getItem("krist-app-token");
-    await addToCart(token, { productId: id, quantity: 1 })
-      .then((res) => {
-        setReload(!reload);
-      })
-      .catch((err) => {
-        setReload(!reload);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
+  // const addCart = async (id) => {
+  //   // const token = localStorage.getItem("krist-app-token");
+  //   await addToCart(token, { productId: id, quantity: 1 })
+  //     .then((res) => {
+  //       setReload(!reload);
+  //     })
+  //     .catch((err) => {
+  //       setReload(!reload);
+  //       dispatch(
+  //         openSnackbar({
+  //           message: err.message,
+  //           severity: "error",
+  //         })
+  //       );
+  //     });
+  // };
 
-  const removeCart = async (id, quantity, type) => {
-    const token = localStorage.getItem("krist-app-token");
-    let qnt = quantity > 0 ? 1 : null;
-    if (type === "full") qnt = null;
-    await deleteFromCart(token, {
-      productId: id,
-      quantity: qnt,
-    })
-      .then((res) => {
-        setReload(!reload);
-      })
-      .catch((err) => {
-        setReload(!reload);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
+  // const removeCart = async (id, quantity, type) => {
+  //   // const token = localStorage.getItem("krist-app-token");
+  //   let qnt = quantity > 0 ? 1 : null;
+  //   if (type === "full") qnt = null;
+  //   await deleteFromCart(token, {
+  //     productId: id,
+  //     quantity: qnt,
+  //   })
+  //     .then((res) => {
+  //       setReload(!reload);
+  //     })
+  //     .catch((err) => {
+  //       setReload(!reload);
+  //       dispatch(
+  //         openSnackbar({
+  //           message: err.message,
+  //           severity: "error",
+  //         })
+  //       );
+  //     });
+  // };
+
   return (
     <Container>
       <Section>
@@ -280,19 +296,22 @@ const Cart = () => {
                     <TableItem bold flex>
                       Product
                     </TableItem>
+                   
                     <TableItem bold>Price</TableItem>
                     <TableItem bold>Quantity</TableItem>
                     <TableItem bold>Subtotal</TableItem>
                     <TableItem></TableItem>
                   </Table>
                   {products.map((item) => (
-                    <Table>
+                    <Table key={item.cartId}>
                       <TableItem flex>
                         <Product>
+                        <TableItem>{item.cartId}</TableItem>
+
                           <Img src={item?.product?.img} />
                           <Details>
-                            <Protitle>{item?.product?.name}</Protitle>
-                            <ProDesc>{item?.product?.desc}</ProDesc>
+                            <Protitle>{item?.productname}</Protitle>
+                            <ProDesc>{item?.pizzaSize}</ProDesc>
                           </Details>
                         </Product>
                       </TableItem>
@@ -305,12 +324,12 @@ const Cart = () => {
                               flex: 1,
                             }}
                             onClick={() =>
-                              removeCart(item?.product?._id, item?.quantity - 1)
+                              removeCart(item?._id, item?.count - 1)
                             }
                           >
                             -
                           </div>
-                          {item?.quantity}{" "}
+                          {item?.count}{" "}
                           <div
                             style={{
                               cursor: "pointer",
@@ -325,15 +344,15 @@ const Cart = () => {
                       <TableItem>
                         {" "}
                         $
-                        {(item.quantity * item?.product?.price?.org).toFixed(2)}
+                        {(item.count * item?.price?.org).toFixed(2)}
                       </TableItem>
                       <TableItem>
                         <DeleteOutline
                           sx={{ color: "red" }}
                           onClick={() =>
                             removeCart(
-                              item?.product?._id,
-                              item?.quantity - 1,
+                              item?.productId,
+                              item?.count - 1,
                               "full"
                             )
                           }
@@ -415,28 +434,11 @@ const Cart = () => {
                       />
                     </div>
                   </Delivery>
-                  <Delivery>
-                    Payment Details:
-                    <div>
-                      <TextInput small placeholder="Card Number" />
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "6px",
-                        }}
-                      >
-                        <TextInput small placeholder="Expiry Date" />
-                        <TextInput small placeholder="CVV" />
-                      </div>
-                      <TextInput small placeholder="Card Holder name" />
-                    </div>
-                  </Delivery>
+                  <PaymentDialog open={openPaymentDialog} onClose={handleClosePaymentDialog} />
                   <Button
-                    text="Pace Order"
+                    text="Checkout"
                     small
-                    onClick={PlaceOrder}
-                    isLoading={buttonLoad}
-                    isDisabled={buttonLoad}
+                    onClick={handleOpenPaymentDialog}
                   />
                 </Right>
               </Wrapper>
