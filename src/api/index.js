@@ -21,18 +21,21 @@ export const getProductDetails = async (id) => await API.get(`/food/${id}`);
 //   });
 
 export const getCart = async () =>
-  await API.get('http://localhost:5126/api/Cart');
-  
+  await axios.get('http://localhost:5126/api/Cart/byUser/1');
+
 
 export const addToCart = async (token, data) =>
   await API.post(`/user/cart/`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const deleteFromCart = async (token, data) =>
-  await API.patch(`/user/cart/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// export const deleteFromCart = async (token, data) =>
+//   await API.patch(`/user/cart/`, data, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
+
+  export const deleteFromCart = async ( data) =>
+  await axios.delete('http://localhost:5126/api/Cart/${cartId}', data);
 
 //favorites
 

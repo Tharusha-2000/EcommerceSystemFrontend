@@ -257,27 +257,29 @@ const Cart = () => {
   //     });
   // };
 
-  // const removeCart = async (id, quantity, type) => {
-  //   // const token = localStorage.getItem("krist-app-token");
-  //   let qnt = quantity > 0 ? 1 : null;
-  //   if (type === "full") qnt = null;
-  //   await deleteFromCart(token, {
-  //     productId: id,
-  //     quantity: qnt,
-  //   })
-  //     .then((res) => {
-  //       setReload(!reload);
-  //     })
-  //     .catch((err) => {
-  //       setReload(!reload);
-  //       dispatch(
-  //         openSnackbar({
-  //           message: err.message,
-  //           severity: "error",
-  //         })
-  //       );
-  //     });
-  // };
+  const removeCart = async (id, count) => {
+    console.log(id, count);
+
+    let qnt = count > 0 ? 1 : null;
+    console.log(qnt);
+    
+    try {
+      await deleteFromCart({
+        cartId: id,
+        count: qnt,
+      });
+      setReload(!reload);
+    } catch (err) {
+      setReload(!reload);
+      dispatch(
+        openSnackbar({
+          message: err.message,
+          severity: "error",
+        })
+      );
+    }
+  };
+  
 
   return (
     <Container>
@@ -319,12 +321,13 @@ const Cart = () => {
                       <TableItem>
                         <Counter>
                           <div
+
                             style={{
                               cursor: "pointer",
                               flex: 1,
                             }}
-                            onClick={() =>
-                              removeCart(item?._id, item?.count - 1)
+                            onClick={() =>  
+                              removeCart(item?.cartId, item?.count - 1)
                             }
                           >
                             -
@@ -335,7 +338,7 @@ const Cart = () => {
                               cursor: "pointer",
                               flex: 1,
                             }}
-                            onClick={() => addCart(item?.product?._id)}
+                            onClick={() => addCart(item?.product?.cartId)}
                           >
                             +
                           </div>
