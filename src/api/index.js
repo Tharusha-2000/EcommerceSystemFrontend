@@ -21,7 +21,7 @@ export const getProductDetails = async (id) => await API.get(`/food/${id}`);
 //   });
 
 export const getCart = async () =>
-  await axios.get('http://localhost:5126/api/Cart/byUser/1');
+  await axios.get('http://localhost:5126/api/Cart');
 
 
 export const addToCart = async (token, data) =>
@@ -34,8 +34,25 @@ export const addToCart = async (token, data) =>
 //     headers: { Authorization: `Bearer ${token}` },
 //   });
 
-  export const deleteFromCart = async ( data) =>
-  await axios.delete('http://localhost:5126/api/Cart/${cartId}', data);
+export const updateFromCart = async ({ cartId, count }) => {
+  try {
+    const data = { count: count > 0 ? count : 0 };  // If count is <= 0, treat as removal (count = 0)
+    const response = await axios.put(`http://localhost:5126/api/Cart/${cartId}?count=${count}`);
+     return response.data; 
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error updating cart');
+  }
+};
+
+export const deleteFromCart = async (cartId) => {
+  try {
+    console.log(cartId);
+    const response = await axios.delete(`http://localhost:5126/api/Cart/${cartId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error deleting from cart');
+  }
+}
 
 //favorites
 

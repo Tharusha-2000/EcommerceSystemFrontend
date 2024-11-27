@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
-import { addToCart, deleteFromCart, getCart, placeOrder } from "../api";
+import { addToCart, deleteFromCart, getCart, placeOrder,updateFromCart } from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { useDispatch } from "react-redux";
@@ -177,7 +177,7 @@ const Cart = () => {
 
   const calculateSubtotal = () => {
     return products.reduce(
-      (total, item) => total + item.quantity * item?.product?.price?.org,
+      (total, item) => total + item.count* item?.unitPrice,
       0
     );
   };
@@ -208,7 +208,7 @@ const Cart = () => {
   //     }
 
   //     // const token = localStorage.getItem("krist-app-token");
-  //     const totalAmount = calculateSubtotal().toFixed(2);
+      const totalAmount = calculateSubtotal().toFixed(2);
   //     const orderDetails = {
   //       products,
   //       address: convertAddressToString(deliveryDetails),
@@ -240,37 +240,43 @@ const Cart = () => {
     getProducts();
   }, []);
 
-  // const addCart = async (id) => {
-  //   // const token = localStorage.getItem("krist-app-token");
-  //   await addToCart(token, { productId: id, quantity: 1 })
-  //     .then((res) => {
-  //       setReload(!reload);
-  //     })
-  //     .catch((err) => {
-  //       setReload(!reload);
-  //       dispatch(
-  //         openSnackbar({
-  //           message: err.message,
-  //           severity: "error",
-  //         })
-  //       );
-  //     });
-  // };
-
-  const removeCart = async (id, count) => {
-    console.log(id, count);
-
-    let qnt = count > 0 ? 1 : null;
-    console.log(qnt);
-    
+ 
+  const updateQuntity = async (id,count) => {
+    let updatedCount = count > 0 ? count : 0;  
     try {
-      await deleteFromCart({
+      await updateFromCart({
         cartId: id,
-        count: qnt,
+        count: updatedCount,
+
       });
+      setProducts(prevItems => 
+        prevItems.map(item => 
+          item.cartId === id ? { ...item, count: updatedCount } : item
+        )
+      );
+
       setReload(!reload);
     } catch (err) {
       setReload(!reload);
+      dispatch(
+        openSnackbar({
+          message: err.message,
+          severity: "error",
+        })
+      );
+    }
+  };
+
+
+  const removeCart = async (cartId) => {
+    try {
+
+      console.log(cartId);
+
+      await deleteFromCart(cartId);
+  
+      setProducts(prevItems => prevItems.filter(item => item.cartId !== cartId));
+    } catch (err) {
       dispatch(
         openSnackbar({
           message: err.message,
@@ -310,14 +316,14 @@ const Cart = () => {
                         <Product>
                         <TableItem>{item.cartId}</TableItem>
 
-                          <Img src={item?.product?.img} />
+                          <Img src={item.productImg} />
                           <Details>
-                            <Protitle>{item?.productname}</Protitle>
+                            <Protitle>{item?.productName}</Protitle>
                             <ProDesc>{item?.pizzaSize}</ProDesc>
                           </Details>
                         </Product>
                       </TableItem>
-                      <TableItem>${item?.product?.price?.org}</TableItem>
+                      <TableItem>LKR.{item?.unitPrice}</TableItem>
                       <TableItem>
                         <Counter>
                           <div
@@ -327,7 +333,7 @@ const Cart = () => {
                               flex: 1,
                             }}
                             onClick={() =>  
-                              removeCart(item?.cartId, item?.count - 1)
+                              updateQuntity(item?.cartId, item?.count - 1)
                             }
                           >
                             -
@@ -338,7 +344,7 @@ const Cart = () => {
                               cursor: "pointer",
                               flex: 1,
                             }}
-                            onClick={() => addCart(item?.product?.cartId)}
+                            onClick={() => updateQuntity(item?.cartId, item?.count + 1)}
                           >
                             +
                           </div>
@@ -346,27 +352,22 @@ const Cart = () => {
                       </TableItem>
                       <TableItem>
                         {" "}
-                        $
-                        {(item.count * item?.price?.org).toFixed(2)}
+                        LKR.
+                        {(item.count * item?.unitPrice).toFixed(2)}
                       </TableItem>
                       <TableItem>
                         <DeleteOutline
                           sx={{ color: "red" }}
-                          onClick={() =>
-                            removeCart(
-                              item?.productId,
-                              item?.count - 1,
-                              "full"
-                            )
-                          }
+                          onClick={() => removeCart( item?.cartId ) }
                         />
                       </TableItem>
                     </Table>
                   ))}
+
                 </Left>
                 <Right>
                   <Subtotal>
-                    Subtotal : ${calculateSubtotal().toFixed(2)}
+                    Subtotal : LKR:{calculateSubtotal().toFixed(2)}
                   </Subtotal>
                   <Delivery>
                     Delivery Details:
