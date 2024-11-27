@@ -1,16 +1,17 @@
+import React, { useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { lightTheme } from "./utils/Themes";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Order from "./pages/Order";
-import { useState } from "react";
-import Authentication from "./pages/Authentication";
 import Favourites from "./pages/Favourites";
 import Cart from "./pages/Cart";
 import FoodDetails from "./pages/FoodDetails";
 import FoodListing from "./pages/FoodListing";
-import { useSelector } from "react-redux";
+import Contact from "./pages/Contact"; // Import Contact page
+import Authentication from "./pages/Authentication";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Customers from "./pages/Admin/Customers";
 import Orders from "./pages/Admin/Orders";
@@ -22,10 +23,11 @@ import PrivateRoute from "./components/PrivateRoute";
 
 const Container = styled.div``;
 
-function App() {
+const App = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { open, message, severity } = useSelector((state) => state.snackbar);
   const [openAuth, setOpenAuth] = useState(false);
+
   return (
     <ThemeProvider theme={lightTheme}>
       <BrowserRouter>
@@ -41,8 +43,9 @@ function App() {
             <Route path="/cart" exact element={<Cart />} />
             <Route path="/dishes/:id" exact element={<FoodDetails />} />
             <Route path="/dishes" exact element={<FoodListing />} />
-            
             <Route path="/orders" exact element={<Order />} />
+            <Route path="/contact" exact element={<Contact />} /> {/* Contact page route */}
+
             <Route
               path="/admin/dashboard"
               exact
@@ -75,7 +78,7 @@ function App() {
               exact
               element={
                 <PrivateRoute>
-                  <Products/>
+                  <Products />
                 </PrivateRoute>
               }
             />
@@ -84,7 +87,7 @@ function App() {
               exact
               element={
                 <PrivateRoute>
-                  <AddProduct/>
+                  <AddProduct />
                 </PrivateRoute>
               }
             />
@@ -106,17 +109,14 @@ function App() {
                 </PrivateRoute>
               }
             />
-            
           </Routes>
           {openAuth && (
             <Authentication setOpenAuth={setOpenAuth} openAuth={openAuth} />
           )}
         </Container>
-
       </BrowserRouter>
     </ThemeProvider>
- 
- );
-}
+  );
+};
 
 export default App;
