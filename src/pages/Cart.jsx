@@ -9,6 +9,9 @@ import { useDispatch } from "react-redux";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { DeleteOutline } from "@mui/icons-material";
 import PaymentDialog from "./Checkout";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -287,6 +290,28 @@ const Cart = () => {
   };
   
 
+      // Fetch user profile data from localStorage or API (simulate fetching)
+      const getUserProfile = () => {
+        // Replace this with an actual API call or retrieve from localStorage
+        return {
+          firstName: "John",
+          lastName: "Doe",
+          email: "john.doe@example.com",
+          phoneNo: "+1234567890",
+          address: "123 Main St, City, Country, 12345",
+        };
+      };
+    
+
+    // Autofill the address fields from the user's profile data
+    const autofillAddress = () => {
+      const userProfile = getUserProfile();
+      setDeliveryDetails({
+        ...userProfile,  // This will set all address details from profile to the form
+      });
+    };
+
+
   return (
     <Container>
       <Section>
@@ -404,35 +429,65 @@ const Cart = () => {
                       <TextInput
                         small
                         placeholder="Email Address"
-                        value={deliveryDetails.emailAddress}
+                        value={deliveryDetails.email}
                         handelChange={(e) =>
                           setDeliveryDetails({
                             ...deliveryDetails,
-                            emailAddress: e.target.value,
+                            email: e.target.value,
                           })
                         }
                       />
-                      <TextInput
+                   
+
+                        <div
+                        style={{
+                          display: "flex",
+                          gap: "6px",
+                        }}
+                      >
+                        <TextInput
                         small
                         placeholder="Phone no. +91 XXXXX XXXXX"
-                        value={deliveryDetails.phoneNumber}
+                        value={deliveryDetails.phoneNo}
                         handelChange={(e) =>
                           setDeliveryDetails({
                             ...deliveryDetails,
-                            phoneNumber: e.target.value,
+                            phoneNo: e.target.value,
                           })
                         }
                       />
+                     
+                           <TextInput
+                          small
+                          placeholder="postalcode"
+                          value={deliveryDetails.postalcode}
+                          handelChange={(e) =>
+                            setDeliveryDetails({
+                              ...deliveryDetails,
+                              postalcode: e.target.value,
+                            })
+                          }
+                        />
+                        
+
+                      </div>
+
+                        <FormControlLabel
+                        control={<Switch/>}
+                        label= "Use exitsing address"
+                        onClick={autofillAddress} 
+                        />
+
                       <TextInput
                         small
                         textArea
                         rows="5"
                         placeholder="Complete Address (Address, State, Country, Pincode)"
-                        value={deliveryDetails.completeAddress}
+                        value={deliveryDetails.address}
                         handelChange={(e) =>
                           setDeliveryDetails({
                             ...deliveryDetails,
-                            completeAddress: e.target.value,
+                            address: e.target.value,
                           })
                         }
                       />

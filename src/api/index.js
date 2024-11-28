@@ -6,7 +6,7 @@ const API = axios.create({
 
 //auth
 export const UserSignUp = async (data) => await API.post("/user/signup", data);
-export const UserSignIn = async (data) => await API.post("/user/signin", data);
+export const UserSignIn = async (data) => await axios.post(`http://localhost:5288/api/Auth/login`, data);
 
 //products
 export const getAllProducts = async (filter) =>
@@ -81,3 +81,7 @@ export const getOrders = async (token) =>
   await API.get(`/user/order/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+
+
+

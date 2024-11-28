@@ -42,9 +42,9 @@ function App() {
               path="/admin/dashboard"
               exact
               element={
-                <PrivateRoute>
+               
                   <AdminDashboard />
-                </PrivateRoute>
+              
               }
             />
             <Route
