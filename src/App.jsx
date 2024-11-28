@@ -23,6 +23,7 @@ function App() {
   const { currentUser } = useSelector((state) => state.user);
   const { open, message, severity } = useSelector((state) => state.snackbar);
   const [openAuth, setOpenAuth] = useState(false);
+  
   return (
     <ThemeProvider theme={lightTheme}>
       <BrowserRouter>
@@ -38,6 +39,7 @@ function App() {
             <Route path="/cart" exact element={<Cart />} />
             <Route path="/dishes/:id" exact element={<FoodDetails />} />
             <Route path="/dishes" exact element={<FoodListing />} />
+            
             <Route
               path="/admin/dashboard"
               exact

@@ -9,7 +9,6 @@ import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import LogoImage from "../utils/Images/Logo.png";
 import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom"; 
-import { c } from "vite/dist/node/types.d-aGj9QkWt";
 
 const Container = styled.div`
   width: 100%;
@@ -55,6 +54,8 @@ const SignIn = ({ setOpenAuth }) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  
 
   const validateInputs = () => {
     if (!username || !password) {
@@ -75,14 +76,14 @@ const SignIn = ({ setOpenAuth }) => {
           const decodedToken = jwtDecode(token);
           console.log(decodedToken);
           const userRole = decodedToken[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ];
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"   ];
+          console.log(userRole);
 
           if (userRole === "Admin") {
             navigate("/admin/dashboard"); 
-            // console.log("Admin");
+             console.log("Admin");
           } else {
-            // console.log("Regular User");
+            console.log("Regular User");
             navigate("/"); // Navigate to homepage for regular users
           }
 
