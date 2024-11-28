@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import PizzaIcon from "../utils/Images/food-delivery.png"; // Replace with your pizza icon
-import Button from "../components/Button"; // Adjust the import path as necessary
+import PizzaIcon from "../utils/Images/food-delivery.png"; 
+import Button from "../components/Button"; 
 import PropTypes from "prop-types";
-import "./MyOrders.css"; // Import the CSS file for additional styles
+import "./MyOrders.css"; 
+import FeedBackModal from "./FeedbackSection/FeedBackModal";
+import FeedbackForm from "./FeedbackSection/FeedbackForm";
+import FeedbackList from "./FeedbackSection/FeedbackList";
 
 const MyOrders = ({ userId }) => {
   const [orders, setOrders] = useState([]);
@@ -17,7 +20,7 @@ const MyOrders = ({ userId }) => {
     const fetchOrders = async () => {
       Swal.fire({
         title: "Loading...",
-        text: "Please wait while we fetch your orders.",
+        text: "Please wait while we load your orders.",
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
@@ -103,6 +106,7 @@ const MyOrders = ({ userId }) => {
     sessionStorage.setItem("OrderId", JSON.stringify(order.orderId));
     sessionStorage.setItem("UserId", JSON.stringify(userId));
     setShowFeedbackForm(true);
+    console.log("Order selected:", order);
   };
 
   const handleCloseModal = () => {
@@ -132,7 +136,7 @@ const MyOrders = ({ userId }) => {
                 className="VehicleIcon align-items-center justify-content-center m-auto"
                 style={{ width: "50px", height: "50px" }} // Adjust the size as needed
               />
-              {/* <div className="fw-semibold pt-2">{order.date}</div> */}
+          
             </div>
             <div className="col-lg-3 col-md-3 col-sm-4 align-items-center justify-content-center m-auto d-grid">
               <h6 className="align-items-center justify-content-center m-auto">
@@ -184,7 +188,7 @@ const MyOrders = ({ userId }) => {
         </div>
       )}
 
-      {/* {showFeedbackForm && selectedOrder && (
+      {showFeedbackForm && selectedOrder && (
         <FeedBackModal onClose={handleCloseModal}>
           <FeedbackForm
             userId={userId}
@@ -197,7 +201,7 @@ const MyOrders = ({ userId }) => {
             orderId={selectedOrder.orderId}
           />
         </FeedBackModal>
-      )} */}
+      )}
     </>
   );
 };
