@@ -32,6 +32,7 @@ function AdminSidebar() {
       <List>
         {[
           { text: 'Dashboard', icon: <DashboardIcon />, path: '/Admindashboard' },
+          { text: 'Products', icon: <DashboardIcon />, path: '/admin/products' },
           { text: 'Orders', icon: <ShoppingCartIcon />, path: '/Orders' },
           { text: 'Customers', icon: <PeopleIcon />, path: '/AdminCustomers' },
           { text: 'Reports', icon: <BarChartIcon />, path: '/Reports' },
