@@ -145,6 +145,8 @@ const TextButton = styled.span`
 `;
 
 const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
+  console.log(currentUser);
+  
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   return (
@@ -167,9 +169,9 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
           <Navlink to="/cart">
             <ShoppingCartOutlined sx={{ color: "inherit", fontSize: "28px" }} />
           </Navlink>
-          {currentUser && (
-            <Avatar src={currentUser?.img}>{currentUser?.name[0]}</Avatar>
-          )}
+          {/* {currentUser && (
+            <Avatar src={currentUser?.img}>{currentUser?.name}</Avatar>
+          )} */}
         </MobileIcons>
 
         <NavItems>
@@ -236,7 +238,9 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
                   sx={{ color: "inherit", fontSize: "28px" }}
                 />
               </Navlink>
-              <Avatar src={currentUser?.img}>{currentUser?.name[0]}</Avatar>
+              {/* <Avatar src={currentUser?.img}>
+                             {currentUser?.name ? currentUser.name[0] : ''}
+              </Avatar> */}
               <TextButton onClick={() => dispatch(logout())}>Logout</TextButton>
             </>
           ) : (

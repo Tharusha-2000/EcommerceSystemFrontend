@@ -29,12 +29,13 @@ const SignUp = ({ setOpenAuth }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const validateInputs = () => {
-    if (!name || !email || !password) {
+    if (!firstName ||!lastName || !username || !password) {
       alert("Please fill in all fields");
       return false;
     }
@@ -46,7 +47,7 @@ const SignUp = ({ setOpenAuth }) => {
     setButtonDisabled(true);
 
     if (validateInputs()) {
-      await UserSignUp({ name, email, password })
+      await UserSignUp({ firstName,lastName, username, password })
         .then((res) => {
           dispatch(loginSuccess(res.data));
           dispatch(
@@ -92,16 +93,22 @@ const SignUp = ({ setOpenAuth }) => {
       </div>
       <div style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
         <TextInput
-          label="Full Name"
-          placeholder="Enter your full name"
-          value={name}
-          handelChange={(e) => setName(e.target.value)}
+          label="First Name"
+          placeholder="Enter your first name"
+          value={firstName}
+          handelChange={(e) => setFirstName(e.target.value)}
+        />
+         <TextInput
+          label="Last Name"
+          placeholder="Enter your last name"
+          value={lastName}
+          handelChange={(e) => setLastName(e.target.value)}
         />
         <TextInput
           label="Email Address"
           placeholder="Enter your email address"
-          value={email}
-          handelChange={(e) => setEmail(e.target.value)}
+          value={username}
+          handelChange={(e) => setUsername(e.target.value)}
         />
         <TextInput
           label="Password"
