@@ -44,14 +44,14 @@ function App() {
             <Route path="/dishes" exact element={<FoodListing />} />
 
             <Route path="/orders" exact element={<Order />} />
-            
+
             <Route
               path="/admin/dashboard"
               exact
               element={
-               
-                  <AdminDashboard />
-              
+                 <PrivateRoute>
+                    <AdminDashboard />
+                 </PrivateRoute>
               }
             />
             <Route
