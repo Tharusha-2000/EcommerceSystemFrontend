@@ -13,15 +13,11 @@ const FeedbackList = ({ userId, orderId }) => {
         console.log("Fetching feedback with params:", { userId, orderId });
 
         const response = await axios.get(
-          `https://localhost:7048/api/GetOrderFeedback`,
-          {
-            params: { userId, orderId },
-          }
+          `https://localhost:7046/api/GetFeedbackByOrderId?orderId=${orderId}`
         );
 
         console.log("API response:", response.data);
-
-        const feedbackArray = response.data.$values || [];
+        const feedbackArray = response.data.$values || [response.data];
         setFeedback(feedbackArray);
         console.log("Fetched feedback:", feedbackArray);
       } catch (error) {
@@ -41,8 +37,8 @@ const FeedbackList = ({ userId, orderId }) => {
       {feedback.length === 0 ? (
         <p className="text-center pt-2">No Feedback Yet from you.</p>
       ) : (
-        feedback.map((item) => (
-          <FeedbackItem key={item.feedBackId} item={item} />
+        feedback.map((item, index) => (
+          <FeedbackItem key={index} item={item} />
         ))
       )}
     </div>

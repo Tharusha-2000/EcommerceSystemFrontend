@@ -4,7 +4,6 @@ import RatingSelect from "./RatingSelect";
 import Card from "./Card";
 import "./Style.css";
 import { toast } from "react-toastify";
-import SendButton from "./SendButton";
 import PropTypes from "prop-types";
 
 const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
@@ -12,6 +11,23 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
   const [rating, setRating] = useState(10);
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [message, setMessage] = useState("");
+  const [hasFeedback, setHasFeedback] = useState(false);
+
+  useEffect(() => {
+    const checkFeedback = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:7046/api/GetFeedbackByOrderId?orderId=${orderId}`
+        );
+        const feedbackArray = response.data.$values || [response.data];
+        setHasFeedback(feedbackArray.length > 0);
+      } catch (error) {
+        console.error("Error checking feedback:", error);
+      }
+    };
+
+    checkFeedback();
+  }, [orderId]);
 
   useEffect(() => {
     if (text.length === 0) {
@@ -79,12 +95,20 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
             placeholder="Write a review"
             value={text}
             onChange={handleTextChange}
+            disabled={hasFeedback} // Disable input if feedback already given
           />
-          <SendButton type="submit" isDisabled={btnDisabled}>
+          <button
+            type="submit"
+            disabled={btnDisabled || hasFeedback}
+            className=" dbtn sendbtn white-text"
+          >
             Send
-          </SendButton>
+          </button>
         </div>
         {message && <div className="message">{message}</div>}
+        {hasFeedback && (
+          <div className="message">Your feedback already given for this order.</div>
+        )}
       </form>
     </Card>
   );
