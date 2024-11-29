@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 const PrivateRoute = ({ children }) => {
   const { currentUser } = useSelector((state) => state.user);
-
+  console.log(currentUser);
   if (!currentUser) {
     return <Navigate to="/" />;
   }

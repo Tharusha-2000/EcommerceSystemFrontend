@@ -75,26 +75,20 @@ const SignIn = ({ setOpenAuth }) => {
           const token = res.data.jwtToken;
           const decodedToken = jwtDecode(token);
           console.log(decodedToken);
-          const userRole = decodedToken[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"   ];
+          const userRole = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
           console.log(userRole);
-
+           dispatch(loginSuccess(res.data));
           if (userRole === "Admin") {
             navigate("/admin/dashboard"); 
+            setOpenAuth(false);
              console.log("Admin");
+
           } else {
             console.log("Regular User");
             navigate("/"); // Navigate to homepage for regular users
+            setOpenAuth(false);
           }
-
-          // dispatch(loginSuccess(res.data));
-
-          console.log(res.data);
-
-       
-
-           console.log(currentUser);
-
+          
           dispatch(
             openSnackbar({
               message: "Login Successful",

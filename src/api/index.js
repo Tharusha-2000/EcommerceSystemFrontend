@@ -6,7 +6,21 @@ const API = axios.create({
 
 //auth
 export const UserSignUp = async (data) => await API.post("/user/signup", data);
-export const UserSignIn = async (data) => await axios.post(`http://localhost:5288/api/Auth/login`, data);
+export const UserSignIn = async (data) => await axios.post(`https://localhost:7087/api/Auth/login`, data);
+
+
+export const getUserById = async (id) => {
+  try {
+    console.log("hi",id);
+    const response = await axios.get(`https://localhost:7087/api/User/${id}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+};
+
 
 //products
 export const getAllProducts = async (filter) =>

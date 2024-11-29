@@ -163,12 +163,17 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
           <Navlink to="/search">
             <SearchRounded sx={{ color: "inherit", fontSize: "30px" }} />
           </Navlink>
+          {currentUser && (
           <Navlink to="/favorite">
             <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
           </Navlink>
+          )}
+           {currentUser && (
           <Navlink to="/cart">
             <ShoppingCartOutlined sx={{ color: "inherit", fontSize: "28px" }} />
           </Navlink>
+          )}
+
           {/* {currentUser && (
             <Avatar src={currentUser?.img}>{currentUser?.name}</Avatar>
           )} */}
@@ -177,7 +182,9 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
         <NavItems>
           <Navlink to="/">Home</Navlink>
           <Navlink to="/dishes">Dishes</Navlink>
+          {currentUser && (
           <Navlink to="/orders">Orders</Navlink>
+          )}
           <Navlink to="/contact">Contact</Navlink>
         </NavItems>
 
@@ -189,9 +196,12 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
             <Navlink to="/dishes" onClick={() => setIsOpen(false)}>
               Dishes
             </Navlink>
-            <Navlink to="/orders" onClick={() => setIsOpen(false)}>
-              Orders
-            </Navlink>
+            
+            {currentUser && (
+             <Navlink to="/orders" onClick={() => setIsOpen(false)}>
+               Orders
+              </Navlink>
+              )}
             <Navlink to="/contact" onClick={() => setIsOpen(false)}>
               Contact
             </Navlink>
