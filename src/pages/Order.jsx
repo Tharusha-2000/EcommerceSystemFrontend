@@ -1,33 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Make sure axios is imported
+import axios from 'axios'; 
 import './Order.css';
 import profileIcon from "../utils/Images/iconamoon_profile-circle-fill.png";
-import Button from '../components/Button'; // Adjust the import path as necessary
-import MyOrders from '../components/MyOrders'; // Adjust the import path as necessary
+import Button from '../components/Button';
+import MyOrders from '../components/MyOrders'; 
 import UpdateProfile from '../components/UpdateProfile';
+import { useSelector } from "react-redux";
+import { getUserById } from "../api";
 
 const Order = () => {
     const [divWidth, setDivWidth] = useState(0);
     const [openDialog, setOpenDialog] = useState(false);
-
-    const userId = 3;
-    const [userdata, setUserdata] = useState([
-      {
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@example.com",
-        contactNo: "1234567890",
-        userName: "johndoe",
-        address: "123 Main St, City, Country"
-      }
-    ]);
-    console.log(userdata);
-    console.log(userdata[0].address);
+    const { currentUser } = useSelector((state) => state.user);
+    const userId = currentUser.id;
+    const [userdata, setUserData] = useState([]);
+    const [loading, setLoading] = useState(true);
     
     const buttonStyle = {
       backgroundColor: "rgba(217, 217, 217, 1)",
       color: "black", 
+    };
+
+
+    useEffect(() => {
+        fetchUserData(); 
+    }, [userdata]);
+
+
+    const fetchUserData = async () => {
+      try {
+        const data = await getUserById(userId);
+        setUserData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setLoading(false);
+      }
     };
 
     useEffect(() => {
@@ -47,8 +56,8 @@ const Order = () => {
 
 
   const handleUpdate = (updatedData) => {
-    setUserdata(updatedData); // Update state with new data
-    console.log("Updated User Data:", updatedData); // Debugging
+    // setUserdata(updatedData); // Update state with new data
+    // console.log("Updated User Data:", updatedData); // Debugging
   };
 
    
@@ -67,7 +76,7 @@ const Order = () => {
               <div className="col-lg-4 col-sm-6 p-4">
                 <div className="">
                   <p className="text-dark">
-                     {userdata ? (
+                     {userdata[0] ? (
                             <>
                               {userdata[0].firstName} &nbsp; {userdata[0].lastName}
                               <br />
@@ -78,6 +87,7 @@ const Order = () => {
                           ) : (
                             "Loading..."
                           )}
+
                    </p>
                 </div>
                 <UpdateProfile

@@ -7,8 +7,10 @@ import Button from '../components/Button';
 import TextField from '@mui/material/TextField';
 
 const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
-  const [formData, setFormData] = useState(userdata);
-  console.log(formData);
+  const [data, setData] = useState(userdata);
+ 
+  console.log("hi");
+  console.log(data);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +31,7 @@ const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
           margin="normal"
           label="First Name"
           name="firstName"
-        //   value={formData.firstName}
+          value= {userdata[0].firstName}
         //   onChange={handleChange}
           fullWidth
         />
