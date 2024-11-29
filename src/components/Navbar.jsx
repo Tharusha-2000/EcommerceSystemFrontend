@@ -12,6 +12,7 @@ import Button from "./Button";
 import { Avatar } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/reducers/UserSlice";
+import { useNavigate } from 'react-router-dom';
 
 const Nav = styled.div`
   background-color: ${({ theme }) => theme.bg};
@@ -149,6 +150,12 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
   
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+     navigate('/'); 
+  };
+
   return (
     <Nav>
       <NavContainer>
@@ -251,7 +258,7 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
               {/* <Avatar src={currentUser?.img}>
                              {currentUser?.name ? currentUser.name[0] : ''}
               </Avatar> */}
-              <TextButton onClick={() => dispatch(logout())}>Logout</TextButton>
+              <TextButton onClick={handleLogout}>Logout</TextButton>
             </>
           ) : (
             <>
