@@ -6,7 +6,7 @@ const FeedbackItem = ({ item }) => {
   return (
     <Card>
       <div className="num-display">{item.rate}</div>
-      <div className="text-display">{item.feedBack}</div>
+      <div className="text-display">{item.feedbackMessage}</div>
     </Card>
   );
 };
@@ -15,7 +15,7 @@ FeedbackItem.propTypes = {
   item: PropTypes.shape({
     feedBackId: PropTypes.number.isRequired,
     rate: PropTypes.number.isRequired,
-    feedBack: PropTypes.string.isRequired,
+    feedbackMessage: PropTypes.string.isRequired,
   }).isRequired,
 };
 
