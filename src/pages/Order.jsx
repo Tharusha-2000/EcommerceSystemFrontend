@@ -56,7 +56,7 @@ const Order = () => {
 
 
   const handleUpdate = (updatedData) => {
-    // setUserdata(updatedData); // Update state with new data
+    setUserdata(updatedData); // Update state with new data
     // console.log("Updated User Data:", updatedData); // Debugging
   };
 

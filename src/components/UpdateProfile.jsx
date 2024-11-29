@@ -1,29 +1,57 @@
-import React, { useState } from 'react';
-import Dialog from '@mui/material/Dialog'; // Ensure @mui/material is installed
+import React, { useState, useEffect } from 'react';
+import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '../components/Button';
 import TextField from '@mui/material/TextField';
+import axios from 'axios'; // Ensure axios is installed
 
 const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
-  const [data, setData] = useState(userdata);
- 
-  console.log("hi");
-  console.log(data);
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNo: '',
+    address: '',
+  });
 
-  const handleSave = () => {
-    onUpdate(formData); // Callback to save updated data
-    onClose(); // Close dialog
+  // Populate formData with userdata only when the dialog opens for the first time
+  useEffect(() => {
+    if (open && userdata && !formData.firstName) {
+      setFormData({
+        id: userdata[0]?.id || '',
+        firstName: userdata[0]?.firstName || '',
+        lastName: userdata[0]?.lastName || '',
+        email: userdata[0]?.email || '',
+        userType: userdata[0]?.userType || '',
+        phoneNo: userdata[0]?.phoneNo || '',
+        address: userdata[0]?.address || '',
+      });
+    }
+  }, [open, userdata]);
+
+  // Save updated data and send it to the backend
+  const handleSave = async () => {
+
+    try {
+      console.log('Updating profile:', formData);
+      const response = await axios.put('https://localhost:7087/api/User', formData);
+       console.log(response);
+      if (response.status === 200) {
+        console.log('Profile updated successfully:', response.data);
+        onClose();
+        onUpdate(formData); // Callback to update parent state or UI
+         // Close dialog
+      } else {
+        console.error('Failed to update profile:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error.message);
+    }
   };
 
   return (
-  
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Update Profile</DialogTitle>
       <DialogContent>
@@ -31,50 +59,45 @@ const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
           margin="normal"
           label="First Name"
           name="firstName"
-          value= {userdata[0].firstName}
-        //   onChange={handleChange}
+          value={formData.firstName}
+          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
           fullWidth
         />
         <TextField
           margin="normal"
           label="Last Name"
           name="lastName"
-        //   value={formData.lastName}
-        //   onChange={handleChange}
+          value={formData.lastName}
+          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
           fullWidth
         />
-        <TextField
-          margin="normal"
-          label="Email"
-          name="email"
-        //   value={formData.email}
-        //   onChange={handleChange}
-          fullWidth
-        />
+     
         <TextField
           margin="normal"
           label="Phone Number"
           name="phoneNumber"
-        //   value={formData.address}
-        //   onChange={handleChange}
+          value={formData.phoneNo}
+          onChange={(e) => setFormData({ ...formData, phoneNo: e.target.value })}
           fullWidth
         />
-          <TextField
+        <TextField
           margin="normal"
           label="Address"
           name="address"
-        //   value={formData.address}
-        //   onChange={handleChange}
+          value={formData.address}
+          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
           fullWidth
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} text="Cancel" />
-        <Button onClick={handleSave} text="Save"/>
-
+        <Button onClick={handleSave} text="Save" />
       </DialogActions>
     </Dialog>
   );
 };
 
 export default UpdateProfile;
+
+
+
