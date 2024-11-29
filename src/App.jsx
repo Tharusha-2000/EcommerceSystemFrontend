@@ -10,7 +10,7 @@ import Favourites from "./pages/Favourites";
 import Cart from "./pages/Cart";
 import FoodDetails from "./pages/FoodDetails";
 import FoodListing from "./pages/FoodListing";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Customers from "./pages/Admin/Customers";
 import Orders from "./pages/Admin/Orders";
@@ -19,6 +19,8 @@ import AddProduct from "./pages/Admin/AddProduct";
 import Reports from "./pages/Admin/Reports";
 import Settings from "./pages/Admin/Settings";
 import PrivateRoute from "./components/PrivateRoute";
+import { Snackbar } from "@mui/material";
+import { closeSnackbar } from "./redux/reducers/SnackbarSlice";
 
 const Container = styled.div``;
 
@@ -26,7 +28,11 @@ function App() {
   const { currentUser } = useSelector((state) => state.user);
   const { open, message, severity } = useSelector((state) => state.snackbar);
   const [openAuth, setOpenAuth] = useState(false);
-  
+  const dispatch = useDispatch();
+
+  const handleClose = () => {
+    dispatch(closeSnackbar());
+  };
   return (
     <ThemeProvider theme={lightTheme}>
       <BrowserRouter>
@@ -108,17 +114,23 @@ function App() {
                 </PrivateRoute>
               }
             />
-            
           </Routes>
           {openAuth && (
             <Authentication setOpenAuth={setOpenAuth} openAuth={openAuth} />
           )}
-        </Container>
 
+          <Snackbar
+            open={open}
+            message={message}
+            severity={severity}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          />
+        </Container>
       </BrowserRouter>
     </ThemeProvider>
- 
- );
+  );
 }
 
 export default App;
