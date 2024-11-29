@@ -1,11 +1,13 @@
-import { CircularProgress, Rating } from "@mui/material";
+import { CircularProgress, IconButton, Rating } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../components/Button";
 import {
+  Add,
   FavoriteBorder,
   FavoriteBorderOutlined,
   FavoriteRounded,
+  Remove,
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -15,9 +17,11 @@ import {
   deleteFromFavourite,
   getFavourite,
   getProductDetails,
+  updateItemOnCart,
 } from "../api";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCartRed, updateCartRed } from "../redux/reducers/cartSlice";
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -103,7 +107,7 @@ const Percent = styled.div`
   color: green;
 `;
 
-const Ingridents = styled.div`
+const Categories = styled.div`
   font-size: 16px;
   font-weight: 500;
   diaplay: flex;
@@ -114,6 +118,8 @@ const Items = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  margin-top: 4px;
+  align-items: center;
 `;
 const Item = styled.div`
   background: ${({ theme }) => theme.primary + 20};
@@ -136,6 +142,15 @@ const ButtonWrapper = styled.div`
   }
 `;
 
+const Div = styled.div`
+  font-size: 16px;
+  font-weight: 500;
+  diaplay: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+`;
+
 const FoodDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -145,6 +160,9 @@ const FoodDetails = () => {
   const [cartLoading, setCartLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState();
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedQty, setSelectedQty] = useState(1);
+  const { cart } = useSelector((state) => state.cart);
 
   const getProduct = async () => {
     setLoading(true);
@@ -221,21 +239,91 @@ const FoodDetails = () => {
 
   const addCart = async () => {
     setCartLoading(true);
+
+    if (selectedSize === "") {
+      setCartLoading(false);
+      dispatch(
+        openSnackbar({
+          message: "Please select a size",
+          severity: "error",
+        })
+      );
+      return;
+    }
+
+    var cartItem = {
+      userId: "2",
+      productId: id,
+      productImg: product?.imageUrl,
+      productName: product?.name,
+      unitPrice: product?.sizes.find(
+        (sizeItem) => sizeItem.size === selectedSize
+      ).price,
+      pizzaSize: selectedSize,
+      count: selectedQty,
+    };
+
+    const existingItem = cart.find((item) => {
+      return (
+        item.productId == cartItem.productId &&
+        item.userId == cartItem.userId &&
+        item.pizzaSize == cartItem.pizzaSize
+      );
+    });
+
     const token = localStorage.getItem("krist-app-token");
-    await addToCart(token, { productId: id, quantity: 1 })
-      .then((res) => {
-        setCartLoading(false);
-        navigate("/cart");
-      })
-      .catch((err) => {
-        setCartLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
+
+    if (existingItem) {
+      cartItem.count += existingItem.count;
+      console.log(existingItem);
+      if (cartItem.count > 10) {
+        cartItem.count = 10;
+      }
+      cartItem = { ...cartItem, cartId: existingItem.cartId };
+      await updateItemOnCart(token, cartItem)
+        .then((res) => {
+          dispatch(updateCartRed(cartItem));
+            setCartLoading(false);
+            navigate("/cart");
+        })
+        .catch((err) => {
+          setCartLoading(false);
+          dispatch(
+            openSnackbar({
+              message: err.message,
+              severity: "error",
+            })
+          );
+        });
+    } else {
+      await addToCart(token, cartItem)
+        .then((res) => {
+          dispatch(addToCartRed(res.data));
+          setCartLoading(false);
+          navigate("/cart");
+        })
+        .catch((err) => {
+          setCartLoading(false);
+          dispatch(
+            openSnackbar({
+              message: err.message,
+              severity: "error",
+            })
+          );
+        });
+    }
+  };
+
+  const handleIncreaseQty = () => {
+    if (selectedQty < 10) {
+      setSelectedQty(selectedQty + 1);
+    }
+  };
+
+  const handleDecreaseQty = () => {
+    if (selectedQty > 1) {
+      setSelectedQty(selectedQty - 1);
+    }
   };
 
   return (
@@ -245,7 +333,7 @@ const FoodDetails = () => {
       ) : (
         <Wrapper>
           <ImagesWrapper>
-            <Image src={product?.img} />
+            <Image src={product?.imageUrl} />
           </ImagesWrapper>
           <Details>
             <div>
@@ -253,20 +341,53 @@ const FoodDetails = () => {
             </div>
             <Rating value={3.5} />
             <Price>
-              ₹{product?.price?.org} <Span>₹{product?.price?.mrp}</Span>{" "}
-              <Percent> (₹{product?.price?.off}% Off) </Percent>
+              ₹
+              {selectedSize
+                ? product?.sizes.find((size) => size.size === selectedSize)
+                    .price
+                : product?.sizes[0].price}
             </Price>
 
-            <Desc>{product?.desc}</Desc>
+            <Desc>{product?.description}</Desc>
 
-            <Ingridents>
-              Ingridents
+            <Categories>
+              Categories
               <Items>
-                {product?.ingredients.map((ingredient) => (
-                  <Item>{ingredient}</Item>
+                {product?.categories.map((category, index) => (
+                  <Item key={index}>{category}</Item>
                 ))}
               </Items>
-            </Ingridents>
+            </Categories>
+
+            <Div>
+              Select Size
+              <Items>
+                {product?.sizes.map((size, index) => (
+                  <Button
+                    key={index}
+                    outlined={selectedSize !== size.size}
+                    small
+                    text={size.size.toUpperCase()}
+                    onClick={() => {
+                      setSelectedSize(size.size);
+                    }}
+                  />
+                ))}
+              </Items>
+            </Div>
+
+            <Div>
+              Select Quntity
+              <Items>
+                <IconButton color="error" onClick={handleDecreaseQty}>
+                  <Remove />
+                </IconButton>
+                <Div style={{ minWidth: "10px" }}>{selectedQty}</Div>
+                <IconButton color="error" onClick={handleIncreaseQty}>
+                  <Add />
+                </IconButton>
+              </Items>
+            </Div>
 
             <ButtonWrapper>
               <Button

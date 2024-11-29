@@ -7,6 +7,7 @@ import {
   FavoriteRounded,
   ShoppingBagOutlined,
   ShoppingCart,
+  Spa,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -131,8 +132,13 @@ const Span = styled.div`
   font-size: 14px;
   font-weight: 500;
   color: ${({ theme }) => theme.text_secondary + 60};
-  text-decoration: line-through;
   text-decoration-color: ${({ theme }) => theme.text_secondary + 50};
+`;
+
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const ProductsCard = ({ product }) => {
@@ -144,7 +150,7 @@ const ProductsCard = ({ product }) => {
   const addFavourite = async () => {
     setFavoriteLoading(true);
     const token = localStorage.getItem("krist-app-token");
-    await addToFavourite(token, { productId: product?._id })
+    await addToFavourite(token, { productId: product?.productId })
       .then((res) => {
         setFavorite(true);
         setFavoriteLoading(false);
@@ -164,7 +170,7 @@ const ProductsCard = ({ product }) => {
   const removeFavourite = async () => {
     setFavoriteLoading(true);
     const token = localStorage.getItem("krist-app-token");
-    await deleteFromFavourite(token, { productId: product?._id })
+    await deleteFromFavourite(token, { productId: product?.productId })
       .then((res) => {
         setFavorite(false);
         setFavoriteLoading(false);
@@ -183,10 +189,10 @@ const ProductsCard = ({ product }) => {
   const checkFavorite = async () => {
     setFavoriteLoading(true);
     const token = localStorage.getItem("krist-app-token");
-    await getFavourite(token, { productId: product?._id })
+    await getFavourite(token, { productId: product?.productId })
       .then((res) => {
         const isFavorite = res.data?.some(
-          (favorite) => favorite._id === product?._id
+          (favorite) => favorite._id === product?.productId
         );
 
         setFavorite(isFavorite);
@@ -226,7 +232,7 @@ const ProductsCard = ({ product }) => {
   return (
     <Card>
       <Top>
-        <Image src={product?.img} />
+        <Image src={product?.imageUrl} />
         <Menu>
           <MenuItem
             onClick={() => (favorite ? removeFavourite() : addFavourite())}
@@ -245,21 +251,24 @@ const ProductsCard = ({ product }) => {
               </>
             )}
           </MenuItem>
-          <MenuItem onClick={() => addCart(product?._id)}>
+          <MenuItem onClick={() => addCart(product?.productId)}>
             <ShoppingBagOutlined sx={{ fontSize: "20px" }} />
           </MenuItem>
         </Menu>
         <Rate>
-          <Rating value={3.5} sx={{ fontSize: "14px" }} />
+          <Rating readOnly value={3.5} sx={{ fontSize: "14px" }} />
         </Rate>
       </Top>
-      <Details onClick={() => navigate(`/dishes/${product._id}`)}>
+      <Details onClick={() => navigate(`/dishes/${product.productId}`)}>
         <Title>{product?.name}</Title>
-        <Desc>{product?.desc}</Desc>
-        <Price>
-          ${product?.price?.org} <Span>${product?.price?.mrp}</Span>
-          <Percent> (${product?.price?.off}% Off) </Percent>
-        </Price>
+        <Flex>
+          {product?.categories &&
+            product?.categories.map((category) => (
+              <Span key={category}>{category}</Span>
+            ))}
+        </Flex>
+        <Desc>{product?.description}</Desc>
+        <Price>${product?.sizes[0]?.price}</Price>
       </Details>
     </Card>
   );

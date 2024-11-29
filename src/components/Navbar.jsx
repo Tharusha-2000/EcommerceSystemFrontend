@@ -168,7 +168,7 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
             <ShoppingCartOutlined sx={{ color: "inherit", fontSize: "28px" }} />
           </Navlink>
           {currentUser && (
-            <Avatar src={currentUser?.img}>{currentUser?.name[0]}</Avatar>
+            <Avatar src={currentUser?.img}>{currentUser?.firstName}</Avatar>
           )}
         </MobileIcons>
 
@@ -236,7 +236,7 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
                   sx={{ color: "inherit", fontSize: "28px" }}
                 />
               </Navlink>
-              <Avatar src={currentUser?.img}>{currentUser?.name[0]}</Avatar>
+              <Avatar src={currentUser?.img}>{currentUser?.firstName}</Avatar>
               <TextButton onClick={() => dispatch(logout())}>Logout</TextButton>
             </>
           ) : (
