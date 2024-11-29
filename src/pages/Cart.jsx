@@ -2,17 +2,28 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
-import { addToCart, deleteFromCart, getCart, getCart2, placeOrder,updateFromCart } from "../api";
+import {
+  addToCart,
+  deleteFromCart,
+  getCart,
+  getCart2,
+  placeOrder,
+  updateFromCart,
+} from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { DeleteOutline } from "@mui/icons-material";
 import PaymentDialog from "./Checkout";
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 
-import { fetchCartRed } from "../redux/reducers/cartSlice";
+import {
+  fetchCartRed,
+  removeFromCartRed,
+  updateCartRed,
+} from "../redux/reducers/cartSlice";
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -151,7 +162,6 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
-  const [products, setProducts] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [deliveryDetails, setDeliveryDetails] = useState({
     firstName: "",
@@ -189,8 +199,8 @@ const Cart = () => {
   };
 
   const calculateSubtotal = () => {
-    return products.reduce(
-      (total, item) => total + item.count* item?.unitPrice,
+    return cart.reduce(
+      (total, item) => total + item.count * item?.unitPrice,
       0
     );
   };
@@ -221,7 +231,7 @@ const Cart = () => {
   //     }
 
   //     // const token = localStorage.getItem("krist-app-token");
-      const totalAmount = calculateSubtotal().toFixed(2);
+  const totalAmount = calculateSubtotal().toFixed(2);
   //     const orderDetails = {
   //       products,
   //       address: convertAddressToString(deliveryDetails),
@@ -253,21 +263,14 @@ const Cart = () => {
     getProducts();
   }, []);
 
- 
-  const updateQuntity = async (id,count) => {
-    let updatedCount = count > 0 ? count : 0;  
+  const updateQuntity = async (id, count) => {
+    let updatedCount = count > 0 ? count : 0;
     try {
-      await updateFromCart({
+      const res = await updateFromCart({
         cartId: id,
         count: updatedCount,
-
       });
-      setProducts(prevItems => 
-        prevItems.map(item => 
-          item.cartId === id ? { ...item, count: updatedCount } : item
-        )
-      );
-
+      dispatch(updateCartRed(res));
       setReload(!reload);
     } catch (err) {
       setReload(!reload);
@@ -279,16 +282,14 @@ const Cart = () => {
       );
     }
   };
-
 
   const removeCart = async (cartId) => {
     try {
-
-      console.log(cartId);
-
       await deleteFromCart(cartId);
-  
-      setProducts(prevItems => prevItems.filter(item => item.cartId !== cartId));
+      dispatch(removeFromCartRed(cartId));
+      // setProducts((prevItems) =>
+      //   prevItems.filter((item) => item.cartId !== cartId)
+      // );
     } catch (err) {
       dispatch(
         openSnackbar({
@@ -298,29 +299,26 @@ const Cart = () => {
       );
     }
   };
-  
 
-      // Fetch user profile data from localStorage or API (simulate fetching)
-      const getUserProfile = () => {
-        // Replace this with an actual API call or retrieve from localStorage
-        return {
-          firstName: "John",
-          lastName: "Doe",
-          email: "john.doe@example.com",
-          phoneNo: "+1234567890",
-          address: "123 Main St, City, Country, 12345",
-        };
-      };
-    
-
-    // Autofill the address fields from the user's profile data
-    const autofillAddress = () => {
-      const userProfile = getUserProfile();
-      setDeliveryDetails({
-        ...userProfile,  // This will set all address details from profile to the form
-      });
+  // Fetch user profile data from localStorage or API (simulate fetching)
+  const getUserProfile = () => {
+    // Replace this with an actual API call or retrieve from localStorage
+    return {
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      phoneNo: "+1234567890",
+      address: "123 Main St, City, Country, 12345",
     };
+  };
 
+  // Autofill the address fields from the user's profile data
+  const autofillAddress = () => {
+    const userProfile = getUserProfile();
+    setDeliveryDetails({
+      ...userProfile, // This will set all address details from profile to the form
+    });
+  };
 
   return (
     <Container>
@@ -362,14 +360,15 @@ const Cart = () => {
                       <TableItem>
                         <Counter>
                           <div
-
                             style={{
                               cursor: "pointer",
                               flex: 1,
                             }}
-                            onClick={() =>  
-                              updateQuntity(item?.cartId, item?.count - 1)
-                            }
+                            onClick={() => {
+                              if (item?.count > 1) {
+                                updateQuntity(item?.cartId, item?.count - 1);
+                              }
+                            }}
                           >
                             -
                           </div>
@@ -379,7 +378,11 @@ const Cart = () => {
                               cursor: "pointer",
                               flex: 1,
                             }}
-                            onClick={() => updateQuntity(item?.cartId, item?.count + 1)}
+                            onClick={() => {
+                              if (item?.count < 10) {
+                                updateQuntity(item?.cartId, item?.count + 1);
+                              }
+                            }}
                           >
                             +
                           </div>
@@ -393,12 +396,11 @@ const Cart = () => {
                       <TableItem>
                         <DeleteOutline
                           sx={{ color: "red" }}
-                          onClick={() => removeCart( item?.cartId ) }
+                          onClick={() => removeCart(item?.cartId)}
                         />
                       </TableItem>
                     </Table>
                   ))}
-
                 </Left>
                 <Right>
                   <Subtotal>
@@ -447,27 +449,26 @@ const Cart = () => {
                           })
                         }
                       />
-                   
 
-                        <div
+                      <div
                         style={{
                           display: "flex",
                           gap: "6px",
                         }}
                       >
                         <TextInput
-                        small
-                        placeholder="Phone no. +91 XXXXX XXXXX"
-                        value={deliveryDetails.phoneNo}
-                        handelChange={(e) =>
-                          setDeliveryDetails({
-                            ...deliveryDetails,
-                            phoneNo: e.target.value,
-                          })
-                        }
-                      />
-                     
-                           <TextInput
+                          small
+                          placeholder="Phone no. +91 XXXXX XXXXX"
+                          value={deliveryDetails.phoneNo}
+                          handelChange={(e) =>
+                            setDeliveryDetails({
+                              ...deliveryDetails,
+                              phoneNo: e.target.value,
+                            })
+                          }
+                        />
+
+                        <TextInput
                           small
                           placeholder="postalcode"
                           value={deliveryDetails.postalcode}
@@ -478,15 +479,13 @@ const Cart = () => {
                             })
                           }
                         />
-                        
-
                       </div>
 
-                        <FormControlLabel
-                        control={<Switch/>}
-                        label= "Use exitsing address"
-                        onClick={autofillAddress} 
-                        />
+                      <FormControlLabel
+                        control={<Switch />}
+                        label="Use exitsing address"
+                        onClick={autofillAddress}
+                      />
 
                       <TextInput
                         small

@@ -65,7 +65,7 @@ export const updateFromCart = async ({ cartId, count }) => {
   try {
     const data = { count: count > 0 ? count : 0 }; // If count is <= 0, treat as removal (count = 0)
     const response = await axios.put(
-      `http://localhost:5126/api/Cart/${cartId}?count=${count}`
+      `https://localhost:7242/api/Cart/${cartId}?count=${count}`
     );
     return response.data;
   } catch (error) {
@@ -80,7 +80,7 @@ export const deleteFromCart = async (cartId) => {
   try {
     console.log(cartId);
     const response = await axios.delete(
-      `http://localhost:5126/api/Cart/${cartId}`
+      `https://localhost:7242/api/Cart/${cartId}`
     );
     return response.data;
   } catch (error) {
