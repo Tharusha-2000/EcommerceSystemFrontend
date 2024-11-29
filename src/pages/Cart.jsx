@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
-import { addToCart, deleteFromCart, getCart, placeOrder,updateFromCart } from "../api";
+import { addToCart, deleteFromCart, getCart, getCart2, placeOrder,updateFromCart } from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { DeleteOutline } from "@mui/icons-material";
 import PaymentDialog from "./Checkout";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 
+import { fetchCartRed } from "../redux/reducers/cartSlice";
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -76,6 +77,7 @@ const TableItem = styled.div`
     bold &&
     `font-weight: 600; 
   font-size: 18px;`}
+  align-items: center;
 `;
 const Counter = styled.div`
   display: flex;
@@ -89,12 +91,16 @@ const Counter = styled.div`
 const Product = styled.div`
   display: flex;
   gap: 16px;
+  align-items: center;
 `;
 const Img = styled.img`
   height: 80px;
+  width: 80px;
+  object-fit: cover;
+  border-radius: 6px;
 `;
 const Details = styled.div`
-  max-width: 130px;
+  max-width: 160px;
   @media (max-width: 700px) {
     max-width: 60px;
   }
@@ -156,6 +162,7 @@ const Cart = () => {
   });
 
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
+  const { cart } = useSelector((state) => state.cart);
 
   const handleOpenPaymentDialog = () => {
     setOpenPaymentDialog(true);
@@ -165,17 +172,20 @@ const Cart = () => {
     setOpenPaymentDialog(false);
   };
 
-
-
   const getProducts = async () => {
     setLoading(true);
     // const token = localStorage.getItem("krist-app-token");
-    await getCart().then((res) => {
-      setProducts(res.data);
-      console.log(res.data);
+    if (cart.length > 0) {
       setLoading(false);
-    });
-
+      return;
+    } else {
+      await getCart2().then((res) => {
+        // setProducts(res.data);
+        dispatch(fetchCartRed(res.data));
+        console.log();
+        setLoading(false);
+      });
+    }
   };
 
   const calculateSubtotal = () => {
@@ -320,7 +330,7 @@ const Cart = () => {
           <CircularProgress />
         ) : (
           <>
-            {products.length === 0 ? (
+            {cart.length === 0 ? (
               <>Cart is empty</>
             ) : (
               <Wrapper>
@@ -329,19 +339,19 @@ const Cart = () => {
                     <TableItem bold flex>
                       Product
                     </TableItem>
-                   
+
                     <TableItem bold>Price</TableItem>
                     <TableItem bold>Quantity</TableItem>
                     <TableItem bold>Subtotal</TableItem>
                     <TableItem></TableItem>
                   </Table>
-                  {products.map((item) => (
+                  {cart.map((item) => (
                     <Table key={item.cartId}>
                       <TableItem flex>
                         <Product>
-                        <TableItem>{item.cartId}</TableItem>
+                          <TableItem>{item.cartId}</TableItem>
 
-                          <Img src={item.productImg} />
+                          <Img src={item?.productImg} />
                           <Details>
                             <Protitle>{item?.productName}</Protitle>
                             <ProDesc>{item?.pizzaSize}</ProDesc>
@@ -493,7 +503,10 @@ const Cart = () => {
                       />
                     </div>
                   </Delivery>
-                  <PaymentDialog open={openPaymentDialog} onClose={handleClosePaymentDialog} />
+                  <PaymentDialog
+                    open={openPaymentDialog}
+                    onClose={handleClosePaymentDialog}
+                  />
                   <Button
                     text="Checkout"
                     small
