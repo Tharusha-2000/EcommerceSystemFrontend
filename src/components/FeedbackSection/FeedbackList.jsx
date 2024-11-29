@@ -13,7 +13,7 @@ const FeedbackList = ({ userId, orderId }) => {
         console.log("Fetching feedback with params:", { userId, orderId });
 
         const response = await axios.get(
-          `https://localhost:7046/api/GetFeedbackByOrderId?orderId=${orderId}`
+          `https://localhost:7046/api/GetFeedbackByOrderId/${orderId}`
         );
 
         console.log("API response:", response.data);

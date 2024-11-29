@@ -17,7 +17,7 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
     const checkFeedback = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7046/api/GetFeedbackByOrderId?orderId=${orderId}`
+          `https://localhost:7046/api/GetFeedbackByOrderId/${orderId}`
         );
         const feedbackArray = response.data.$values || [response.data];
         setHasFeedback(feedbackArray.length > 0);
