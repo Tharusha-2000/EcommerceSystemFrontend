@@ -11,6 +11,9 @@ import MoreIcon from '@mui/icons-material/MoreVert'
 import MuiAppBar from '@mui/material/AppBar'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import Swal from 'sweetalert2'
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/reducers/UserSlice";
+
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
@@ -28,6 +31,8 @@ export default function Header() {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function userLogout() {
     Swal.fire({
@@ -40,6 +45,8 @@ export default function Header() {
       cancelButtonColor: '#3085d6',
     }).then((result) => {
       if (result.value) {
+        dispatch(logout());
+        navigate('/'); 
         // Add your logout logic here
         console.log('User logged out')
       }
