@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import PizzaIcon from "../utils/Images/food-delivery.png"; 
-import Button from "../components/Button"; 
+import PizzaIcon from "../utils/Images/food-delivery.png";
+import Button from "../components/Button";
 import PropTypes from "prop-types";
-import "./MyOrders.css"; 
+import "./MyOrders.css";
 import FeedBackModal from "./FeedbackSection/FeedBackModal";
 import FeedbackForm from "./FeedbackSection/FeedbackForm";
 import FeedbackList from "./FeedbackSection/FeedbackList";
+import {
+  fetchOrdersByUserId,
+  getOrderProductByOrderId,
+  getProductById,
+} from "../api";
 
 const MyOrders = ({ userId }) => {
   const [orders, setOrders] = useState([]);
@@ -28,15 +33,12 @@ const MyOrders = ({ userId }) => {
       });
 
       try {
-        const response = await axios.get(
-          `https://localhost:7242/api/Order/byUser/${userId}`
-        );
-
+        const response = await fetchOrdersByUserId(userId);
         const userOrders = response.data
-          .filter((order) => order.paymentStatus === true) // Filter orders with paymentStatus true
+          .filter((order) => order.paymentStatus === true)
           .map((order) => ({
             orderId: order.orderId,
-            date: new Date(order.date), // Convert date string to Date object
+            date: new Date(order.date),
             totalPrice: order.totalPrice,
             orderStatus: order.orderStatus,
           }))
@@ -66,9 +68,7 @@ const MyOrders = ({ userId }) => {
         const productsData = {};
 
         for (const order of orders) {
-          const response = await axios.get(
-            `https://localhost:7242/api/OrderProduct/byOrder/${order.orderId}`
-          );
+          const response = await getOrderProductByOrderId(order.orderId);
 
           console.log(
             "Order products for order",
@@ -80,8 +80,8 @@ const MyOrders = ({ userId }) => {
 
           for (const orderProduct of response.data) {
             if (!productsData[orderProduct.productId]) {
-              const productResponse = await axios.get(
-                `https://localhost:7273/api/Product/GetProductById/${orderProduct.productId}`
+              const productResponse = await getProductById(
+                orderProduct.productId
               );
               productsData[orderProduct.productId] = productResponse.data.name;
             }
@@ -136,7 +136,6 @@ const MyOrders = ({ userId }) => {
                 className="VehicleIcon align-items-center justify-content-center m-auto"
                 style={{ width: "50px", height: "50px" }} // Adjust the size as needed
               />
-          
             </div>
             <div className="col-lg-3 col-md-3 col-sm-4 align-items-center justify-content-center m-auto d-grid">
               <h6 className="align-items-center justify-content-center m-auto">
@@ -156,7 +155,8 @@ const MyOrders = ({ userId }) => {
                     key={orderProduct.orderProductId}
                     className="align-items-center justify-content-center m-auto"
                   >
-                    {products[orderProduct.productId]} ({orderProduct.count}{orderProduct.pizzaSize})
+                    {products[orderProduct.productId]} ({orderProduct.count}
+                    {orderProduct.pizzaSize})
                   </p>
                 ))}
             </div>
@@ -196,10 +196,7 @@ const MyOrders = ({ userId }) => {
             onClose={handleCloseModal}
             onSave={handleSaveFeedback}
           />
-          <FeedbackList
-            userId={userId}
-            orderId={selectedOrder.orderId}
-          />
+          <FeedbackList userId={userId} orderId={selectedOrder.orderId} />
         </FeedBackModal>
       )}
     </>
