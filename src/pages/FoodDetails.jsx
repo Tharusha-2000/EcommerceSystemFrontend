@@ -12,7 +12,6 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import {
   addToCart,
-  addToCart2,
   addToFavourite,
   deleteFromCart,
   deleteFromFavourite,
@@ -301,7 +300,7 @@ const FoodDetails = () => {
           );
         });
     } else {
-      await addToCart2(token, cartItem)
+      await addToCart(token, cartItem)
         .then((res) => {
           dispatch(addToCartRed(res.data));
           setCartLoading(false);

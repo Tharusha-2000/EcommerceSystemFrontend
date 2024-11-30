@@ -6,7 +6,6 @@ import {
   addToCart,
   deleteFromCart,
   getCart,
-  getCart2,
   placeOrder,
   updateFromCart,
 } from "../api";
@@ -189,7 +188,7 @@ const Cart = () => {
       setLoading(false);
       return;
     } else {
-      await getCart2().then((res) => {
+      await getCart().then((res) => {
         // setProducts(res.data);
         dispatch(fetchCartRed(res.data));
         console.log();
@@ -265,11 +264,13 @@ const Cart = () => {
 
   const updateQuntity = async (id, count) => {
     let updatedCount = count > 0 ? count : 0;
+    console.log(id, count);
     try {
       const res = await updateFromCart({
         cartId: id,
         count: updatedCount,
       });
+
       dispatch(updateCartRed(res));
       setReload(!reload);
     } catch (err) {
