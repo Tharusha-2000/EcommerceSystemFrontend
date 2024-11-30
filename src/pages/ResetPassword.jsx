@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 import Button from '../components/Button';
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import Input from "@mui/material/Input";
+
 
 const ResetPassword = () => {
     const [value, setValue] = useState({ email: '' });

@@ -26,8 +26,6 @@ const API1 = axios.create({
 
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
-
-
 export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
 
 export const UserCreate = async (data) => {
@@ -43,8 +41,6 @@ export const UserCreate = async (data) => {
   }
   
 };
-
-
 
 export const getUserById = async (id) => {
   try {
@@ -70,9 +66,7 @@ export const getProductDetails = async (id) =>
 
 
 export const getCartByUserId = async (userId) => await API3.get(`Cart/byUser/${userId}`);
-
 export const getCart = async () => await API3.get("Cart");
-
 export const addToCart = async (token, data) => await API3.post(`Cart/`, data);
 
 // export const deleteFromCart = async (token, data) =>
