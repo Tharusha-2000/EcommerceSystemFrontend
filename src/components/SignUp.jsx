@@ -51,16 +51,11 @@ const SignUp = ({ setOpenAuth }) => {
       const username = email; 
       const roles = ["customer"]; 
       const userType = "customer"; 
-      const phoneNo = "null"; 
-      const address = "Null"; 
-
       const userData = {
         firstName,
         lastName,
         email,
         userType,
-        phoneNo,
-        address
       };
 
       try {
