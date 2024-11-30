@@ -6,12 +6,12 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "http://localhost:5114/api/",
+  baseURL: "https://localhost:7273/api/",
 });
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "http://localhost:5126/api/",
+  baseURL: "https://localhost:7242/api/",
 });
 
 const API4 = axios.create({
@@ -20,44 +20,35 @@ const API4 = axios.create({
 
 //auth
 const API1 = axios.create({
-  baseURL: "https://localhost:7087/api/",
+  baseURL: "http://localhost:8080/api/",
 });
-
-
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
 
-
-export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
+export const UserSignUp = async (data) =>
+  await API1.post(`Auth/register`, data);
 
 export const UserCreate = async (data) => {
-  console.log('Data being sent to UserCreate:', data); // Log the data
+  console.log("Data being sent to UserCreate:", data); // Log the data
 
-    try {
+  try {
     const response = await API1.post(`User`, data);
-    console.log('Response from UserCreate:', response); // Log the response
+    console.log("Response from UserCreate:", response); // Log the response
     return response;
   } catch (error) {
-    console.error('Error in UserCreate:', error); // Log any error
+    console.error("Error in UserCreate:", error); // Log any error
     throw error;
   }
-  
 };
 
-
-
 export const getUserById = async (id) => {
-  try {
-    const response = await API1.get(`User/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await API1.get(`User/${id}`);
+  return response.data;
 };
 
 //products
 export const getAllProducts = async (filter) =>
-  await API2.get(`Product/GetAllProducts`);
+  await API2.get(`Product/GetAllProducts?${filter}`);
 
 export const getProductDetails = async (id) =>
   await API2.get(`Product/GetProductById/${id}`);
@@ -69,7 +60,7 @@ export const getProductDetails = async (id) =>
 //   });
 
 export const getCart = async () =>
-  await axios.get("http://localhost:5126/api/Cart");
+  await axios.get("https://localhost:7242/api/Cart");
 
 export const addToCart = async (token, data) =>
   await API.post(`/user/cart/`, data, {
