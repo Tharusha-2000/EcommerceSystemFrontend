@@ -176,7 +176,6 @@ const FoodDetails = () => {
 
   useEffect(() => {
     getProduct();
-    checkFavorite();
   }, []);
 
   const addCart = async () => {

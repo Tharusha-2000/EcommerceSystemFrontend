@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import UpdateProduct from './UpdateProduct';
+import axios from 'axios';
 
 const handleDelete = async (productId) => {
     try {
