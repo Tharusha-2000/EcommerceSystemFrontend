@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import TextInput from "./TextInput";
 import Button from "./Button";
-import { UserSignUp } from "../api";
+import { UserSignUp , UserCreate } from "../api";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/reducers/UserSlice";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
+
 
 const Container = styled.div`
   width: 100%;
@@ -31,11 +32,11 @@ const SignUp = ({ setOpenAuth }) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const validateInputs = () => {
-    if (!firstName ||!lastName || !username || !password) {
+    if (!firstName || !lastName || !email || !password) {
       alert("Please fill in all fields");
       return false;
     }
@@ -47,44 +48,69 @@ const SignUp = ({ setOpenAuth }) => {
     setButtonDisabled(true);
 
     if (validateInputs()) {
-      await UserSignUp({ firstName,lastName, username, password })
-        .then((res) => {
-          dispatch(loginSuccess(res.data));
-          dispatch(
-            openSnackbar({
-              message: "Sign Up Successful",
-              severity: "success",
-            })
-          );
+      const username = email; 
+      const roles = ["customer"]; 
+      const userType = "customer"; 
+      const phoneNo = "null"; 
+      const address = "Null"; 
+
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        userType,
+        phoneNo,
+        address
+      };
+
+      try {
+        const createResponse = await UserCreate(userData);
+        
+        if (createResponse.status === 200) {
+          const signUpResponse = await UserSignUp({ username, password, roles });
+          console.log('UserSignUp response:', signUpResponse);
+
+          if (signUpResponse.status === 200) {
+            dispatch(loginSuccess(createResponse.data));
+            dispatch(
+              openSnackbar({
+                message: "Sign Up Successful",
+                severity: "success",
+              })
+            );
+            setLoading(false);
+            setButtonDisabled(false);
+            setOpenAuth(false);
+          }
+        }
+
+      } catch (err) {
+        console.log('Error in handleSignUp:', err);
+        setButtonDisabled(false);
+        if (err.response) {
           setLoading(false);
           setButtonDisabled(false);
-          setOpenAuth(false);
-        })
-        .catch((err) => {
+          alert(err.response.data.message);
+          dispatch(
+            openSnackbar({
+              message: err.response.data.message,
+              severity: "error",
+            })
+          );
+        } else {
+          setLoading(false);
           setButtonDisabled(false);
-          if (err.response) {
-            setLoading(false);
-            setButtonDisabled(false);
-            alert(err.response.data.message);
-            dispatch(
-              openSnackbar({
-                message: err.response.data.message,
-                severity: "error",
-              })
-            );
-          } else {
-            setLoading(false);
-            setButtonDisabled(false);
-            dispatch(
-              openSnackbar({
-                message: err.message,
-                severity: "error",
-              })
-            );
-          }
-        });
+          dispatch(
+            openSnackbar({
+              message: err.message,
+              severity: "error",
+            })
+          );
+        }
+      }
     }
   };
+
   return (
     <Container>
       <div>
@@ -107,8 +133,8 @@ const SignUp = ({ setOpenAuth }) => {
         <TextInput
           label="Email Address"
           placeholder="Enter your email address"
-          value={username}
-          handelChange={(e) => setUsername(e.target.value)}
+          value={email}
+          handelChange={(e) => setEmail(e.target.value)}
         />
         <TextInput
           label="Password"
