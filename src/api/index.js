@@ -5,7 +5,23 @@ const API = axios.create({
 });
 
 //auth
-export const UserSignUp = async (data) => await API.post("/user/signup", data);
+export const UserSignUp = async (data) => await axios.post(`https://localhost:7087/api/Auth/register`, data);
+
+export const UserCreate = async (data) => {
+  console.log('Data being sent to UserCreate:', data); // Log the data
+
+    try {
+    const response = await axios.post(`https://localhost:7087/api/User`, data);
+    console.log('Response from UserCreate:', response); // Log the response
+    return response;
+  } catch (error) {
+    console.error('Error in UserCreate:', error); // Log any error
+    throw error;
+  }
+  
+};
+
+
 export const UserSignIn = async (data) => await axios.post(`https://localhost:7087/api/Auth/login`, data);
 
 
