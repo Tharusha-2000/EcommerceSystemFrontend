@@ -30,10 +30,11 @@ export const userSlice = createSlice({
         ...decodedPayload,
         token: action.payload.jwtToken, // You might want to store the token as well
         role: decodedPayload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-         id: decodedPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]
+         id: decodedPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+      
       };
     
-      console.log("Current User:", state.currentUser);
+      console.log("Current User:", state.currentUser.FirstName);
 
     },
     logout: (state) => {

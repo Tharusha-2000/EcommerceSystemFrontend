@@ -6,12 +6,12 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "https://localhost:7273/api/",
+  baseURL: "http://localhost:5114/api/",
 });
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "https://localhost:7242/api/",
+  baseURL: "http://localhost:5126/api/",
 });
 
 const API4 = axios.create({
@@ -19,18 +19,27 @@ const API4 = axios.create({
 });
 
 //auth
-export const UserSignIn = async (data) =>
-  await axios.post(`https://localhost:7087/api/Auth/login`, data);
 
-export const UserSignUp = async (data) =>
-  await axios.post(`http://localhost:7087/api/Auth/register`, data);
+const API1 = axios.create({
+  baseURL: "https://localhost:7087/api/",
+});
+
+
+
+export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
+
+
+export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
+
 
 export const UserCreate = async (data) => {
   console.log("Data being sent to UserCreate:", data); // Log the data
 
-  try {
-    const response = await axios.post(`https://localhost:7087/api/User`, data);
-    console.log("Response from UserCreate:", response); // Log the response
+
+    try {
+    const response = await API1.post(`User`, data);
+    console.log('Response from UserCreate:', response); // Log the response
+
     return response;
   } catch (error) {
     console.error("Error in UserCreate:", error); // Log any error
@@ -40,12 +49,9 @@ export const UserCreate = async (data) => {
 
 export const getUserById = async (id) => {
   try {
-    console.log("hi", id);
-    const response = await axios.get(`https://localhost:7087/api/User/${id}`);
-    console.log(response.data);
+    const response = await API1.get(`User/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching user data:", error);
     throw error;
   }
 };
