@@ -12,6 +12,7 @@ import Button from "./Button";
 import { Avatar } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/reducers/UserSlice";
+import { useNavigate } from 'react-router-dom';
 
 const Nav = styled.div`
   background-color: ${({ theme }) => theme.bg};
@@ -145,8 +146,16 @@ const TextButton = styled.span`
 `;
 
 const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
+  console.log(currentUser);
+  
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+     navigate('/'); 
+  };
+
   return (
     <Nav>
       <NavContainer>
@@ -161,21 +170,28 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
           <Navlink to="/search">
             <SearchRounded sx={{ color: "inherit", fontSize: "30px" }} />
           </Navlink>
+          {currentUser && (
           <Navlink to="/favorite">
             <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
           </Navlink>
+          )}
+           {currentUser && (
           <Navlink to="/cart">
             <ShoppingCartOutlined sx={{ color: "inherit", fontSize: "28px" }} />
           </Navlink>
-          {currentUser && (
-            <Avatar src={currentUser?.img}>{currentUser?.name[0]}</Avatar>
           )}
+
+          {/* {currentUser && (
+            <Avatar src={currentUser?.img}>{currentUser?.name}</Avatar>
+          )} */}
         </MobileIcons>
 
         <NavItems>
           <Navlink to="/">Home</Navlink>
           <Navlink to="/dishes">Dishes</Navlink>
+          {currentUser && (
           <Navlink to="/orders">Orders</Navlink>
+          )}
           <Navlink to="/contact">Contact</Navlink>
         </NavItems>
 
@@ -187,9 +203,12 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
             <Navlink to="/dishes" onClick={() => setIsOpen(false)}>
               Dishes
             </Navlink>
-            <Navlink to="/orders" onClick={() => setIsOpen(false)}>
-              Orders
-            </Navlink>
+            
+            {currentUser && (
+             <Navlink to="/orders" onClick={() => setIsOpen(false)}>
+               Orders
+              </Navlink>
+              )}
             <Navlink to="/contact" onClick={() => setIsOpen(false)}>
               Contact
             </Navlink>
@@ -236,8 +255,10 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
                   sx={{ color: "inherit", fontSize: "28px" }}
                 />
               </Navlink>
-              <Avatar src={currentUser?.img}>{currentUser?.name[0]}</Avatar>
-              <TextButton onClick={() => dispatch(logout())}>Logout</TextButton>
+              {/* <Avatar src={currentUser?.img}>
+                             {currentUser?.name ? currentUser.name[0] : ''}
+              </Avatar> */}
+              <TextButton onClick={handleLogout}>Logout</TextButton>
             </>
           ) : (
             <>

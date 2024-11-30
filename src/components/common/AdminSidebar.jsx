@@ -31,11 +31,12 @@ function AdminSidebar() {
       </Toolbar>
       <List>
         {[
-          { text: 'Dashboard', icon: <DashboardIcon />, path: '/Admindashboard' },
-          { text: 'Orders', icon: <ShoppingCartIcon />, path: '/Orders' },
-          { text: 'Customers', icon: <PeopleIcon />, path: '/AdminCustomers' },
-          { text: 'Reports', icon: <BarChartIcon />, path: '/Reports' },
-          { text: 'Settings', icon: <SettingsIcon />, path: '/Settings' },
+          { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
+          { text: 'Products', icon: <DashboardIcon />, path: '/admin/products' },
+          { text: 'Orders', icon: <ShoppingCartIcon />, path: '/admin/orders' },
+          { text: 'Customers', icon: <PeopleIcon />, path: '/admin/customers' },
+          { text: 'Reports', icon: <BarChartIcon />, path: '/admin/reports' },
+          { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },
         ].map((item, index) => (
           <ListItem button component={Link} to={item.path} key={index} sx={{ color: 'white' }}>
             <ListItemIcon sx={{ color: 'white' }}>{item.icon}</ListItemIcon>

@@ -2,12 +2,28 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
-import { addToCart, deleteFromCart, getCart, placeOrder } from "../api";
+import {
+  addToCart,
+  deleteFromCart,
+  getCart,
+  getCart2,
+  placeOrder,
+  updateFromCart,
+} from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { DeleteOutline } from "@mui/icons-material";
+import PaymentDialog from "./Checkout";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+
+import {
+  fetchCartRed,
+  removeFromCartRed,
+  updateCartRed,
+} from "../redux/reducers/cartSlice";
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -72,6 +88,7 @@ const TableItem = styled.div`
     bold &&
     `font-weight: 600; 
   font-size: 18px;`}
+  align-items: center;
 `;
 const Counter = styled.div`
   display: flex;
@@ -85,12 +102,16 @@ const Counter = styled.div`
 const Product = styled.div`
   display: flex;
   gap: 16px;
+  align-items: center;
 `;
 const Img = styled.img`
   height: 80px;
+  width: 80px;
+  object-fit: cover;
+  border-radius: 6px;
 `;
 const Details = styled.div`
-  max-width: 130px;
+  max-width: 160px;
   @media (max-width: 700px) {
     max-width: 60px;
   }
@@ -141,7 +162,6 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
-  const [products, setProducts] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [deliveryDetails, setDeliveryDetails] = useState({
     firstName: "",
@@ -151,18 +171,36 @@ const Cart = () => {
     completeAddress: "",
   });
 
+  const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
+  const { cart } = useSelector((state) => state.cart);
+
+  const handleOpenPaymentDialog = () => {
+    setOpenPaymentDialog(true);
+  };
+
+  const handleClosePaymentDialog = () => {
+    setOpenPaymentDialog(false);
+  };
+
   const getProducts = async () => {
     setLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await getCart(token).then((res) => {
-      setProducts(res.data);
+    // const token = localStorage.getItem("krist-app-token");
+    if (cart.length > 0) {
       setLoading(false);
-    });
+      return;
+    } else {
+      await getCart2().then((res) => {
+        // setProducts(res.data);
+        dispatch(fetchCartRed(res.data));
+        console.log();
+        setLoading(false);
+      });
+    }
   };
 
   const calculateSubtotal = () => {
-    return products.reduce(
-      (total, item) => total + item.quantity * item?.product?.price?.org,
+    return cart.reduce(
+      (total, item) => total + item.count * item?.unitPrice,
       0
     );
   };
@@ -171,97 +209,115 @@ const Cart = () => {
     return `${addressObj.firstName} ${addressObj.lastName}, ${addressObj.completeAddress}, ${addressObj.phoneNumber}, ${addressObj.emailAddress}`;
   };
 
-  const PlaceOrder = async () => {
-    setButtonLoad(true);
-    try {
-      const isDeliveryDetailsFilled =
-        deliveryDetails.firstName &&
-        deliveryDetails.lastName &&
-        deliveryDetails.completeAddress &&
-        deliveryDetails.phoneNumber &&
-        deliveryDetails.emailAddress;
+  // const PlaceOrder = async () => {
+  //   setButtonLoad(true);
+  //   try {
+  //     const isDeliveryDetailsFilled =
+  //       deliveryDetails.firstName &&
+  //       deliveryDetails.lastName &&
+  //       deliveryDetails.completeAddress &&
+  //       deliveryDetails.phoneNumber &&
+  //       deliveryDetails.emailAddress;
 
-      if (!isDeliveryDetailsFilled) {
-        // Show an error message or handle the situation where delivery details are incomplete
-        dispatch(
-          openSnackbar({
-            message: "Please fill in all required delivery details.",
-            severity: "error",
-          })
-        );
-        return;
-      }
+  //     if (!isDeliveryDetailsFilled) {
+  //       // Show an error message or handle the situation where delivery details are incomplete
+  //       dispatch(
+  //         openSnackbar({
+  //           message: "Please fill in all required delivery details.",
+  //           severity: "error",
+  //         })
+  //       );
+  //       return;
+  //     }
 
-      const token = localStorage.getItem("krist-app-token");
-      const totalAmount = calculateSubtotal().toFixed(2);
-      const orderDetails = {
-        products,
-        address: convertAddressToString(deliveryDetails),
-        totalAmount,
-      };
+  //     // const token = localStorage.getItem("krist-app-token");
+  const totalAmount = calculateSubtotal().toFixed(2);
+  //     const orderDetails = {
+  //       products,
+  //       address: convertAddressToString(deliveryDetails),
+  //       totalAmount,
+  //     };
 
-      await placeOrder(token, orderDetails);
-      dispatch(
-        openSnackbar({
-          message: "Order placed successfully",
-          severity: "success",
-        })
-      );
-      setButtonLoad(false);
-      // Clear the cart and update the UI
-      setReload(!reload);
-    } catch (err) {
-      dispatch(
-        openSnackbar({
-          message: "Failed to place order. Please try again.",
-          severity: "error",
-        })
-      );
-      setButtonLoad(false);
-    }
-  };
+  //     await placeOrder(token, orderDetails);
+  //     dispatch(
+  //       openSnackbar({
+  //         message: "Order placed successfully",
+  //         severity: "success",
+  //       })
+  //     );
+  //     setButtonLoad(false);
+  //     // Clear the cart and update the UI
+  //     setReload(!reload);
+  //   } catch (err) {
+  //     dispatch(
+  //       openSnackbar({
+  //         message: "Failed to place order. Please try again.",
+  //         severity: "error",
+  //       })
+  //     );
+  //     setButtonLoad(false);
+  //   }
+  // };
 
   useEffect(() => {
     getProducts();
-  }, [reload]);
+  }, []);
 
-  const addCart = async (id) => {
-    // const token = localStorage.getItem("krist-app-token");
-    await addToCart(token, { productId: id, quantity: 1 })
-      .then((res) => {
-        setReload(!reload);
-      })
-      .catch((err) => {
-        setReload(!reload);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
+  const updateQuntity = async (id, count) => {
+    let updatedCount = count > 0 ? count : 0;
+    try {
+      const res = await updateFromCart({
+        cartId: id,
+        count: updatedCount,
       });
+      dispatch(updateCartRed(res));
+      setReload(!reload);
+    } catch (err) {
+      setReload(!reload);
+      dispatch(
+        openSnackbar({
+          message: err.message,
+          severity: "error",
+        })
+      );
+    }
   };
 
-  const removeCart = async (id, quantity, type) => {
-    const token = localStorage.getItem("krist-app-token");
-    let qnt = quantity > 0 ? 1 : null;
-    if (type === "full") qnt = null;
-    await deleteFromCart(token, {
-      productId: id,
-      quantity: qnt,
-    })
-      .then((res) => {
-        setReload(!reload);
-      })
-      .catch((err) => {
-        setReload(!reload);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
+  const removeCart = async (cartId) => {
+    try {
+      await deleteFromCart(cartId);
+      dispatch(removeFromCartRed(cartId));
+      // setProducts((prevItems) =>
+      //   prevItems.filter((item) => item.cartId !== cartId)
+      // );
+    } catch (err) {
+      dispatch(
+        openSnackbar({
+          message: err.message,
+          severity: "error",
+        })
+      );
+    }
+  };
+
+  // Fetch user profile data from localStorage or API (simulate fetching)
+  const getUserProfile = () => {
+    // Replace this with an actual API call or retrieve from localStorage
+    return {
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      phoneNo: "+1234567890",
+      address: "123 Main St, City, Country, 12345",
+    };
+  };
+
+  // Autofill the address fields from the user's profile data
+  const autofillAddress = () => {
+    const userProfile = getUserProfile();
+    setDeliveryDetails({
+      ...userProfile, // This will set all address details from profile to the form
+    });
   };
 
   return (
@@ -272,7 +328,7 @@ const Cart = () => {
           <CircularProgress />
         ) : (
           <>
-            {products.length === 0 ? (
+            {cart.length === 0 ? (
               <>Cart is empty</>
             ) : (
               <Wrapper>
@@ -281,23 +337,26 @@ const Cart = () => {
                     <TableItem bold flex>
                       Product
                     </TableItem>
+
                     <TableItem bold>Price</TableItem>
                     <TableItem bold>Quantity</TableItem>
                     <TableItem bold>Subtotal</TableItem>
                     <TableItem></TableItem>
                   </Table>
-                  {products.map((item) => (
-                    <Table>
+                  {cart.map((item) => (
+                    <Table key={item.cartId}>
                       <TableItem flex>
                         <Product>
-                          <Img src={item?.product?.img} />
+                          <TableItem>{item.cartId}</TableItem>
+
+                          <Img src={item?.productImg} />
                           <Details>
-                            <Protitle>{item?.product?.name}</Protitle>
-                            <ProDesc>{item?.product?.desc}</ProDesc>
+                            <Protitle>{item?.productName}</Protitle>
+                            <ProDesc>{item?.pizzaSize}</ProDesc>
                           </Details>
                         </Product>
                       </TableItem>
-                      <TableItem>${item?.product?.price?.org}</TableItem>
+                      <TableItem>LKR.{item?.unitPrice}</TableItem>
                       <TableItem>
                         <Counter>
                           <div
@@ -305,19 +364,25 @@ const Cart = () => {
                               cursor: "pointer",
                               flex: 1,
                             }}
-                            onClick={() =>
-                              removeCart(item?.product?._id, item?.quantity - 1)
-                            }
+                            onClick={() => {
+                              if (item?.count > 1) {
+                                updateQuntity(item?.cartId, item?.count - 1);
+                              }
+                            }}
                           >
                             -
                           </div>
-                          {item?.quantity}{" "}
+                          {item?.count}{" "}
                           <div
                             style={{
                               cursor: "pointer",
                               flex: 1,
                             }}
-                            onClick={() => addCart(item?.product?._id)}
+                            onClick={() => {
+                              if (item?.count < 10) {
+                                updateQuntity(item?.cartId, item?.count + 1);
+                              }
+                            }}
                           >
                             +
                           </div>
@@ -325,19 +390,13 @@ const Cart = () => {
                       </TableItem>
                       <TableItem>
                         {" "}
-                        $
-                        {(item.quantity * item?.product?.price?.org).toFixed(2)}
+                        LKR.
+                        {(item.count * item?.unitPrice).toFixed(2)}
                       </TableItem>
                       <TableItem>
                         <DeleteOutline
                           sx={{ color: "red" }}
-                          onClick={() =>
-                            removeCart(
-                              item?.product?._id,
-                              item?.quantity - 1,
-                              "full"
-                            )
-                          }
+                          onClick={() => removeCart(item?.cartId)}
                         />
                       </TableItem>
                     </Table>
@@ -345,7 +404,7 @@ const Cart = () => {
                 </Left>
                 <Right>
                   <Subtotal>
-                    Subtotal : ${calculateSubtotal().toFixed(2)}
+                    Subtotal : LKR:{calculateSubtotal().toFixed(2)}
                   </Subtotal>
                   <Delivery>
                     Delivery Details:
@@ -382,62 +441,75 @@ const Cart = () => {
                       <TextInput
                         small
                         placeholder="Email Address"
-                        value={deliveryDetails.emailAddress}
+                        value={deliveryDetails.email}
                         handelChange={(e) =>
                           setDeliveryDetails({
                             ...deliveryDetails,
-                            emailAddress: e.target.value,
+                            email: e.target.value,
                           })
                         }
                       />
-                      <TextInput
-                        small
-                        placeholder="Phone no. +91 XXXXX XXXXX"
-                        value={deliveryDetails.phoneNumber}
-                        handelChange={(e) =>
-                          setDeliveryDetails({
-                            ...deliveryDetails,
-                            phoneNumber: e.target.value,
-                          })
-                        }
-                      />
-                      <TextInput
-                        small
-                        textArea
-                        rows="5"
-                        placeholder="Complete Address (Address, State, Country, Pincode)"
-                        value={deliveryDetails.completeAddress}
-                        handelChange={(e) =>
-                          setDeliveryDetails({
-                            ...deliveryDetails,
-                            completeAddress: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </Delivery>
-                  <Delivery>
-                    Payment Details:
-                    <div>
-                      <TextInput small placeholder="Card Number" />
+
                       <div
                         style={{
                           display: "flex",
                           gap: "6px",
                         }}
                       >
-                        <TextInput small placeholder="Expiry Date" />
-                        <TextInput small placeholder="CVV" />
+                        <TextInput
+                          small
+                          placeholder="Phone no. +91 XXXXX XXXXX"
+                          value={deliveryDetails.phoneNo}
+                          handelChange={(e) =>
+                            setDeliveryDetails({
+                              ...deliveryDetails,
+                              phoneNo: e.target.value,
+                            })
+                          }
+                        />
+
+                        <TextInput
+                          small
+                          placeholder="postalcode"
+                          value={deliveryDetails.postalcode}
+                          handelChange={(e) =>
+                            setDeliveryDetails({
+                              ...deliveryDetails,
+                              postalcode: e.target.value,
+                            })
+                          }
+                        />
                       </div>
-                      <TextInput small placeholder="Card Holder name" />
+
+                      <FormControlLabel
+                        control={<Switch />}
+                        label="Use exitsing address"
+                        onClick={autofillAddress}
+                      />
+
+                      <TextInput
+                        small
+                        textArea
+                        rows="5"
+                        placeholder="Complete Address (Address, State, Country, Pincode)"
+                        value={deliveryDetails.address}
+                        handelChange={(e) =>
+                          setDeliveryDetails({
+                            ...deliveryDetails,
+                            address: e.target.value,
+                          })
+                        }
+                      />
                     </div>
                   </Delivery>
+                  <PaymentDialog
+                    open={openPaymentDialog}
+                    onClose={handleClosePaymentDialog}
+                  />
                   <Button
-                    text="Pace Order"
+                    text="Checkout"
                     small
-                    onClick={PlaceOrder}
-                    isLoading={buttonLoad}
-                    isDisabled={buttonLoad}
+                    onClick={handleOpenPaymentDialog}
                   />
                 </Right>
               </Wrapper>

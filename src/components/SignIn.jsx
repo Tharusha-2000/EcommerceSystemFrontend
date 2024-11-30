@@ -7,6 +7,8 @@ import { UserSignIn } from "../api";
 import { loginSuccess } from "../redux/reducers/UserSlice";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import LogoImage from "../utils/Images/Logo.png";
+import {jwtDecode} from "jwt-decode";
+import { useNavigate } from "react-router-dom"; 
 
 const Container = styled.div`
   width: 100%;
@@ -50,11 +52,13 @@ const SignIn = ({ setOpenAuth }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  
 
   const validateInputs = () => {
-    if (!email || !password) {
+    if (!username || !password) {
       alert("Please fill in all fields");
       return false;
     }
@@ -65,14 +69,32 @@ const SignIn = ({ setOpenAuth }) => {
     setLoading(true);
     setButtonDisabled(true);
     if (validateInputs()) {
-      await UserSignIn({ email, password })
+      await UserSignIn({ username, password })
+         
         .then((res) => {
-          dispatch(loginSuccess(res.data));
+          const token = res.data.jwtToken;
+          const decodedToken = jwtDecode(token);
+          console.log(decodedToken);
+          const userRole = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+          console.log(userRole);
+           dispatch(loginSuccess(res.data));
+          if (userRole === "Admin") {
+            navigate("/admin/dashboard"); 
+            setOpenAuth(false);
+             console.log("Admin");
+
+          } else {
+            console.log("Regular User");
+            navigate("/"); // Navigate to homepage for regular users
+            setOpenAuth(false);
+          }
+          
           dispatch(
             openSnackbar({
               message: "Login Successful",
               severity: "success",
             })
+
           );
           setLoading(false);
           setButtonDisabled(false);
@@ -101,8 +123,8 @@ const SignIn = ({ setOpenAuth }) => {
         <TextInput
           label="Email Address"
           placeholder="Enter your email address"
-          value={email}
-          handelChange={(e) => setEmail(e.target.value)}
+          value={username}
+          handelChange={(e) => setUserName(e.target.value)}
         />
         <TextInput
           label="Password"

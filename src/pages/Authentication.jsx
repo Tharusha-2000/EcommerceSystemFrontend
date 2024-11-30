@@ -6,6 +6,8 @@ import { Close } from "@mui/icons-material";
 import SignIn from "../components/SignIn";
 import SignUp from "../components/SignUp";
 
+
+
 const Container = styled.div`
   flex: 1;
   height: 100%;
@@ -84,6 +86,10 @@ const TextButton = styled.div`
 
 const Authentication = ({ openAuth, setOpenAuth }) => {
   const [login, setLogin] = useState(true);
+
+
+
+
   return (
     <Modal open={openAuth} onClose={() => setOpenAuth(false)}>
       <Container>
@@ -98,7 +104,7 @@ const Authentication = ({ openAuth, setOpenAuth }) => {
          
           {login ? (
             <>
-              <SignIn setOpenAuth={setOpenAuth} />
+              <SignIn setOpenAuth={setOpenAuth}/>
               <Text>
                 {" "}
                 Don't have an account ?{" "}
