@@ -3,6 +3,7 @@ import axios from "axios";
 import FeedbackItem from "./FeedbackItem";
 import "./Style.css";
 import PropTypes from "prop-types";
+import { GetFeedbackByOrderId } from "../../api";
 
 const FeedbackList = ({ userId, orderId }) => {
   const [feedback, setFeedback] = useState([]);
@@ -12,9 +13,7 @@ const FeedbackList = ({ userId, orderId }) => {
       try {
         console.log("Fetching feedback with params:", { userId, orderId });
 
-        const response = await axios.get(
-          `https://localhost:7046/api/GetFeedbackByOrderId/${orderId}`
-        );
+        const response = await  GetFeedbackByOrderId(orderId);
 
         console.log("API response:", response.data);
         const feedbackArray = response.data.$values || [response.data];
