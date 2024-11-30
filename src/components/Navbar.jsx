@@ -144,6 +144,17 @@ const TextButton = styled.span`
     color: ${({ theme }) => theme.primary};
   }
 `;
+const NameTag = styled.span`
+  text-align: end;
+  color: ${({ theme }) => theme.text_primary};
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  &:hover {
+    color: ${({ theme }) => theme.primary};
+  }
+`;
 
 const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
   console.log(currentUser);
@@ -181,9 +192,6 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
           </Navlink>
           )}
 
-          {/* {currentUser && (
-            <Avatar src={currentUser?.img}>{currentUser?.name}</Avatar>
-          )} */}
         </MobileIcons>
 
         <NavItems>
@@ -255,9 +263,12 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
                   sx={{ color: "inherit", fontSize: "28px" }}
                 />
               </Navlink>
-              {/* <Avatar src={currentUser?.img}>
-                             {currentUser?.name ? currentUser.name[0] : ''}
-              </Avatar> */}
+              <Avatar >
+                         {currentUser?.FirstName ? currentUser.FirstName.charAt(0) : ''}
+              </Avatar>
+               <NameTag >
+                 {currentUser?.FirstName ? currentUser.FirstName : ''}
+              </NameTag>
               <TextButton onClick={handleLogout}>Logout</TextButton>
             </>
           ) : (
