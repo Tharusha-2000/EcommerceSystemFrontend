@@ -6,12 +6,12 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "https://localhost:7273/api/",
+  baseURL: "http://localhost:5114/api/",
 });
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "https://localhost:7242/api/",
+  baseURL: "http://localhost:5126/api/",
 });
 
 //auth

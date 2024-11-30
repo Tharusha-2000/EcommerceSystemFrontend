@@ -233,6 +233,7 @@ const FoodDetails = () => {
       });
   };
 
+
   useEffect(() => {
     getProduct();
     checkFavorite();
