@@ -5,6 +5,7 @@ import Card from "./Card";
 import "./Style.css";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
+import { GetFeedbackByOrderId,SaveProductFeedback } from "../../api";
 
 const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
   const [text, setText] = useState("");
@@ -16,9 +17,7 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
   useEffect(() => {
     const checkFeedback = async () => {
       try {
-        const response = await axios.get(
-          `https://localhost:7046/api/GetFeedbackByOrderId/${orderId}`
-        );
+        const response = await GetFeedbackByOrderId(orderId);
         const feedbackArray = response.data.$values || [response.data];
         setHasFeedback(feedbackArray.length > 0);
       } catch (error) {
@@ -57,10 +56,7 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
       };
 
       try {
-        await axios.post(
-          "https://localhost:7046/api/SaveProductFeedback",
-          newFeedback
-        );
+        await SaveProductFeedback(newFeedback);
         toast.success("Feedback saved successfully");
         onClose();
         onSave(newFeedback);

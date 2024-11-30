@@ -19,21 +19,23 @@ const API4 = axios.create({
 });
 
 //auth
+
 const API1 = axios.create({
   baseURL: "http://localhost:8080/api/",
 });
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
+export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
 
-export const UserSignUp = async (data) =>
-  await API1.post(`Auth/register`, data);
 
 export const UserCreate = async (data) => {
   console.log("Data being sent to UserCreate:", data); // Log the data
 
+
   try {
     const response = await API1.post(`User`, data);
-    console.log("Response from UserCreate:", response); // Log the response
+    console.log('Response from UserCreate:', response); // Log the response
+
     return response;
   } catch (error) {
     console.error("Error in UserCreate:", error); // Log any error
@@ -59,17 +61,10 @@ export const getProductDetails = async (id) =>
 //     headers: { Authorization: `Bearer ${token}` },
 //   });
 
-export const getCart = async () =>
-  await axios.get("https://localhost:7242/api/Cart");
 
-export const addToCart = async (token, data) =>
-  await API.post(`/user/cart/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-export const getCart2 = async () => await API3.get("Cart");
-
-export const addToCart2 = async (token, data) => await API3.post(`Cart/`, data);
+export const getCartByUserId = async (userId) => await API3.get(`Cart/byUser/${userId}`);
+export const getCart = async () => await API3.get("Cart");
+export const addToCart = async (token, data) => await API3.post(`Cart/`, data);
 
 // export const deleteFromCart = async (token, data) =>
 //   await API.patch(`/user/cart/`, data, {
@@ -79,9 +74,10 @@ export const addToCart2 = async (token, data) => await API3.post(`Cart/`, data);
 export const updateFromCart = async ({ cartId, count }) => {
   try {
     const data = { count: count > 0 ? count : 0 }; // If count is <= 0, treat as removal (count = 0)
-    const response = await axios.put(
-      `https://localhost:7242/api/Cart/${cartId}?count=${count}`
+    const response = await API3.put(
+      `Cart/${cartId}?count=${count}`
     );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Error updating cart");
@@ -94,8 +90,8 @@ export const updateItemOnCart = async (token, data) =>
 export const deleteFromCart = async (cartId) => {
   try {
     console.log(cartId);
-    const response = await axios.delete(
-      `https://localhost:7242/api/Cart/${cartId}`
+    const response = await API3.delete(
+      `Cart/${cartId}`
     );
     return response.data;
   } catch (error) {
@@ -105,22 +101,6 @@ export const deleteFromCart = async (cartId) => {
   }
 };
 
-//favorites
-
-export const getFavourite = async (token) =>
-  await API.get(`/user/favorite`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-export const addToFavourite = async (token, data) =>
-  await API.post(`/user/favorite/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-export const deleteFromFavourite = async (token, data) =>
-  await API.patch(`/user/favorite/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 
 //Orders
 export const placeOrder = async (token, data) =>
@@ -133,14 +113,86 @@ export const getOrders = async (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-// review and rating
+/////////////// review and rating
+
+//API for fetching product reviews
 export const getProductFeedbacks = async (productId) => {
   try {
-    const response = await API4.get(`/GetProductFeedBack/${productId}`);
+    const response = await API4.get(
+      `/FeedBack/GetProductFeedback/${productId}`
+    );
     return response.data.$values; // Extract the $values array from the response
   } catch (error) {
+    console.error("Error fetching product reviews:", error);
     throw new Error(
       error.response?.data?.message || "Error fetching product reviews"
+    );
+  }
+};
+
+//API for fetching Feedbacks by order Id
+export const GetFeedbackByOrderId = async (orderId) => {
+  try {
+    const response = await API4.get(
+      `/FeedBack/GetFeedbackByOrderId/${orderId}`
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching feedback by order id:", error);
+    throw new Error(
+      error.response?.data?.message || "Error fetching feedback by order id"
+    );
+  }
+};
+
+//API fetching for add product feedback
+export const SaveProductFeedback = async (newFeedback) => {
+  try {
+    const response = await API4.post(
+      `/FeedBack/SaveProductFeedback`,
+      newFeedback
+    );
+  } catch (error) {
+    console.error("Error saving feedback:", error);
+    throw new Error(error.response?.data?.message || "Error saving feedback");
+  }
+};
+
+//API for feching orders by orderId
+export const fetchOrdersByUserId = async (userId) => {
+  try {
+    const response = await API3.get(`/Order/byUser/${userId}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching orders by user id:", error);
+    throw new Error(
+      error.response?.data?.message || "Error fetching orders by user id"
+    );
+  }
+};
+
+//API for fetching order included products
+export const getOrderProductByOrderId = async (orderId) => {
+  try {
+    const response = await API3.get(`/OrderProduct/byOrder/${orderId}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching orders by user id:", error);
+    throw new Error(
+      error.response?.data?.message || "Error fetching orders by user id"
+    );
+  }
+};
+
+//API for get products by product Id
+export const getProductById = async (productId) => {
+  try {
+    const response = await API2.get(`/Product/GetProductById/${productId}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching orders by user id:", error);
+    throw new Error(
+      error.response?.data?.message || "Error fetching orders by user id"
     );
   }
 };

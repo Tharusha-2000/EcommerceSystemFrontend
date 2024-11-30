@@ -6,7 +6,6 @@ import Home from "./pages/Home";
 import Order from "./pages/Order";
 import { useState } from "react";
 import Authentication from "./pages/Authentication";
-import Favourites from "./pages/Favourites";
 import Cart from "./pages/Cart";
 import FoodDetails from "./pages/FoodDetails";
 import FoodListing from "./pages/FoodListing";
@@ -21,6 +20,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import { Snackbar } from "@mui/material";
 import { closeSnackbar } from "./redux/reducers/SnackbarSlice";
 import Products from "./pages/Admin/Products";
+import ForgetPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const Container = styled.div``;
 
@@ -44,11 +45,11 @@ function App() {
           />
           <Routes>
             <Route path="/" exact element={<Home />} />
-            <Route path="/favorite" exact element={<Favourites />} />
             <Route path="/cart" exact element={<Cart />} />
             <Route path="/dishes/:id" exact element={<FoodDetails />} />
             <Route path="/dishes" exact element={<FoodListing />} />
-
+            <Route path="/forgetPassword" exact element={<ForgetPassword />} />
+            <Route path="/resetPassword" exact element={<ResetPassword/>} />
             <Route path="/orders" exact element={<Order />} />
 
             <Route
