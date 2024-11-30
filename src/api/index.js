@@ -14,13 +14,19 @@ const API3 = axios.create({
   baseURL: "http://localhost:5126/api/",
 });
 
+const API4 = axios.create({
+  baseURL: "https://localhost:7046/api/",
+});
+
 //auth
 const API1 = axios.create({
   baseURL: "https://localhost:7087/api/",
 });
 
 
+
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
+
 
 export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
 
@@ -37,6 +43,7 @@ export const UserCreate = async (data) => {
   }
   
 };
+
 
 
 export const getUserById = async (id) => {
@@ -134,3 +141,15 @@ export const getOrders = async (token) =>
   await API.get(`/user/order/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+// review and rating
+export const getProductFeedbacks = async (productId) => {
+  try {
+    const response = await API4.get(`/GetProductFeedBack/${productId}`);
+    return response.data.$values; // Extract the $values array from the response
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Error fetching product reviews"
+    );
+  }
+};

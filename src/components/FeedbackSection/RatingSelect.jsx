@@ -1,4 +1,3 @@
-
 import "./Style.css";
 import PropTypes from "prop-types";
 
@@ -10,7 +9,7 @@ const RatingSelect = ({ select, selected }) => {
 
   return (
     <ul className="rating">
-      {Array.from({ length: 10 }, (_, i) => (
+      {Array.from({ length: 5 }, (_, i) => (
         <li key={`rating-${i + 1}`}>
           <input
             className="rating-input"
