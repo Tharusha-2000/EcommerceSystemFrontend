@@ -69,7 +69,7 @@ export const getProductDetails = async (id) =>
 //   });
 
 
-export const getCartByUserId = async (userId) => await API3.get(`/Cart/byUser/${userId}`);
+export const getCartByUserId = async (userId) => await API3.get(`Cart/byUser/${userId}`);
 
 export const getCart = async () => await API3.get("Cart");
 
@@ -83,8 +83,8 @@ export const addToCart = async (token, data) => await API3.post(`Cart/`, data);
 export const updateFromCart = async ({ cartId, count }) => {
   try {
     const data = { count: count > 0 ? count : 0 }; // If count is <= 0, treat as removal (count = 0)
-    const response = await axios.put(
-      `http://localhost:5126/api/Cart/${cartId}?count=${count}`
+    const response = await API3.put(
+      `Cart/${cartId}?count=${count}`
     );
     console.log(response.data);
     return response.data;
@@ -99,8 +99,8 @@ export const updateItemOnCart = async (token, data) =>
 export const deleteFromCart = async (cartId) => {
   try {
     console.log(cartId);
-    const response = await axios.delete(
-      `http://localhost:5126/api/Cart/${cartId}`
+    const response = await API3.delete(
+      `Cart/${cartId}`
     );
     return response.data;
   } catch (error) {
@@ -110,22 +110,6 @@ export const deleteFromCart = async (cartId) => {
   }
 };
 
-//favorites
-
-export const getFavourite = async (token) =>
-  await API.get(`/user/favorite`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-export const addToFavourite = async (token, data) =>
-  await API.post(`/user/favorite/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-export const deleteFromFavourite = async (token, data) =>
-  await API.patch(`/user/favorite/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 
 //Orders
 export const placeOrder = async (token, data) =>

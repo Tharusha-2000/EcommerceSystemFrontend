@@ -12,10 +12,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import {
   addToCart,
-  addToFavourite,
   deleteFromCart,
-  deleteFromFavourite,
-  getFavourite,
   getProductDetails,
   updateItemOnCart,
   getProductFeedbacks,
@@ -174,66 +171,6 @@ const FoodDetails = () => {
       setProduct(res.data);
       setLoading(false);
     });
-  };
-
-  const removeFavourite = async () => {
-    setFavoriteLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await deleteFromFavourite(token, { productId: id })
-      .then((res) => {
-        setFavorite(false);
-        setFavoriteLoading(false);
-      })
-      .catch((err) => {
-        setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
-
-  const addFavourite = async () => {
-    setFavoriteLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await addToFavourite(token, { productId: id })
-      .then((res) => {
-        setFavorite(true);
-        setFavoriteLoading(false);
-      })
-      .catch((err) => {
-        setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
-
-  const checkFavorite = async () => {
-    setFavoriteLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await getFavourite(token, { productId: id })
-      .then((res) => {
-        const isFavorite = res.data?.some((favorite) => favorite._id === id);
-
-        setFavorite(isFavorite);
-
-        setFavoriteLoading(false);
-      })
-      .catch((err) => {
-        setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
   };
 
 
