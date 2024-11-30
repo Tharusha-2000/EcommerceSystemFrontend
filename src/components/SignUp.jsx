@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import TextInput from "./TextInput";
 import Button from "./Button";
-import { UserSignUp , UserCreate } from "../api";
+import { UserSignUp , UserCreate , UserSignIn } from "../api";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/reducers/UserSlice";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
@@ -51,16 +51,11 @@ const SignUp = ({ setOpenAuth }) => {
       const username = email; 
       const roles = ["customer"]; 
       const userType = "customer"; 
-      const phoneNo = "null"; 
-      const address = "Null"; 
-
       const userData = {
         firstName,
         lastName,
         email,
         userType,
-        phoneNo,
-        address
       };
 
       try {
@@ -68,10 +63,13 @@ const SignUp = ({ setOpenAuth }) => {
         
         if (createResponse.status === 200) {
           const signUpResponse = await UserSignUp({ username, password, roles });
-          console.log('UserSignUp response:', signUpResponse);
+          console.log(' createuser', signUpResponse);
 
           if (signUpResponse.status === 200) {
-            dispatch(loginSuccess(createResponse.data));
+            console.log('UserSignUp response:', signUpResponse);
+            const signInResponse = await UserSignIn({ username, password });
+            console.log('UserSignIn response:', signInResponse);
+            dispatch(loginSuccess(signInResponse.data));
             dispatch(
               openSnackbar({
                 message: "Sign Up Successful",
