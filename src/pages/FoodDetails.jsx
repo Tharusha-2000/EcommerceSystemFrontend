@@ -19,10 +19,12 @@ import {
   getFavourite,
   getProductDetails,
   updateItemOnCart,
+  getProductFeedbacks,
 } from "../api";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartRed, updateCartRed } from "../redux/reducers/cartSlice";
+import ReviewList from "../components/FeedbackSection/ReviewList";
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -164,6 +166,7 @@ const FoodDetails = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedQty, setSelectedQty] = useState(1);
   const { cart } = useSelector((state) => state.cart);
+  const [averageRating, setAverageRating] = useState(null);
 
   const getProduct = async () => {
     setLoading(true);
@@ -284,8 +287,8 @@ const FoodDetails = () => {
       await updateItemOnCart(token, cartItem)
         .then((res) => {
           dispatch(updateCartRed(cartItem));
-            setCartLoading(false);
-            navigate("/cart");
+          setCartLoading(false);
+          navigate("/cart");
         })
         .catch((err) => {
           setCartLoading(false);
@@ -327,6 +330,20 @@ const FoodDetails = () => {
     }
   };
 
+  useEffect(() => {
+    const getProductReviews = async () => {
+      const response = await getProductFeedbacks(id);
+      // Calculate average rating
+      const totalRating = response.reduce(
+        (acc, review) => acc + review.rate,
+        0
+      );
+      const averageRating = totalRating / response.length;
+      setAverageRating(averageRating);
+    };
+    getProductReviews();
+  }, [id]);
+
   return (
     <Container>
       {loading ? (
@@ -340,9 +357,9 @@ const FoodDetails = () => {
             <div>
               <Title>{product?.name}</Title>
             </div>
-            <Rating value={3.5} />
+            <Rating value={averageRating} />
             <Price>
-              ₹
+              LKR
               {selectedSize
                 ? product?.sizes.find((size) => size.size === selectedSize)
                     .price
@@ -416,6 +433,7 @@ const FoodDetails = () => {
           </Details>
         </Wrapper>
       )}
+      <ReviewList productId={id} />
     </Container>
   );
 };
