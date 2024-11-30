@@ -69,6 +69,8 @@ export const getProductDetails = async (id) =>
 //   });
 
 
+export const getCartByUserId = async (userId) => await API3.get(`/Cart/byUser/${userId}`);
+
 export const getCart = async () => await API3.get("Cart");
 
 export const addToCart = async (token, data) => await API3.post(`Cart/`, data);

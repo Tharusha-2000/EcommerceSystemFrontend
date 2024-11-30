@@ -12,6 +12,7 @@ import Button from "./Button";
 import { Avatar } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/reducers/UserSlice";
+import { clearCart} from "../redux/reducers/cartSlice";
 import { useNavigate } from 'react-router-dom';
 
 const Nav = styled.div`
@@ -163,6 +164,7 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
+    dispatch(clearCart());
     dispatch(logout());
      navigate('/'); 
   };
@@ -181,11 +183,6 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
           <Navlink to="/search">
             <SearchRounded sx={{ color: "inherit", fontSize: "30px" }} />
           </Navlink>
-          {currentUser && (
-          <Navlink to="/favorite">
-            <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
-          </Navlink>
-          )}
            {currentUser && (
           <Navlink to="/cart">
             <ShoppingCartOutlined sx={{ color: "inherit", fontSize: "28px" }} />
@@ -255,9 +252,6 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
           </Navlink>
           {currentUser ? (
             <>
-              <Navlink to="/favorite">
-                <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
-              </Navlink>
               <Navlink to="/cart">
                 <ShoppingCartOutlined
                   sx={{ color: "inherit", fontSize: "28px" }}

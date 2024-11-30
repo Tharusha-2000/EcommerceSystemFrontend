@@ -166,6 +166,7 @@ const FoodDetails = () => {
   const [selectedQty, setSelectedQty] = useState(1);
   const { cart } = useSelector((state) => state.cart);
   const [averageRating, setAverageRating] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
 
   const getProduct = async () => {
     setLoading(true);
@@ -254,9 +255,9 @@ const FoodDetails = () => {
       );
       return;
     }
-
+  
     var cartItem = {
-      userId: "2",
+      userId: currentUser.id,
       productId: id,
       productImg: product?.imageUrl,
       productName: product?.name,
@@ -415,19 +416,8 @@ const FoodDetails = () => {
                 isLoading={cartLoading}
                 onClick={() => addCart()}
               />
-              <Button text="Order Now" full />
-              <Button
-                leftIcon={
-                  favorite ? (
-                    <FavoriteRounded sx={{ fontSize: "22px", color: "red" }} />
-                  ) : (
-                    <FavoriteBorderOutlined sx={{ fontSize: "22px" }} />
-                  )
-                }
-                full
-                outlined
-                isLoading={favoriteLoading}
-                onClick={() => (favorite ? removeFavourite() : addFavourite())}
+              <Button text="Order Now" full 
+               onClick={() => addCart()}
               />
             </ButtonWrapper>
           </Details>
