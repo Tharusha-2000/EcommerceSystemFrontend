@@ -113,6 +113,12 @@ const SignIn = ({ setOpenAuth }) => {
     }
   };
 
+  const handleForgotPasswordClick = () => {
+    setOpenAuth(false);
+    navigate('/forgetPassword');
+  };
+
+
   return (
     <Container>
       <div>
@@ -134,7 +140,7 @@ const SignIn = ({ setOpenAuth }) => {
           handelChange={(e) => setPassword(e.target.value)}
         />
 
-        <TextButton>Forgot Password?</TextButton>
+        <TextButton onClick={handleForgotPasswordClick}>Forgot Password?</TextButton>
         <Button
           text="Sign In"
           onClick={handelSignIn}
