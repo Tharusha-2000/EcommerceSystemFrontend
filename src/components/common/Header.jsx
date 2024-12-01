@@ -16,6 +16,7 @@ import { logout } from "../../redux/reducers/UserSlice";
 import { useNavigate } from 'react-router-dom'
 
 
+
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
   background: 'linear-gradient(45deg, #333, #555)', // Gradient background

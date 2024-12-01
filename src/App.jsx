@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Order from "./pages/Order";
 import { useState } from "react";
-import Authentication from "./pages/Authentication";
+import Authentication from "./pages/Auth/Authentication";
 import Cart from "./pages/Cart";
 import FoodDetails from "./pages/FoodDetails";
 import FoodListing from "./pages/FoodListing";
