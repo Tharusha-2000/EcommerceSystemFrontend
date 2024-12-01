@@ -36,14 +36,74 @@ const SignUp = ({ setOpenAuth }) => {
   const [password, setPassword] = useState("");
 
   const validateInputs = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const nameRegex = /^[A-Za-z]+$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  
     if (!firstName || !lastName || !email || !password) {
-      alert("Please fill in all fields");
+      dispatch(
+        openSnackbar({
+          message: "Please fill in all fields",
+          severity: "error",
+        })
+      );
       return false;
     }
+  
+    if (!nameRegex.test(firstName)) {
+      dispatch(
+        openSnackbar({
+          message: "First name should only contain letters",
+          severity: "error",
+        })
+      );
+      return false;
+    }
+  
+    if (!nameRegex.test(lastName)) {
+      dispatch(
+        openSnackbar({
+          message: "Last name should only contain letters",
+          severity: "error",
+        })
+      );
+      return false;
+    }
+  
+    if (!emailRegex.test(email)) {
+      dispatch(
+        openSnackbar({
+          message: "Please enter a valid email address",
+          severity: "error",
+        })
+      );
+      return false;
+    }
+  
+    if (!passwordRegex.test(password)) {
+      dispatch(
+        openSnackbar({
+          message: "Password must be at least 8 characters long and contain at least one letter, one number, and one special character",
+          severity: "error",
+        })
+      );
+      return false;
+    }
+  
     return true;
   };
 
+
+
+
   const handleSignUp = async () => {
+
+    if (!validateInputs()) {
+      setLoading(false); 
+      setButtonDisabled(false); 
+      return;
+    }
+
     setLoading(true);
     setButtonDisabled(true);
 
@@ -88,7 +148,6 @@ const SignUp = ({ setOpenAuth }) => {
         if (err.response) {
           setLoading(false);
           setButtonDisabled(false);
-          alert(err.response.data.message);
           dispatch(
             openSnackbar({
               message: err.response.data.message,
@@ -96,8 +155,6 @@ const SignUp = ({ setOpenAuth }) => {
             })
           );
         } else {
-          setLoading(false);
-          setButtonDisabled(false);
           dispatch(
             openSnackbar({
               message: err.message,
