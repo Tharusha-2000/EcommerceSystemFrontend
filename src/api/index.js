@@ -25,6 +25,8 @@ const API1 = axios.create({
 });
 
 
+
+
 //auth
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
@@ -64,6 +66,23 @@ export const getAllProducts = async (filter) =>
 export const getProductDetails = async (id) =>
   await API2.get(`Product/GetProductById/${id}`);
 
+export const createProduct = async (productData) =>
+  await API2.post("Product/CreateProductAsync", productData);
+
+
+export const updateProduct = async (id, productData) =>
+  await API2.put(`Product/UpdateProductAsync/${id}`, productData);
+
+export const deleteProduct = async (productId) => {
+  try {
+    const response = await API2.delete(`Product/${productId}`);
+    return response;
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw new Error(error.response?.data?.message || "Error deleting product");
+  }
+};
+//Cart
 //Cart
 // export const getCart = async (token) =>
 //   await API.get(`/user/cart`, {
@@ -215,3 +234,26 @@ export const getProductById = async (productId) => {
     );
   }
 };
+
+
+//users-dilum
+export const getAllUsers = async () =>
+  await API1.get(`User`);
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await API1.delete(`User/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Error deleting user");
+  }
+};
+//get all orders -dilum
+export const getAllOrders = async () =>
+  await API3.get(`Order`);
+//get all feedback -dilum
+export const getAllFeedback = async () =>
+  await API4.get(`Feedback/GetAllFeedbacks`);
+//get order details -dilum
+export const getallOrderDetails = async (id) =>
+  await API3.get(`OrderProduct`);
