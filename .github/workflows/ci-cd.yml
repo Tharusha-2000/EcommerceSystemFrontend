@@ -1,4 +1,5 @@
 name: React CI/CD Pipeline
+
 on:
   push:
     branches:
@@ -11,6 +12,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 22.x]  # Specify the Node.js versions to test against
+
     steps:
     # Checkout the repository
     - name: Checkout Code
@@ -20,7 +25,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 18  # Specify your Node.js version
+        node-version: ${{ matrix.node-version }}  # Use the matrix value
 
     # Install dependencies
     - name: Install Dependencies
@@ -52,3 +57,4 @@ jobs:
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       run: npx vercel deploy --prod
+
