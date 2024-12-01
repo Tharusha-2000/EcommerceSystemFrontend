@@ -74,7 +74,7 @@ export const getProductDetails = async (id) =>
 
 export const getCartByUserId = async (userId) => await API3.get(`Cart/byUser/${userId}`);
 export const getCart = async () => await API3.get("Cart");
-export const addToCart = async (token, data) => await API3.post(`Cart/`, data);
+export const addToCart = async ( data) => await API3.post(`Cart/`, data);
 
 // export const deleteFromCart = async (token, data) =>
 //   await API.patch(`/user/cart/`, data, {
@@ -94,7 +94,7 @@ export const updateFromCart = async ({ cartId, count }) => {
   }
 };
 
-export const updateItemOnCart = async (token, data) =>
+export const updateItemOnCart = async (data) =>
   await API3.put(`Cart/${data.cartId}`, data);
 
 export const deleteFromCart = async (cartId) => {
