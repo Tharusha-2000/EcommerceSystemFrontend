@@ -49,7 +49,7 @@ function App() {
             <Route path="/dishes/:id" exact element={<FoodDetails />} />
             <Route path="/dishes" exact element={<FoodListing />} />
             <Route path="/forgetPassword" exact element={<ForgetPassword />} />
-            <Route path="/resetPassword" exact element={<ResetPassword/>} />
+            <Route path="/reset-password" exact element={<ResetPassword/>} />
             <Route path="/orders" exact element={<Order />} />
 
             <Route

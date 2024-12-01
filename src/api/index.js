@@ -25,9 +25,15 @@ const API1 = axios.create({
 });
 
 
+//auth
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
 export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
+
+export const SendEmail = async (data) => await API1.post(`Auth/forgot-password`, data);
+
+export const PasswordChange = async (data) => await API1.post(`Auth/reset-password`, data);
+
 
 
 export const UserCreate = async (data) => {
@@ -44,6 +50,8 @@ export const updateUser = async (data) => {
   const response = await API1.put(`User`, data);
   return response;
 };
+
+
 
 
 

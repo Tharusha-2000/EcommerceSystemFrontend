@@ -9,16 +9,25 @@ import Swal from 'sweetalert2';
 import Button from '../../components/Button';
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-
+import { PasswordChange } from "../../api/index";
+import { useSearchParams } from 'react-router-dom';
+import { openSnackbar } from "../../redux/reducers/SnackbarSlice";
+import { useDispatch } from "react-redux";
 
 const ResetPassword = () => {
-    const [value, setValue] = useState({ email: '' });
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
-    const [values, setValues] =useState({
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
+  const email = searchParams.get('email');
+  const navigate = useNavigate();
+  const [values, setValues] =useState({
         password: '',
          confirmpassword: ''
      })
+  const dispatch = useDispatch();
+     
+    console.log(token);
+    console.log(email);
+
     const handleSubmit = (event) => {
         console.log(value);
         event.preventDefault();
@@ -111,3 +120,4 @@ const ResetPassword = () => {
 }
 
 export default ResetPassword;
+
