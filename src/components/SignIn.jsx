@@ -105,13 +105,19 @@ const SignIn = ({ setOpenAuth }) => {
           setButtonDisabled(false);
           dispatch(
             openSnackbar({
-              message: err.message,
+              message:  err.response.data,
               severity: "error",
             })
           );
         });
     }
   };
+
+  const handleForgotPasswordClick = () => {
+    setOpenAuth(false);
+    navigate('/forgetPassword');
+  };
+
 
   return (
     <Container>
@@ -134,7 +140,7 @@ const SignIn = ({ setOpenAuth }) => {
           handelChange={(e) => setPassword(e.target.value)}
         />
 
-        <TextButton>Forgot Password?</TextButton>
+        <TextButton onClick={handleForgotPasswordClick}>Forgot Password?</TextButton>
         <Button
           text="Sign In"
           onClick={handelSignIn}

@@ -5,8 +5,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Order from "./pages/Order";
 import { useState } from "react";
-import Authentication from "./pages/Authentication";
-import Favourites from "./pages/Favourites";
+import Authentication from "./pages/Auth/Authentication";
 import Cart from "./pages/Cart";
 import FoodDetails from "./pages/FoodDetails";
 import FoodListing from "./pages/FoodListing";
@@ -14,13 +13,15 @@ import { useDispatch, useSelector } from "react-redux";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Customers from "./pages/Admin/Customers";
 import Orders from "./pages/Admin/Orders";
-import Products from "./pages/Admin/products";
 import AddProduct from "./pages/Admin/AddProduct";
 import Reports from "./pages/Admin/Reports";
 import Settings from "./pages/Admin/Settings";
 import PrivateRoute from "./components/PrivateRoute";
 import { Snackbar } from "@mui/material";
 import { closeSnackbar } from "./redux/reducers/SnackbarSlice";
+import Products from "./pages/Admin/Products";
+import ForgetPassword from "./pages/Auth/ForgetPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 
 const Container = styled.div``;
 
@@ -44,11 +45,11 @@ function App() {
           />
           <Routes>
             <Route path="/" exact element={<Home />} />
-            <Route path="/favorite" exact element={<Favourites />} />
             <Route path="/cart" exact element={<Cart />} />
             <Route path="/dishes/:id" exact element={<FoodDetails />} />
             <Route path="/dishes" exact element={<FoodListing />} />
-
+            <Route path="/forgetPassword" exact element={<ForgetPassword />} />
+            <Route path="/reset-password" exact element={<ResetPassword/>} />
             <Route path="/orders" exact element={<Order />} />
 
             <Route

@@ -12,11 +12,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import {
   addToCart,
-  addToCart2,
-  addToFavourite,
   deleteFromCart,
-  deleteFromFavourite,
-  getFavourite,
   getProductDetails,
   updateItemOnCart,
   getProductFeedbacks,
@@ -167,6 +163,7 @@ const FoodDetails = () => {
   const [selectedQty, setSelectedQty] = useState(1);
   const { cart } = useSelector((state) => state.cart);
   const [averageRating, setAverageRating] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
 
   const getProduct = async () => {
     setLoading(true);
@@ -176,70 +173,9 @@ const FoodDetails = () => {
     });
   };
 
-  const removeFavourite = async () => {
-    setFavoriteLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await deleteFromFavourite(token, { productId: id })
-      .then((res) => {
-        setFavorite(false);
-        setFavoriteLoading(false);
-      })
-      .catch((err) => {
-        setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
-
-  const addFavourite = async () => {
-    setFavoriteLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await addToFavourite(token, { productId: id })
-      .then((res) => {
-        setFavorite(true);
-        setFavoriteLoading(false);
-      })
-      .catch((err) => {
-        setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
-
-  const checkFavorite = async () => {
-    setFavoriteLoading(true);
-    const token = localStorage.getItem("krist-app-token");
-    await getFavourite(token, { productId: id })
-      .then((res) => {
-        const isFavorite = res.data?.some((favorite) => favorite._id === id);
-
-        setFavorite(isFavorite);
-
-        setFavoriteLoading(false);
-      })
-      .catch((err) => {
-        setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
-
 
   useEffect(() => {
     getProduct();
-    checkFavorite();
   }, []);
 
   const addCart = async () => {
@@ -255,9 +191,9 @@ const FoodDetails = () => {
       );
       return;
     }
-
+  
     var cartItem = {
-      userId: "2",
+      userId: currentUser.id,
       productId: id,
       productImg: product?.imageUrl,
       productName: product?.name,
@@ -301,7 +237,7 @@ const FoodDetails = () => {
           );
         });
     } else {
-      await addToCart2(token, cartItem)
+      await addToCart(token, cartItem)
         .then((res) => {
           dispatch(addToCartRed(res.data));
           setCartLoading(false);
@@ -416,19 +352,8 @@ const FoodDetails = () => {
                 isLoading={cartLoading}
                 onClick={() => addCart()}
               />
-              <Button text="Order Now" full />
-              <Button
-                leftIcon={
-                  favorite ? (
-                    <FavoriteRounded sx={{ fontSize: "22px", color: "red" }} />
-                  ) : (
-                    <FavoriteBorderOutlined sx={{ fontSize: "22px" }} />
-                  )
-                }
-                full
-                outlined
-                isLoading={favoriteLoading}
-                onClick={() => (favorite ? removeFavourite() : addFavourite())}
+              <Button text="Order Now" full 
+               onClick={() => addCart()}
               />
             </ButtonWrapper>
           </Details>

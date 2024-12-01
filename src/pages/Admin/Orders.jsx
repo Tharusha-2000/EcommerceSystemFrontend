@@ -21,6 +21,7 @@ import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import Modal from "@mui/material/Modal";
 import axios from "axios";
+import {getOrders,updateOrder,handelViewOrder} from "../../api/index"
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -35,7 +36,7 @@ function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("https://localhost:7242/api/Order");
+       const response=await getOrders();
         setOrders(response.data);
         setLoading(false);
       } catch (error) {
@@ -49,7 +50,8 @@ function Orders() {
   const handleSave = async (orderId, index) => {
     try {
       const updatedOrder = { ...orders[index], orderStatus: selectedStatus };
-      await axios.put(`https://localhost:7242/api/Order/${orderId}`, updatedOrder);
+      
+      await updateOrder(orderId, updatedOrder);
 
       // Update local state
       setOrders((prevOrders) =>
@@ -68,9 +70,7 @@ function Orders() {
     setLoadingProducts(true);
     setModalOpen(true);
     try {
-      const response = await axios.get(
-        `https://localhost:7242/api/OrderProduct/byOrder/${orderId}`
-      );
+      const response= await handelViewOrder(orderId);
       setProductDetails(response.data);
       setLoadingProducts(false);
     } catch (error) {
