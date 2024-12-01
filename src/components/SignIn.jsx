@@ -105,7 +105,7 @@ const SignIn = ({ setOpenAuth }) => {
           setButtonDisabled(false);
           dispatch(
             openSnackbar({
-              message:  err.response.data,
+              message:  err.response,
               severity: "error",
             })
           );
