@@ -11,9 +11,10 @@ import axios from 'axios';
 // Function to handle product deletion
 const handleDelete = async (productId) => {
   try {
-    const response = await axios.delete(`http://your-backend-url/api/products/${productId}`);
+    const response = await axios.delete(`https://localhost:7273/api/Product/${productId}`);
     if (response.status === 200) {
       alert('Product deleted successfully!');
+      fetchProducts();
     }
   } catch (error) {
     console.error('Error deleting product:', error);
@@ -79,7 +80,7 @@ const Products = () => {
       {
         accessorKey: 'imageUrl',
         header: 'Image',
-        size: 150,
+        size: 120,
         Cell: ({ row }) => (
           <Box display="flex" justifyContent="center">
             <img
@@ -93,7 +94,7 @@ const Products = () => {
       {
         accessorKey: 'name',
         header: 'Name',
-        size: 200,
+        size: 150,
       },
       {
         accessorKey: 'description',
@@ -103,7 +104,7 @@ const Products = () => {
       {
         accessorKey: 'categories',
         header: 'Categories',
-        size: 200,
+        size: 150,
         Cell: ({ row }) => {
           const categories = row.original.categories;
           return (
@@ -122,6 +123,7 @@ const Products = () => {
       {
         accessorKey: 'sizes',
         header: 'Sizes',
+        size: 130,
         Cell: ({ row }) => (
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             {row.original.sizes.map((size, index) => (
