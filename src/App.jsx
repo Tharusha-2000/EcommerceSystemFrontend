@@ -20,8 +20,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import { Snackbar } from "@mui/material";
 import { closeSnackbar } from "./redux/reducers/SnackbarSlice";
 import Products from "./pages/Admin/Products";
-import ForgetPassword from "./pages/ForgetPassword";
-import ResetPassword from "./pages/ResetPassword";
+import ForgetPassword from "./pages/Auth/ForgetPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 
 const Container = styled.div``;
 
