@@ -6,6 +6,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '../components/Button';
 import TextField from '@mui/material/TextField';
 import axios from 'axios'; // Ensure axios is installed
+import { useDispatch } from "react-redux";
+import { openSnackbar } from "../redux/reducers/SnackbarSlice";
+
 
 const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -15,6 +18,7 @@ const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
     phoneNo: '',
     address: '',
   });
+  const dispatch = useDispatch();
 
   // Populate formData with userdata only when the dialog opens for the first time
   useEffect(() => {
@@ -39,15 +43,31 @@ const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
       const response = await axios.put('https://localhost:7087/api/User', formData);
        console.log(response);
       if (response.status === 200) {
-        console.log('Profile updated successfully:', response.data);
+        dispatch(
+          openSnackbar({
+            message: response.data,
+            severity: "success",
+          })
+        );
         onClose();
-        onUpdate(formData); // Callback to update parent state or UI
-         // Close dialog
+        onUpdate(formData); 
       } else {
-        console.error('Failed to update profile:', response.statusText);
+        dispatch(
+          openSnackbar({
+            message: response.statusText,
+            severity: "error",
+          })
+        );
+    
       }
     } catch (error) {
-      console.error('Error updating profile:', error.message);
+      dispatch(
+        openSnackbar({
+          message: error.message,
+          severity: "error",
+        })
+      );
+      
     }
   };
 
