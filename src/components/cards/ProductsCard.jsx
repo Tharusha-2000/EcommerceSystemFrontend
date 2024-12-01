@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { CircularProgress, Rating } from "@mui/material";
+import { Rating } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
 import {
   AddShoppingCartOutlined,
   FavoriteBorder,
@@ -10,11 +11,10 @@ import {
   Spa,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import {
-  addToCart,
-} from "../../api";
-import { useDispatch } from "react-redux";
+import { addToCart, updateItemOnCart } from "../../api";
+import { useDispatch, useSelector } from "react-redux";
 import { openSnackbar } from "../../redux/reducers/SnackbarSlice";
+import { addToCartRed, updateCartRed } from "../../redux/reducers/cartSlice";
 
 const Card = styled.div`
   width: 300px;
@@ -64,6 +64,9 @@ const Top = styled.div`
   }
   &:hover ${Menu} {
     display: flex;
+    padding: 8px;
+    background: white;
+    border-radius: 50%;
   }
 `;
 const MenuItem = styled.div`
@@ -143,29 +146,69 @@ const ProductsCard = ({ product }) => {
   const navigate = useNavigate();
   const [favorite, setFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const { cart } = useSelector((state) => state.cart);
 
-  const addCart = async (id) => {
-    await addToCart(token, { productId: id, quantity: 1 })
-      .then((res) => {
-        navigate("/cart");
-      })
-      .catch((err) => {
-        dispatch(
-          openSnackbar({
-            message: err.response.data.message,
-            severity: "error",
-          })
-        );
-      });
-  };
+  const [cartLoading, setCartLoading] = useState(false);
 
+  const addCart = async () => {
+    var cartItem = {
+      userId: currentUser.id,
+      productId: product.productId,
+      productImg: product?.imageUrl,
+      productName: product?.name,
+      unitPrice: product?.sizes.find((sizeItem) => sizeItem.size === "S").price,
+      pizzaSize: "S",
+      count: 1,
+    };
+
+    const existingItem = cart.find((item) => {
+      return (
+        item.productId == cartItem.productId &&
+        item.userId == cartItem.userId &&
+        item.pizzaSize == cartItem.pizzaSize
+      );
+    });
+
+    
+    if (existingItem) {
+      return dispatch(
+        openSnackbar({
+          message: "Item already in cart",
+          severity: "error",
+        })
+      );
+    } else {
+      await addToCart( cartItem)
+        .then((res) => {
+          dispatch(addToCartRed(res.data));
+          dispatch(
+            openSnackbar({
+              message: "Added to cart",
+              severity: "success",
+            })
+          );
+        
+          setCartLoading(false);
+        })
+        .catch((err) => {
+          setCartLoading(false);
+          dispatch(
+            openSnackbar({
+              message: err.message,
+              severity: "error",
+            })
+          );
+        });
+    }
+    
   return (
     <Card>
       <Top>
         <Image src={product?.imageUrl} />
         <Menu>
           <MenuItem onClick={() => addCart(product?.productId)}>
-            <ShoppingBagOutlined sx={{ fontSize: "20px" }} />
+            <ShoppingBagOutlined sx={{ fontSize: "28px" }} />
           </MenuItem>
         </Menu>
         <Rate>
@@ -181,7 +224,7 @@ const ProductsCard = ({ product }) => {
             ))}
         </Flex>
         <Desc>{product?.description}</Desc>
-        <Price>${product?.sizes[0]?.price}</Price>
+        <Price>LKR {product?.sizes[0]?.price}</Price>
       </Details>
     </Card>
   );
