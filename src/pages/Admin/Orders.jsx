@@ -37,7 +37,6 @@ function Orders() {
     const fetchOrders = async () => {
       try {
        const response=await getOrders();
-        // const response = await axios.get("https://localhost:7242/api/Order");
         setOrders(response.data);
         setLoading(false);
       } catch (error) {
@@ -53,8 +52,6 @@ function Orders() {
       const updatedOrder = { ...orders[index], orderStatus: selectedStatus };
       
       await updateOrder(orderId, updatedOrder);
-
-      // await axios.put(`https://localhost:7242/api/Order/${orderId}`, updatedOrder);
 
       // Update local state
       setOrders((prevOrders) =>
@@ -74,9 +71,6 @@ function Orders() {
     setModalOpen(true);
     try {
       const response= await handelViewOrder(orderId);
-      // const response = await axios.get(
-      //   `https://localhost:7242/api/OrderProduct/byOrder/${orderId}`
-      // );
       setProductDetails(response.data);
       setLoadingProducts(false);
     } catch (error) {

@@ -120,9 +120,7 @@ export const placeOrder = async (token, data) =>
 //   });
 
 export const getOrders = async () => await API3.get(`Order`);
-
 export const handelViewOrder = async ( orderId ) => await API3.get(`OrderProduct/byOrder/${orderId}`);
-
 export const updateOrder = async (orderId, updatedOrder)  => await API3.put(`Order/${orderId}`, updatedOrder);
 
 
