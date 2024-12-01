@@ -19,7 +19,7 @@ export const userSlice = createSlice({
       // state.currentUser = action.payload.user;
        console.log(action.payload.user);
        console.log(action.payload.jwtToken);
-      localStorage.setItem("foodeli-app-token", action.payload.jwtToken);
+      localStorage.setItem("Mossa-Melt-token", action.payload.jwtToken);
       console.log(action.payload.jwtToken);
       const tokenParts=action.payload.jwtToken.split('.');
       const encodedPayload=tokenParts[1];
@@ -39,7 +39,7 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       state.currentUser = null;
-      localStorage.removeItem("foodeli-app-token");
+      localStorage.removeItem("Mossa-Melt-token");
     },
   },
 });
