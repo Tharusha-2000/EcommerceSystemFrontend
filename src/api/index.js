@@ -6,47 +6,56 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "https://localhost:7273/api/",
+  baseURL: "http://localhost:5114/api/",
 });
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "https://localhost:7242/api/",
+  baseURL: "http://localhost:5126/api/",
 });
 
+//review and rating
 const API4 = axios.create({
   baseURL: "http://localhost:5249/api/",
 });
 
 //auth
-
 const API1 = axios.create({
-  baseURL: "http://localhost:8080/api/",
+  baseURL: "https://localhost:7087/api/",
 });
+
+
+//auth
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
 export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
 
+export const SendEmail = async (data) => await API1.post(`Auth/forgot-password`, data);
+
+export const PasswordChange = async (data) => await API1.post(`Auth/reset-password`, data);
+
+
 
 export const UserCreate = async (data) => {
-  console.log("Data being sent to UserCreate:", data); // Log the data
-
-
-  try {
-    const response = await API1.post(`User`, data);
-    console.log('Response from UserCreate:', response); // Log the response
-
+      const response = await API1.post(`User`, data);
     return response;
-  } catch (error) {
-    console.error("Error in UserCreate:", error); // Log any error
-    throw error;
-  }
 };
 
 export const getUserById = async (id) => {
   const response = await API1.get(`User/${id}`);
   return response.data;
 };
+
+export const updateUser = async (data) => {
+  const response = await API1.put(`User`, data);
+  return response;
+};
+
+
+
+
+
+
 
 //products
 export const getAllProducts = async (filter) =>
@@ -60,6 +69,7 @@ export const getProductDetails = async (id) =>
 //   await API.get(`/user/cart`, {
 //     headers: { Authorization: `Bearer ${token}` },
 //   });
+
 
 
 export const getCartByUserId = async (userId) => await API3.get(`Cart/byUser/${userId}`);
@@ -102,16 +112,25 @@ export const deleteFromCart = async (cartId) => {
 };
 
 
+
+
+
+
 //Orders
 export const placeOrder = async (token, data) =>
   await API.post(`/user/order/`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const getOrders = async (token) =>
-  await API.get(`/user/order/`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// export const getOrders = async (token) =>
+//   await API.get(`Order`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
+
+export const getOrders = async () => await API3.get(`Order`);
+export const handelViewOrder = async ( orderId ) => await API3.get(`OrderProduct/byOrder/${orderId}`);
+export const updateOrder = async (orderId, updatedOrder)  => await API3.put(`Order/${orderId}`, updatedOrder);
+
 
 /////////////// review and rating
 
