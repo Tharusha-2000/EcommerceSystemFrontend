@@ -170,8 +170,7 @@ const ProductsCard = ({ product }) => {
       );
     });
 
-    const token = localStorage.getItem("krist-app-token");
-
+    
     if (existingItem) {
       return dispatch(
         openSnackbar({
@@ -180,7 +179,7 @@ const ProductsCard = ({ product }) => {
         })
       );
     } else {
-      await addToCart(token, cartItem)
+      await addToCart( cartItem)
         .then((res) => {
           dispatch(addToCartRed(res.data));
           dispatch(
@@ -189,6 +188,7 @@ const ProductsCard = ({ product }) => {
               severity: "success",
             })
           );
+        
           setCartLoading(false);
         })
         .catch((err) => {
@@ -201,8 +201,7 @@ const ProductsCard = ({ product }) => {
           );
         });
     }
-  };
-
+    
   return (
     <Card>
       <Top>

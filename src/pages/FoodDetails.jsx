@@ -212,7 +212,6 @@ const FoodDetails = () => {
       );
     });
 
-    const token = localStorage.getItem("krist-app-token");
 
     if (existingItem) {
       cartItem.count += existingItem.count;
@@ -221,7 +220,7 @@ const FoodDetails = () => {
         cartItem.count = 10;
       }
       cartItem = { ...cartItem, cartId: existingItem.cartId };
-      await updateItemOnCart(token, cartItem)
+      await updateItemOnCart( cartItem)
         .then((res) => {
           dispatch(updateCartRed(cartItem));
           setCartLoading(false);
@@ -237,7 +236,7 @@ const FoodDetails = () => {
           );
         });
     } else {
-      await addToCart(token, cartItem)
+      await addToCart( cartItem)
         .then((res) => {
           dispatch(addToCartRed(res.data));
           setCartLoading(false);
