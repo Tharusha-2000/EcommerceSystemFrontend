@@ -24,6 +24,8 @@ const API1 = axios.create({
   baseURL: "https://localhost:7087/api/",
 });
 
+
+
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
 export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
 
@@ -42,6 +44,8 @@ export const updateUser = async (data) => {
   const response = await API1.put(`User`, data);
   return response;
 };
+
+
 
 
 
@@ -103,16 +107,24 @@ export const deleteFromCart = async (cartId) => {
 
 
 
+
 //Orders
 export const placeOrder = async (token, data) =>
   await API.post(`/user/order/`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const getOrders = async (token) =>
-  await API.get(`/user/order/`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// export const getOrders = async (token) =>
+//   await API.get(`Order`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
+
+export const getOrders = async () => await API3.get(`Order`);
+
+export const handelViewOrder = async ( orderId ) => await API3.get(`OrderProduct/byOrder/${orderId}`);
+
+export const updateOrder = async (orderId, updatedOrder)  => await API3.put(`Order/${orderId}`, updatedOrder);
+
 
 /////////////// review and rating
 
