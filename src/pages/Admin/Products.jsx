@@ -1,73 +1,62 @@
-import AdminSidebar from '../../components/common/AdminSidebar';
+import AdminSidebar from '../../components/common/AdminSidebar'; 
 import Header from '../../components/common/Header';
 import Grid from '@mui/material/Grid';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import {
-  Box,
-  Button,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import UpdateProduct from './UpdateProduct';
 import axios from 'axios';
 
+// Function to handle product deletion
 const handleDelete = async (productId) => {
-    try {
-      const response = await axios.delete(`http://your-backend-url/api/products/${productId}`);
-      
-      if (response.status === 200) {
-        alert('Product deleted successfully!');
-      }
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      alert('Failed to delete the product. Please try again.');
+  try {
+    const response = await axios.delete(`http://your-backend-url/api/products/${productId}`);
+    if (response.status === 200) {
+      alert('Product deleted successfully!');
     }
-  };
-  
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    alert('Failed to delete the product. Please try again.');
+  }
+};
 
 const Products = () => {
-  const [data, setData] = useState([
-    {
-      productId: 1,
-      name: 'Margherita Pizza',
-      description: 'Classic margherita pizza with fresh tomatoes, basil, and mozzarella.',
-      imageUrl: 'http://example.com/margherita.jpg',
-      isAvailable: true,
-      sizes: [
-        { size: 'Small', price: 800, qty: 20 },
-        { size: 'Medium', price: 1200, qty: 15 },
-        { size: 'Large', price: 1500, qty: 10 },
-      ],
-    },
-    {
-      productId: 2,
-      name: 'Pepperoni Pizza',
-      description: 'Spicy pepperoni pizza topped with cheese and extra pepperoni.',
-      imageUrl: 'http://example.com/pepperoni.jpg',
-      isAvailable: true,
-      sizes: [
-        { size: 'Small', price: 900, qty: 25 },
-        { size: 'Medium', price: 1300, qty: 20 },
-        { size: 'Large', price: 1600, qty: 15 },
-      ],
-    },
-  ]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [data, setData] = useState([]); // State to store product data
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
+  const [selectedProduct, setSelectedProduct] = useState(null); // State to store selected product
   const navigate = useNavigate();
 
+  // Fetch products data from the backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('https://localhost:7273/api/Product/GetAllProducts');
+        if (response.status === 200) {
+          setData(response.data); // Set fetched data
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        alert('Failed to load products. Please try again.');
+      }
+    };
+
+    fetchProducts();
+  }, []); // Empty dependency array means this effect runs only once on mount
+
+  // Open modal with selected product data
   const handleOpenModal = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
+  // Close the modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedProduct(null);
+    setSelectedProduct(null); // Reset selected product
   };
 
+  // Update the product data in the table
   const handleUpdateProduct = (updatedProduct) => {
     setData((prevData) =>
       prevData.map((product) =>
@@ -79,6 +68,7 @@ const Products = () => {
     handleCloseModal();
   };
 
+  // Define the table columns
   const columns = useMemo(
     () => [
       {
@@ -109,6 +99,19 @@ const Products = () => {
         accessorKey: 'description',
         header: 'Description',
         size: 300,
+      },
+      {
+        accessorKey: 'categories',
+        header: 'Categories',
+        size: 200,
+        Cell: ({ row }) => {
+          const categories = row.original.categories;
+          return (
+            <Typography variant="body2">
+              {categories ? categories.join(', ') : 'No categories'}
+            </Typography>
+          );
+        },
       },
       {
         accessorKey: 'isAvailable',
@@ -179,12 +182,7 @@ const Products = () => {
           <AdminSidebar />
           <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
             <Box sx={{ width: '90%', margin: 'auto' }}>
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mb={2}
-              >
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Button
                   variant="contained"
                   onClick={() => navigate('/admin/add-product')}
@@ -211,7 +209,7 @@ const Products = () => {
                   },
                 }}
                 state={{
-                  isLoading: false,
+                  isLoading: data.length === 0, // Show loading state if no data
                 }}
               />
 
