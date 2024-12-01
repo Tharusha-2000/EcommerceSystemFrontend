@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main  # Trigger on pushes to the main branch
+      - dev2 
   pull_request:
     branches:
       - main  # Trigger on pull requests to the main branch
+      - dev2 
 
 jobs:
   build:

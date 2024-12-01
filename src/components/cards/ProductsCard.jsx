@@ -201,7 +201,7 @@ const ProductsCard = ({ product }) => {
           );
         });
     }
-    
+  }
   return (
     <Card>
       <Top>
