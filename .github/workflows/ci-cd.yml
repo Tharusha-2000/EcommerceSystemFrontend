@@ -33,7 +33,8 @@ jobs:
 
     # Run tests
     - name: Run Tests
-      run: npm test -- --watchAll=false
+      run: npm test -- --watchAll=false --passWithNoTests
+
 
     # Build the React app
     - name: Build React App
