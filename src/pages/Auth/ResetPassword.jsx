@@ -1,12 +1,12 @@
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
-import image2 from '../utils/Images/forgetpass.png';
+import image2 from '../../utils/Images/forgetpass.png';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import Button from '../components/Button';
+import Button from '../../components/Button';
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 

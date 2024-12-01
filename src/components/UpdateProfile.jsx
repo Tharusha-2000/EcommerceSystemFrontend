@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios'; // Ensure axios is installed
 import { useDispatch } from "react-redux";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
-
+import { updateUser } from "../api/index";
 
 const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -37,37 +37,29 @@ const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
 
   // Save updated data and send it to the backend
   const handleSave = async () => {
-
     try {
-      console.log('Updating profile:', formData);
-      const response = await axios.put('https://localhost:7087/api/User', formData);
-       console.log(response);
+      const response = await updateUser(formData);
       if (response.status === 200) {
+        console.log('Profile updated successfully:', response.data);
         dispatch(
           openSnackbar({
-            message: response.data,
+            message: "Profile updated successfully",
             severity: "success",
           })
         );
         onClose();
-        onUpdate(formData); 
+        onUpdate(formData);
       } else {
+        console.log('Error updating profile:', response.statusText);
         dispatch(
           openSnackbar({
             message: response.statusText,
             severity: "error",
           })
         );
-    
       }
     } catch (error) {
-      dispatch(
-        openSnackbar({
-          message: error.message,
-          severity: "error",
-        })
-      );
-      
+      console.error( error);
     }
   };
 
