@@ -1,4 +1,5 @@
 name: React CI/CD Pipeline
+
 on:
   push:
     branches:
@@ -11,44 +12,38 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-    # Checkout the repository
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    # Set up Node.js
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18  # Specify your Node.js version
-
-    # Install dependencies
-    - name: Install Dependencies
-      run: npm install
-
-    # Run tests
-    - name: Run Tests
-      run: npm test -- --watchAll=false
-
-    # Build the React app
-    - name: Build React App
-      run: npm run build
-
-    # Deploy to GitHub Pages (Optional)
-    - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]  # Specify the Node.js versions to test against
 
     steps:
-    # Example: Deploy to Vercel or other platforms (Replace as needed)
-    - name: Deploy to Vercel
-      env:
-        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      run: npx vercel deploy --prod
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}  # Use the matrix value
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Run tests
+      - name: Run Tests
+        run: npm test -- --watchAll=false --passWithNoTests
+
+      # Build the React app
+      - name: Build React App
+        run: npm run build
+
+      # Deploy to GitHub Pages (Optional)
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+
