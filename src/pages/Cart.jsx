@@ -8,6 +8,7 @@ import {
   getCartByUserId,
   createOrder,
   updateFromCart,
+  storeOrderProduct
 } from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
@@ -17,7 +18,6 @@ import { DeleteOutline } from "@mui/icons-material";
 import PaymentDialog from "./Checkout";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-
 
 import {
   fetchCartRed,
@@ -186,7 +186,7 @@ const Cart = () => {
 
   const getProducts = async () => {
     setLoading(true);
-  
+
     if (cart.length > 0) {
       setLoading(false);
       return;
@@ -208,8 +208,6 @@ const Cart = () => {
     }
   };
 
-  
-
   const calculateSubtotal = () => {
     return cart.reduce(
       (total, item) => total + item.count * item?.unitPrice,
@@ -221,13 +219,10 @@ const Cart = () => {
     return `${addressObj.firstName} ${addressObj.lastName}, ${addressObj.completeAddress}, ${addressObj.phoneNumber}, ${addressObj.emailAddress}`;
   };
 
-
   const afterCheckout = () => {
     PlaceOrder();
     //handleOpenPaymentDialog();
-  }
-
-
+  };
 
   const PlaceOrder = async () => {
     setButtonLoad(true);
@@ -239,7 +234,7 @@ const Cart = () => {
         deliveryDetails.phoneNo &&
         deliveryDetails.email &&
         deliveryDetails.postalcode;
-  
+
       if (!isDeliveryDetailsFilled) {
         dispatch(
           openSnackbar({
@@ -249,14 +244,23 @@ const Cart = () => {
         );
         return;
       }
-  
+      // if (deliveryDetails.postalcode !== 11270) {
+      //   dispatch(
+      //     openSnackbar({
+      //       message: "We are currently not delivering to your area",
+      //       severity: "error",
+      //     })
+      //   );
+      //   return;
+      // }
+
       const totalAmount = calculateSubtotal().toFixed(2);
       console.log("Total Amount:", totalAmount);
-  
+
       const userId = currentUser.id;
       console.log("User ID:", userId);
-  
-      const orderDetails = {  
+
+      const orderDetails = {
         userId: userId,
         fName: deliveryDetails.firstName,
         lName: deliveryDetails.lastName,
@@ -269,18 +273,35 @@ const Cart = () => {
         totalPrice: totalAmount,
         postalcode: deliveryDetails.postalcode,
       };
-  
+
       console.log("Order Details:", orderDetails);
-  
-      await createOrder(orderDetails);
-      dispatch(
-        openSnackbar({
-          message: "Order placed successfully",
-          severity: "success",
-        })
-      );
-      setButtonLoad(false);
-      setReload(!reload);
+
+      const response = await createOrder(orderDetails);
+      console.log("Order Response:", response);
+      if (response.status === 201) {
+        console.log(response.data.orderId);
+        for (let i = 0; i < cart.length; i++) {
+          const cartItem = cart[i];
+          const product = {
+            orderId: response.data.orderId,
+            productId: cartItem.productId,
+            pizzaSize: cartItem.pizzaSize,
+            count: cartItem.count,
+          };
+          console.log("Product:", product);
+          const res = await storeOrderProduct(product);
+          console.log("Product Response:", res);
+        }
+        dispatch(
+          openSnackbar({
+            message: "Order placed",
+            severity: "success",
+          })
+        );
+        
+        setButtonLoad(false);
+        setReload(!reload);
+      }
     } catch (err) {
       console.error("Error placing order:", err);
       dispatch(
@@ -344,20 +365,20 @@ const Cart = () => {
         throw new Error("Network response was not ok");
       }
       const userProfileArray = await response.json(); // Parse the JSON response
-  
+
       console.log("Full API Response:", userProfileArray);
-  
+
       // Check if the array has data
       if (userProfileArray.length > 0) {
         const userProfile = userProfileArray[0]; // Access the first element in the array
-  
+
         // Display the required fields in the console
         console.log("User Profile Data:");
         console.log(`First Name: ${userProfile.firstName}`);
         console.log(`Last Name: ${userProfile.lastName}`);
         console.log(`Email: ${userProfile.email}`);
         console.log(`Phone Number: ${userProfile.phoneNo}`);
-  
+
         return userProfile;
       } else {
         console.error("User profile array is empty");
@@ -368,7 +389,7 @@ const Cart = () => {
       return null;
     }
   };
-  
+
   // Example usage
   const autofillAddress = async () => {
     const userId = currentUser.id; // Replace with the actual user ID
@@ -567,12 +588,7 @@ const Cart = () => {
                     open={openPaymentDialog}
                     onClose={handleClosePaymentDialog}
                   />
-                  <Button
-                    text="Checkout"
-                    small 
-                    onClick={afterCheckout}
-                   
-                  />
+                  <Button text="Checkout" small onClick={afterCheckout} />
                 </Right>
               </Wrapper>
             )}
