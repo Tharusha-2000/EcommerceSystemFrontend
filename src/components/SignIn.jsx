@@ -59,7 +59,14 @@ const SignIn = ({ setOpenAuth }) => {
 
   const validateInputs = () => {
     if (!username || !password) {
-      alert("Please fill in all fields");
+      dispatch(
+        openSnackbar({
+          message: "Please fill all the fields",
+          severity: "error",
+        })
+       );
+       setLoading(false);
+       setButtonDisabled(false);
       return false;
     }
     return true;
