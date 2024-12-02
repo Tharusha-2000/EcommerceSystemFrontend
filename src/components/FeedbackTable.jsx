@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { getAllFeedback, getAllUsers, getAllOrders, getAllProducts, getallOrderDetails } from '../api'; // Import the API functions
 
 const FeedbackTable = () => {
@@ -147,6 +147,9 @@ const FeedbackTable = () => {
 
   return (
     <Box sx={{ width: '95%', margin: 'auto' }}>
+       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+           All Feedbacks
+          </Typography>
       {/* Feedback Table */}
       <MaterialReactTable
         columns={columns}
@@ -223,8 +226,9 @@ const AverageRatingTable = ({ feedbacks, products }) => {
 
   return (
     <Box sx={{ width: '95%', margin: 'auto', marginTop: '20px' }}>
-      {/* Average Rating Table
-      <h2>Ratings by product </h2>
+      {/* <Typography variant="h5" gutterBottom>
+        Ratings by Product
+      </Typography>
       <MaterialReactTable
         columns={columns}
         data={averageRatings}

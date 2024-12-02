@@ -15,7 +15,7 @@ function Feedbacks() {
       <Box sx={{ display: 'flex' }}>
         <AdminSidebar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <h1>All Feedbacks</h1>
+        
         <FeedbackTable />
         </Box>
       </Box>
