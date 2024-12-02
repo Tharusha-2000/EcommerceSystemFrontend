@@ -3,16 +3,20 @@ import Header from '../../components/common/Header';
 import Grid from '@mui/material/Grid';
 import React, { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography, useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import UpdateProduct from './UpdateProduct';
 import { getAllProducts, deleteProduct } from '../../api'; // Import the API functions
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const Products = () => {
   const [data, setData] = useState([]); // State to store product data
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
   const [selectedProduct, setSelectedProduct] = useState(null); // State to store selected product
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 600px)');
 
   // Fetch products data from the backend
   useEffect(() => {
@@ -25,7 +29,7 @@ const Products = () => {
         }
       } catch (error) {
         console.error('Error fetching products:', error);
-        alert('Failed to load products. Please try again.');
+        Swal.fire('Error', 'Failed to load products. Please try again.', 'error');
       }
     };
 
@@ -34,19 +38,30 @@ const Products = () => {
 
   // Function to handle product deletion
   const handleDelete = async (productId) => {
-    console.log(productId);
-    try {
-      const response = await deleteProduct(productId);
-      if (response.status === 200) {
-        alert('Product deleted successfully!');
-        // Fetch the updated list of products after deletion
-        const updatedProducts = await getAllProducts();
-        setData(updatedProducts.data);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this product!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await deleteProduct(productId);
+          if (response.status === 200) {
+            Swal.fire('Deleted!', 'Product has been deleted.', 'success');
+            // Fetch the updated list of products after deletion
+            const updatedProducts = await getAllProducts();
+            setData(updatedProducts.data);
+          }
+        } catch (error) {
+          console.error('Error deleting product:', error);
+          Swal.fire('Error', 'Failed to delete the product. Please try again.', 'error');
+        }
       }
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      alert('Failed to delete the product. Please try again.');
-    }
+    });
   };
 
   // Open modal with selected product data
@@ -79,18 +94,18 @@ const Products = () => {
       {
         accessorKey: 'productId',
         header: 'ID',
-        size: 50,
+        size: isMobile ? 20 : 40,
       },
       {
         accessorKey: 'imageUrl',
         header: 'Image',
-        size: 120,
+        size: isMobile ? 50 : 80,
         Cell: ({ row }) => (
           <Box display="flex" justifyContent="center">
             <img
               src={row.original.imageUrl}
               alt={row.original.name}
-              style={{ width: 75, height: 75, borderRadius: 8 }}
+              style={{ width: isMobile ? 30 : 50, height: isMobile ? 30 : 50, borderRadius: 8 }}
             />
           </Box>
         ),
@@ -98,17 +113,17 @@ const Products = () => {
       {
         accessorKey: 'name',
         header: 'Name',
-        size: 150,
+        size: isMobile ? 60 : 100,
       },
       {
         accessorKey: 'description',
         header: 'Description',
-        size: 300,
+        size: isMobile ? 100 : 150,
       },
       {
         accessorKey: 'categories',
         header: 'Categories',
-        size: 150,
+        size: isMobile ? 60 : 100,
         Cell: ({ row }) => {
           const categories = row.original.categories;
           return (
@@ -122,12 +137,12 @@ const Products = () => {
         accessorKey: 'isAvailable',
         header: 'Available',
         Cell: ({ cell }) => (cell.getValue() ? 'Yes' : 'No'),
-        size: 130,
+        size: isMobile ? 50 : 80,
       },
       {
         accessorKey: 'sizes',
         header: 'Sizes',
-        size: 130,
+        size: isMobile ? 60 : 80,
         Cell: ({ row }) => (
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             {row.original.sizes.map((size, index) => (
@@ -141,53 +156,52 @@ const Products = () => {
       {
         accessorKey: 'actions',
         header: 'Actions',
-        size: 150,
+        size: isMobile ? 30 : 50,
         Cell: ({ row }) => (
-          <Box display="flex" gap="8px">
-            <Button
-              variant="contained"
+          <Box display="flex" flexDirection="column" gap="4px">
+            <IconButton
               size="small"
               onClick={() => handleOpenModal(row.original)}
               sx={{
-                backgroundColor: '#ff3d00',
-                color: '#fff',
+                color: '#ff3d00',
                 '&:hover': {
-                  backgroundColor: '#d32f2f',
+                  color: '#d32f2f',
                 },
               }}
             >
-              Update
-            </Button>
-            <Button
-              variant="contained"
+              <EditIcon />
+            </IconButton>
+            <IconButton
               size="small"
               onClick={() => handleDelete(row.original.productId)}
               sx={{
-                backgroundColor: '#f44336',
-                color: '#fff',
+                color: '#f44336',
                 '&:hover': {
-                  backgroundColor: '#d32f2f',
+                  color: '#d32f2f',
                 },
               }}
             >
-              Delete
-            </Button>
+              <DeleteIcon />
+            </IconButton>
           </Box>
         ),
       },
     ],
-    []
+    [isMobile]
   );
 
   return (
     <Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
         <Header />
-        <Box height={60} />
+        <Box height={40}  /> {/* Reduced top padding */}
         <Box sx={{ display: 'flex' }}>
           <AdminSidebar />
-          <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
-            <Box sx={{ width: '90%', margin: 'auto' }}>
+          <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
+            <Box sx={{ width: '100%', margin: 'auto', padding: 0 }}>
+            <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+          All Products
+          </Typography>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Button
                   variant="contained"
@@ -210,8 +224,21 @@ const Products = () => {
                 enableRowVirtualization
                 muiTableBodyProps={{
                   sx: {
-                    height: '500px',
+                    height: '400px', // Reduce the height of the table
                     overflowY: 'auto',
+                    fontSize: '0.75rem', // Reduce font size
+                  },
+                }}
+                muiTableHeadCellProps={{
+                  sx: {
+                    padding: '2px', // Reduce padding in header cells
+                    fontSize: '0.75rem', // Reduce font size in header cells
+                  },
+                }}
+                muiTableBodyCellProps={{
+                  sx: {
+                    padding: '3px', // Reduce padding in body cells
+                    fontSize: '0.75rem', // Reduce font size in body cells
                   },
                 }}
                 state={{
