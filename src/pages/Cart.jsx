@@ -6,7 +6,7 @@ import {
   addToCart,
   deleteFromCart,
   getCartByUserId,
-  placeOrder,
+  createOrder,
   updateFromCart,
 } from "../api";
 import { useNavigate } from "react-router-dom";
@@ -221,55 +221,77 @@ const Cart = () => {
     return `${addressObj.firstName} ${addressObj.lastName}, ${addressObj.completeAddress}, ${addressObj.phoneNumber}, ${addressObj.emailAddress}`;
   };
 
-  // const PlaceOrder = async () => {
-  //   setButtonLoad(true);
-  //   try {
-  //     const isDeliveryDetailsFilled =
-  //       deliveryDetails.firstName &&
-  //       deliveryDetails.lastName &&
-  //       deliveryDetails.completeAddress &&
-  //       deliveryDetails.phoneNumber &&
-  //       deliveryDetails.emailAddress;
 
-  //     if (!isDeliveryDetailsFilled) {
-  //       // Show an error message or handle the situation where delivery details are incomplete
-  //       dispatch(
-  //         openSnackbar({
-  //           message: "Please fill in all required delivery details.",
-  //           severity: "error",
-  //         })
-  //       );
-  //       return;
-  //     }
+  const afterCheckout = () => {
+    PlaceOrder();
+    //handleOpenPaymentDialog();
+  }
 
-  //     // const token = localStorage.getItem("krist-app-token");
-  const totalAmount = calculateSubtotal().toFixed(2);
-  //     const orderDetails = {
-  //       products,
-  //       address: convertAddressToString(deliveryDetails),
-  //       totalAmount,
-  //     };
 
-  //     await placeOrder(token, orderDetails);
-  //     dispatch(
-  //       openSnackbar({
-  //         message: "Order placed successfully",
-  //         severity: "success",
-  //       })
-  //     );
-  //     setButtonLoad(false);
-  //     // Clear the cart and update the UI
-  //     setReload(!reload);
-  //   } catch (err) {
-  //     dispatch(
-  //       openSnackbar({
-  //         message: "Failed to place order. Please try again.",
-  //         severity: "error",
-  //       })
-  //     );
-  //     setButtonLoad(false);
-  //   }
-  // };
+
+  const PlaceOrder = async () => {
+    setButtonLoad(true);
+    try {
+      const isDeliveryDetailsFilled =
+        deliveryDetails.firstName &&
+        deliveryDetails.lastName &&
+        deliveryDetails.address &&
+        deliveryDetails.phoneNo &&
+        deliveryDetails.email &&
+        deliveryDetails.postalcode;
+  
+      if (!isDeliveryDetailsFilled) {
+        dispatch(
+          openSnackbar({
+            message: "Please fill in all required delivery details.",
+            severity: "error",
+          })
+        );
+        return;
+      }
+  
+      const totalAmount = calculateSubtotal().toFixed(2);
+      console.log("Total Amount:", totalAmount);
+  
+      const userId = currentUser.id;
+      console.log("User ID:", userId);
+  
+      const orderDetails = {  
+        userId: userId,
+        fName: deliveryDetails.firstName,
+        lName: deliveryDetails.lastName,
+        email: deliveryDetails.email,
+        phoneNum: deliveryDetails.phoneNo,
+        address: deliveryDetails.address,
+        paymentStatus: true,
+        orderStatus: "new",
+        date: new Date().toDateString(),
+        totalPrice: totalAmount,
+        postalcode: deliveryDetails.postalcode,
+      };
+  
+      console.log("Order Details:", orderDetails);
+  
+      await createOrder(orderDetails);
+      dispatch(
+        openSnackbar({
+          message: "Order placed successfully",
+          severity: "success",
+        })
+      );
+      setButtonLoad(false);
+      setReload(!reload);
+    } catch (err) {
+      console.error("Error placing order:", err);
+      dispatch(
+        openSnackbar({
+          message: "Failed to place order. Please try again.",
+          severity: "error",
+        })
+      );
+      setButtonLoad(false);
+    }
+  };
 
   useEffect(() => {
     getProducts();
@@ -315,25 +337,50 @@ const Cart = () => {
   };
 
   // Fetch user profile data from localStorage or API (simulate fetching)
-  const getUserProfile = () => {
-    // Replace this with an actual API call or retrieve from localStorage
-    return {
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      phoneNo: "+1234567890",
-      address: "123 Main St, City, Country, 12345",
-    };
+  const getUserProfile = async (userId) => {
+    try {
+      const response = await fetch(`https://localhost:8080/api/User/${userId}`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const userProfileArray = await response.json(); // Parse the JSON response
+  
+      console.log("Full API Response:", userProfileArray);
+  
+      // Check if the array has data
+      if (userProfileArray.length > 0) {
+        const userProfile = userProfileArray[0]; // Access the first element in the array
+  
+        // Display the required fields in the console
+        console.log("User Profile Data:");
+        console.log(`First Name: ${userProfile.firstName}`);
+        console.log(`Last Name: ${userProfile.lastName}`);
+        console.log(`Email: ${userProfile.email}`);
+        console.log(`Phone Number: ${userProfile.phoneNo}`);
+  
+        return userProfile;
+      } else {
+        console.error("User profile array is empty");
+        return null;
+      }
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+      return null;
+    }
   };
-
-  // Autofill the address fields from the user's profile data
-  const autofillAddress = () => {
-    const userProfile = getUserProfile();
-    setDeliveryDetails({
-      ...userProfile, // This will set all address details from profile to the form
-    });
+  
+  // Example usage
+  const autofillAddress = async () => {
+    const userId = currentUser.id; // Replace with the actual user ID
+    const userProfile = await getUserProfile(userId);
+    if (userProfile) {
+      setDeliveryDetails({
+        ...userProfile, // Autofill form details with the user profile
+      });
+    } else {
+      console.error("Failed to fetch user profile");
+    }
   };
-
   return (
     <Container>
       <Section>
@@ -522,8 +569,9 @@ const Cart = () => {
                   />
                   <Button
                     text="Checkout"
-                    small
-                    onClick={handleOpenPaymentDialog}
+                    small 
+                    onClick={afterCheckout}
+                   
                   />
                 </Right>
               </Wrapper>
