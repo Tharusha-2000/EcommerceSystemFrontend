@@ -132,6 +132,7 @@ const SignIn = ({ setOpenAuth }) => {
           value={username}
           handelChange={(e) => setUserName(e.target.value)}
         />
+
         
         <TextInput
           label="Password"
