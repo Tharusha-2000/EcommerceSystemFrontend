@@ -1,10 +1,38 @@
-import React from "react";
+import React, { useRef } from "react";
 import "./Contact.css";
 import { FaMapMarkerAlt, FaPhoneAlt, FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import { IoMdMail } from "react-icons/io";
 import { FaClock } from "react-icons/fa6";
+import emailjs from "@emailjs/browser";
 
 const Contact = () => {
+  const form = useRef();
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        "service_og7e34f", // Replace with your EmailJS Service ID
+        "template_753xbhi", // Replace with your EmailJS Template ID
+        form.current,
+        "a3lYensrYyYrAdK9n" // Replace with your EmailJS Public Key
+      )
+      .then(
+        (result) => {
+          console.log("Email successfully sent!", result.text);
+          alert("Your message has been sent successfully!");
+        },
+        (error) => {
+          console.log("Failed to send email:", error.text);
+          alert("There was an issue sending your message. Please try again.");
+        }
+      );
+
+    // Clear the form
+    e.target.reset();
+  };
+
   return (
     <div className="contact-page">
       {/* Overlay for transparency */}
@@ -12,50 +40,42 @@ const Contact = () => {
 
       {/* Main container with flex layout */}
       <div className="contact-content">
-
-        
         {/* Left-side section */}
         <div className="left-section">
-
-        <div className="contact-heading">
+          <div className="contact-heading">
             <h2>Get In Touch</h2>
-           
           </div>
           <div className="info-item">
-  {/* Centered content */}
-  <div className="info-row">
-    <FaMapMarkerAlt size={30} className="info-icon" />
-    <p className="info-title">Location</p>
-  </div>
-  <p className="info-details">No 121, Kandy Roday, Kadawtha</p>
-</div>
+            <div className="info-row">
+              <FaMapMarkerAlt size={30} className="info-icon" />
+              <p className="info-title">Location</p>
+            </div>
+            <p className="info-details">No 121, Kandy Roday, Kadawtha</p>
+          </div>
 
-<div className="info-item">
-  <div className="info-row">
-    <FaPhoneAlt size={30} className="info-icon" />
-    <p className="info-title">Phone</p>
-  </div>
-  <p className="info-details">0332273580</p>
-</div>
+          <div className="info-item">
+            <div className="info-row">
+              <FaPhoneAlt size={30} className="info-icon" />
+              <p className="info-title">Phone</p>
+            </div>
+            <p className="info-details">0332273580</p>
+          </div>
 
-<div className="info-item">
-  {/* Icon on the left */}
-  <div className="info-row">
-    <IoMdMail size={30} className="info-icon" />
-    <p className="info-title">Email</p>
-  </div>
-  <p className="info-details">mossamelt@gmail.com</p>
-</div>
+          <div className="info-item">
+            <div className="info-row">
+              <IoMdMail size={30} className="info-icon" />
+              <p className="info-title">Email</p>
+            </div>
+            <p className="info-details">mossamelt@gmail.com</p>
+          </div>
 
-<div className="info-item">
-  <div className="info-row">
-    <FaClock size={30} className="info-icon" />
-    <p className="info-title">Open Houres</p>
-  </div>
-  <p className="info-details">9.00 am - 12.00 pm</p>
-</div>
-
-
+          <div className="info-item">
+            <div className="info-row">
+              <FaClock size={30} className="info-icon" />
+              <p className="info-title">Open Hours</p>
+            </div>
+            <p className="info-details">9.00 am - 12.00 pm</p>
+          </div>
 
           <div className="social-box">
             <h3>Follow Us</h3>
@@ -82,10 +102,10 @@ const Contact = () => {
             </p>
           </div>
           <div className="contact-form">
-            <form>
-              <input type="text" placeholder="Your Name" required />
-              <input type="email" placeholder="Your Email" required />
-              <textarea placeholder="Message" rows="4" required></textarea>
+            <form ref={form} onSubmit={sendEmail}>
+              <input type="text" name="user_name" placeholder="Your Name" required />
+              <input type="email" name="user_email" placeholder="Your Email" required />
+              <textarea name="message" placeholder="Message" rows="4" required></textarea>
               <button type="submit">Send</button>
             </form>
           </div>
