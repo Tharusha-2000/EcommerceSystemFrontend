@@ -42,7 +42,7 @@ const TextButton = styled.div`
 
 const Logo = styled.img`
   position: absolute;
-  top: 100px;
+  top: 10px;
   left: 180px;
   z-index: 10;
 `;
