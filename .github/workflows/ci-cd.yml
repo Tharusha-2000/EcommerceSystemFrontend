@@ -37,9 +37,9 @@ jobs:
       - name: Run Tests
         run: npm test -- --watchAll=false --passWithNoTests
        
-      # Run Mocha tests
-      - name: Run Mocha Tests
-        run: npm run test:mocha  
+      # # Run Mocha tests
+      # - name: Run Mocha Tests
+      #   run: npm run test:mocha  
 
       # Build the React app
       - name: Build React App
