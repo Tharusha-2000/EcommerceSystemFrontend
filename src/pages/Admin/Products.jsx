@@ -34,9 +34,9 @@ const Products = () => {
     };
 
     fetchProducts();
-  }, []); // Empty dependency array means this effect runs only once on mount
+  }, []); 
 
-  // Function to handle product deletion
+ 
   const handleDelete = async (productId) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -156,7 +156,7 @@ const Products = () => {
       {
         accessorKey: 'actions',
         header: 'Actions',
-        size: isMobile ? 30 : 50,
+        size: isMobile ? 50 : 50,
         Cell: ({ row }) => (
           <Box display="flex" flexDirection="column" gap="4px">
             <IconButton
