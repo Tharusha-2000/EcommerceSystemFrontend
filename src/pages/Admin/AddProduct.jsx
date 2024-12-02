@@ -18,6 +18,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../../firebase.js";
 import { createProduct } from "../../api"; // Import the createProduct function
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 function AddProduct() {
   const [sizePriceList, setSizePriceList] = useState([{ size: "", price: "" }]);
@@ -29,7 +30,6 @@ function AddProduct() {
 
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [imageUrls, setImageUrls] = useState([]);
   const [errors, setErrors] = useState({});
 
   const selectedSizes = sizePriceList.map((row) => row.size);
@@ -122,7 +122,7 @@ function AddProduct() {
     try {
       const response = await createProduct(productData); // Use the createProduct function
       console.log("Product added successfully:", response.data);
-      alert("Product added successfully!");
+      Swal.fire('Success', 'Product added successfully!', 'success');
 
       // Reset form
       setProductName("");
@@ -134,12 +134,13 @@ function AddProduct() {
       setErrors({});
     } catch (error) {
       console.error("Error adding product:", error);
-      alert("An error occurred while adding the product.");
+      Swal.fire('Error', 'An error occurred while adding the product.', 'error');
     }
   };
 
   const upload = () => {
     if (!image) {
+      alert('Please select an image to upload.');
       return;
     }
     const imagePath = `product/${image.name + uuidv4()}`;
@@ -156,6 +157,7 @@ function AddProduct() {
       },
       (err) => {
         console.log("error while uploading file", err);
+        alert('Error uploading image.');
       },
       () => {
         setTimeout(() => {
@@ -163,6 +165,7 @@ function AddProduct() {
         }, 2000);
         getDownloadURL(uploadFile.snapshot.ref).then((downloadURL) => {
           setImageUrl(downloadURL);
+         
         });
         setImage(null);
       }
