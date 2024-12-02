@@ -21,7 +21,7 @@ const API4 = axios.create({
 
 //auth
 const API1 = axios.create({
-  baseURL: "http://localhost:7087/api/",
+  baseURL: "https://localhost:7087/api/",
 });
 
 
@@ -82,7 +82,9 @@ export const deleteProduct = async (productId) => {
     throw new Error(error.response?.data?.message || "Error deleting product");
   }
 };
-//Cart
+
+
+
 //Cart
 // export const getCart = async (token) =>
 //   await API.get(`/user/cart`, {
@@ -101,33 +103,19 @@ export const addToCart = async ( data) => await API3.post(`Cart/`, data);
 //   });
 
 export const updateFromCart = async ({ cartId, count }) => {
-  try {
     const data = { count: count > 0 ? count : 0 }; // If count is <= 0, treat as removal (count = 0)
-    const response = await API3.put(
-      `Cart/${cartId}?count=${count}`
-    );
-    console.log(response.data);
+    const response = await API3.put(`Cart/${cartId}?count=${count}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Error updating cart");
-  }
+ 
 };
 
 export const updateItemOnCart = async (data) =>
   await API3.put(`Cart/${data.cartId}`, data);
 
 export const deleteFromCart = async (cartId) => {
-  try {
-    console.log(cartId);
-    const response = await API3.delete(
-      `Cart/${cartId}`
-    );
+    const response = await API3.delete(`Cart/${cartId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Error deleting from cart"
-    );
-  }
+ 
 };
 
 
