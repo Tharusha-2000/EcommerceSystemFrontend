@@ -5,7 +5,8 @@ const PrivateRoute = ({ children }) => {
   const { currentUser } = useSelector((state) => state.user);
   console.log(currentUser);
   if (!currentUser) {
-    return <Navigate to="/" />;
+    //return <Navigate to="/" />;
+    return children;
   }
 
   // Check if the user is logged in and has the "admin" role
