@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import AdminSidebar from "../../components/common/AdminSidebar";
 import Header from "../../components/common/Header";
 import {
@@ -18,6 +17,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../../firebase.js";
+import { createProduct } from "../../api"; // Import the createProduct function
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 function AddProduct() {
   const [sizePriceList, setSizePriceList] = useState([{ size: "", price: "" }]);
@@ -25,13 +26,11 @@ function AddProduct() {
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [isAvailable, setIsAvailable] = useState(false);
+  const [categories, setCategories] = useState(""); // New state for categories
 
-  // Image upload
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [imageUrls, setImageUrls] = useState([]);
-
-  const [errors, setErrors] = useState({}); // State to track form errors
+  const [errors, setErrors] = useState({});
 
   const selectedSizes = sizePriceList.map((row) => row.size);
 
@@ -58,6 +57,10 @@ function AddProduct() {
         validationErrors[`price_${index}`] = "Price is required";
       }
     });
+
+    if (!categories.trim()) {
+      validationErrors.categories = "Categories are required";
+    }
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
@@ -89,10 +92,8 @@ function AddProduct() {
       }
     }
 
-    // Set the updated value for size or price
     updatedList[index][field] = value;
 
-    // Clear the error if the field is valid
     if (field === "size" && value.trim()) {
       const updatedErrors = { ...errors };
       delete updatedErrors[`size_${index}`];
@@ -108,21 +109,20 @@ function AddProduct() {
       return;
     }
 
+    // Categories should be stored as an array (assuming backend stores as an array of strings)
     const productData = {
       name: productName,
       description: description,
       imageUrl: imageUrl,
       isAvailable: isAvailable,
       sizes: sizePriceList,
+      categories: categories.split(",").map((cat) => cat.trim()), // Convert categories string to array
     };
 
     try {
-      const response = await axios.post(
-        "http://your-backend-url/api/products",
-        productData
-      );
+      const response = await createProduct(productData); // Use the createProduct function
       console.log("Product added successfully:", response.data);
-      alert("Product added successfully!");
+      Swal.fire('Success', 'Product added successfully!', 'success');
 
       // Reset form
       setProductName("");
@@ -130,18 +130,19 @@ function AddProduct() {
       setImageUrl("");
       setIsAvailable(false);
       setSizePriceList([{ size: "", price: "" }]);
+      setCategories(""); // Reset categories
       setErrors({});
     } catch (error) {
       console.error("Error adding product:", error);
-      alert("An error occurred while adding the product.");
+      Swal.fire('Error', 'An error occurred while adding the product.', 'error');
     }
   };
 
   const upload = () => {
     if (!image) {
+      alert('Please select an image to upload.');
       return;
     }
-    console.log(">>>");
     const imagePath = `product/${image.name + uuidv4()}`;
     const imageRef = ref(storage, imagePath);
     const uploadFile = uploadBytesResumable(imageRef, image);
@@ -156,20 +157,15 @@ function AddProduct() {
       },
       (err) => {
         console.log("error while uploading file", err);
+        alert('Error uploading image.');
       },
       () => {
         setTimeout(() => {
           setProgress(0);
         }, 2000);
         getDownloadURL(uploadFile.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-
-          console.log(imagePath);
-          // Save the path of the uploaded image
-
           setImageUrl(downloadURL);
-          console.log(downloadURL);
-          console.log(imageUrl);
+         
         });
         setImage(null);
       }
@@ -241,12 +237,12 @@ function AddProduct() {
                         <Button variant="contained" onClick={upload}>
                           Upload Image
                         </Button>
-                        { progress > 0 &&
+                        {progress > 0 && (
                           <div>
                             <progress value={progress} max="100" />
                             {progress}%
                           </div>
-                        }
+                        )}
                       </div>
                     </Box>
                   </Box>
@@ -285,6 +281,18 @@ function AddProduct() {
                   error={!!errors.imageUrl}
                   helperText={errors.imageUrl}
                   disabled={!description.trim()} // Disabled until Description is filled
+                  sx={{ width: "400em" }}
+                />
+
+                {/* Categories Input */}
+                <TextField
+                  id="categories"
+                  label="Categories (comma separated)"
+                  variant="outlined"
+                  value={categories}
+                  onChange={(e) => setCategories(e.target.value)}
+                  error={!!errors.categories}
+                  helperText={errors.categories}
                   sx={{ width: "400em" }}
                 />
 
@@ -411,6 +419,7 @@ function AddProduct() {
                       setImageUrl("");
                       setIsAvailable(false);
                       setSizePriceList([{ size: "", price: "" }]);
+                      setCategories(""); // Reset categories
                       setErrors({});
                     }}
                   >

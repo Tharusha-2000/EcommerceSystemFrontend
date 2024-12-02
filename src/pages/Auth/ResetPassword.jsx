@@ -147,9 +147,7 @@ const ResetPassword = () => {
           />
         </FormControl>
         <Button
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          text="Reset Password" type="primary"
           onClick={handleSubmit}
         >
           Create Password

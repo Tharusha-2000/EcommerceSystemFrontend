@@ -1,0 +1,55 @@
+name: React CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the main branch
+      - dev2 
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to the main branch
+      - dev2 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]  # Specify the Node.js versions to test against
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}  # Use the matrix value
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Run tests
+      - name: Run Tests
+        run: npm test -- --watchAll=false --passWithNoTests
+       
+      # # Run Mocha tests
+      # - name: Run Mocha Tests
+      #   run: npm run test:mocha  
+
+      # Build the React app
+      - name: Build React App
+        run: npm run build
+
+      # Deploy to GitHub Pages (Optional)
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+

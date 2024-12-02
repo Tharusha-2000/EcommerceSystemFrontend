@@ -23,15 +23,7 @@ const MyOrders = ({ userId }) => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      Swal.fire({
-        title: "Loading...",
-        text: "Please wait while we load your orders.",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
+      
       try {
         const response = await fetchOrdersByUserId(userId);
         const userOrders = response.data
@@ -49,12 +41,7 @@ const MyOrders = ({ userId }) => {
         setOrders(userOrders);
         Swal.close();
       } catch (error) {
-        console.error("Error fetching orders:", error);
-        Swal.fire(
-          "Error",
-          "Failed to load orders. Please try again later.",
-          "error"
-        );
+        
       }
     };
 

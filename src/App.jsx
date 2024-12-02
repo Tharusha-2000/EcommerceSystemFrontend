@@ -14,14 +14,14 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Customers from "./pages/Admin/Customers";
 import Orders from "./pages/Admin/Orders";
 import AddProduct from "./pages/Admin/AddProduct";
-import Reports from "./pages/Admin/Reports";
-import Settings from "./pages/Admin/Settings";
 import PrivateRoute from "./components/PrivateRoute";
 import { Snackbar } from "@mui/material";
 import { closeSnackbar } from "./redux/reducers/SnackbarSlice";
 import Products from "./pages/Admin/Products";
 import ForgetPassword from "./pages/Auth/ForgetPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
+import Feedbacks from "./pages/Admin/Feedbacks";
+import Contact from "./pages/Contact";
 
 const Container = styled.div``;
 
@@ -51,7 +51,8 @@ function App() {
             <Route path="/forgetPassword" exact element={<ForgetPassword />} />
             <Route path="/reset-password" exact element={<ResetPassword/>} />
             <Route path="/orders" exact element={<Order />} />
-
+            <Route path="/contact" exact element={<Contact />} />
+            
             <Route
               path="/admin/dashboard"
               exact
@@ -98,20 +99,11 @@ function App() {
               }
             />
             <Route
-              path="/admin/reports"
+              path="/admin/feedbacks"
               exact
               element={
                 <PrivateRoute>
-                  <Reports />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/settings"
-              exact
-              element={
-                <PrivateRoute>
-                  <Settings />
+                <Feedbacks/>
                 </PrivateRoute>
               }
             />
