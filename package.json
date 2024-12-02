@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "test": "react-scripts test --watchAll=false",
+    "test:mocha": "mocha tests/*.test.js",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,9 +20,11 @@
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
+    "chromedriver": "^131.0.1",
     "firebase": "^11.0.2",
     "jwt-decode": "^4.0.0",
     "material-react-table": "^3.0.1",
+    "mocha": "^10.8.2",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -31,6 +34,7 @@
     "react-toastify": "^10.0.6",
     "recharts": "^2.13.3",
     "redux-persist": "^6.0.0",
+    "selenium-webdriver": "^4.27.0",
     "styled-components": "^6.1.8",
     "sweetalert2": "^11.14.5",
     "uuid": "^11.0.3",
