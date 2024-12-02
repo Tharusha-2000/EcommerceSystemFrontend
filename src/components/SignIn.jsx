@@ -42,7 +42,7 @@ const TextButton = styled.div`
 
 const Logo = styled.img`
   position: absolute;
-  top: 100px;
+  top: 10px;
   left: 180px;
   z-index: 10;
 `;
@@ -132,6 +132,8 @@ const SignIn = ({ setOpenAuth }) => {
           value={username}
           handelChange={(e) => setUserName(e.target.value)}
         />
+
+        
         <TextInput
           label="Password"
           placeholder="Enter your password"
