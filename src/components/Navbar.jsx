@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link as LinkR, NavLink } from "react-router-dom";
-import LogoImg from "../utils/Images/Logo.png";
+import LogoImg from "../utils/Images/Logo1.png";
 import {
   FavoriteBorder,
   MenuRounded,
@@ -263,6 +263,11 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
                <NameTag >
                  {currentUser?.FirstName ? currentUser.FirstName : ''}
               </NameTag>
+
+                {currentUser.role === 'Admin' && (
+                  <TextButton onClick={() => navigate('/admin/dashboard')}>Admin</TextButton>
+                 )}
+
               <TextButton onClick={handleLogout}>Logout</TextButton>
             </>
           ) : (

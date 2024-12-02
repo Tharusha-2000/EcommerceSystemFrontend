@@ -21,6 +21,7 @@ import Products from "./pages/Admin/Products";
 import ForgetPassword from "./pages/Auth/ForgetPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import Feedbacks from "./pages/Admin/Feedbacks";
+import Contact from "./pages/Contact";
 
 const Container = styled.div``;
 
@@ -50,7 +51,8 @@ function App() {
             <Route path="/forgetPassword" exact element={<ForgetPassword />} />
             <Route path="/reset-password" exact element={<ResetPassword/>} />
             <Route path="/orders" exact element={<Order />} />
-
+            <Route path="/contact" exact element={<Contact />} />
+            
             <Route
               path="/admin/dashboard"
               exact
