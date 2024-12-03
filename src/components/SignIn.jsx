@@ -110,9 +110,10 @@ const SignIn = ({ setOpenAuth }) => {
         .catch((err) => {
           setLoading(false);
           setButtonDisabled(false);
+          console.log(err.response);
           dispatch(
             openSnackbar({
-              message:  err.response,
+              message:  err.response.data,
               severity: "error",
             })
           );
