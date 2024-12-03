@@ -13,6 +13,7 @@ const chrome = require('selenium-webdriver/chrome');
     await driver.get('http://localhost:5173/');
     console.log("Navigated to home page.");
 
+    
     // Wait for the "Sign In" button on the home page and click it
     console.log("Waiting for sign-in button...");
     const homeSignInButtonSelector = By.className('sc-blHHSb Rsved'); // Adjust based on your button class

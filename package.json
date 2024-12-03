@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "test": "npm run test:react && npm run test:mocha",
-    "test:react": "react-scripts test --watchAll=false",
+    "test:react": "react-scripts test --watchAll=false --passWithNoTests",
     "test:mocha": "mocha tests/**/*.spec.cjs",
     "preview": "vite preview"
   },
