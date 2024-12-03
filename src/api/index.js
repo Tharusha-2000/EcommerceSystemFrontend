@@ -74,14 +74,12 @@ export const updateProduct = async (id, productData) =>
   await API2.put(`Product/UpdateProductAsync/${id}`, productData);
 
 export const deleteProduct = async (productId) => {
-  try {
     const response = await API2.delete(`Product/${productId}`);
     return response;
-  } catch (error) {
-    console.error("Error deleting product:", error);
-    throw new Error(error.response?.data?.message || "Error deleting product");
-  }
+ 
 };
+
+
 //Cart
 //Cart
 // export const getCart = async (token) =>
