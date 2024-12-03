@@ -1,269 +1,117 @@
-import React, { useRef, useState } from "react";
-import styled from "styled-components";
-import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
-// import FF from '../utils/Images/FF.png';
-// import { contact } from "../api/";
-
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column; /* Stack form and icons vertically on mobile */
-  justify-content: center;
-  align-items: center; /* Center vertically */
-  /* Background Image with smooth gradient overlay */
-  background: linear-gradient(
-      to bottom, 
-      rgba(255, 255, 255, 0.5),  /* Start with a white ash color */
-      rgba(255, 255, 255, 0.5)   /* Gradually fade to transparent */
-    ),
-  
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
-  padding: 40px;
-  @media (max-width: 960px) {
-    padding: 20px;
-  }
-`;
-
-const Wrapper = styled.div`
-
-  display: flex;
-  
-  flex-direction: row; /* Row direction on desktop */
-  align-items: flex-start; /* Align items to the top */
-  width: 100%;
-  max-width: 1400px;
-  gap: 20px;
-  @media (max-width: 600px) {
-    flex-direction: column; /* Column direction on mobile */
-    align-items: center; /* Center items on mobile */
-  }
-`;
-
-
-
-const RightColumn = styled.div`
-  display: flex;
-  flex-direction: column; /* Stack contact info and social icons vertically */
-  justify-content: center;
-  align-items: center;
-  flex: 1; /* Allow it to grow */
-  margin-top: 30px; /* Move the content a bit lower */
-  margin-right: 50px;
-  @media (max-width: 600px) {
-    width: 100%; /* Full width on mobile */
-    margin-top: 20px; /* Add space above social icons on mobile */
-  }
-
-`;
-
-const LeftColumn = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 2; /* Allow it to grow more */
-  @media (max-width: 600px) {
-    width: 100%; /* Full width on mobile */
-  }
-`;
-
-const SocialIcons = styled.div`
-margin-top: 10px;
-  display: flex;
-  justify-content: center; /* Center icons horizontally */
-  gap: 20px;
-
-`;
-
-const SocialIcon = styled.a`
-  font-size: 32px;
-  color: #3b5998; /* Default color for Facebook */
-  transition: color 0.3s;
-  
-  &:hover {
-    color: #1d3a91; /* Darker shade on hover */
-  }
-
-  &:nth-child(2) {
-    color: #e4405f; /* Instagram color */
-    
-    &:hover {
-      color: #d82c4d; /* Darker Instagram shade on hover */
-    }
-  }
-`;
-
-const ContactForm = styled.form`
-  width: 100%;
-  max-width: 400px; /* Reduced size */
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(
-    to bottom, 
-    rgba(255, 255, 255, 0.9),  /* Start with a white ash color */
-    rgba(255, 255, 255, 0.9)   /* Gradually fade to transparent */
-  );
-
-  border: 1px solid rgba(0, 0, 0, 0.125); /* Changed border color to light gray */
-  padding: 32px;
-  border-radius: 22px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px; /* Changed box shadow color to black */
-  gap: 12px;
-  @media (max-width: 960px) {
-    background: linear-gradient(
-        to bottom, 
-        rgba(255, 255, 255, 0.6),  /* Start with a white ash color */
-        rgba(255, 255, 255, 0.6)   /* Gradually fade to transparent */
-      );
-   
-  }
-
-
-`;
-
-const ContactTitle = styled.div`
-  font-size: 60px;
-  margin-bottom: 16px;
-  color:#000;
-  font-weight: 600;
-  color: ${({ theme }) => theme.text_primary};
-  @media (max-width: 960px) {
-    font-size: 26px;
-   
-  }
- 
-`;
-
-const ContactInput = styled.input`
-  background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.text_secondary + 50};
-  outline: none;
-  font-size: 16px;
-  color: ${({ theme }) => theme.text_primary};
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  &:focus {
-    border: 1px solid ${({ theme }) => theme.primary};
-  }
-`;
-
-const ContactInputMessage = styled.textarea`
-  background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.text_secondary + 50};
-  outline: none;
-  font-size: 16px;
-  color: ${({ theme }) => theme.text_primary};
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  &:focus {
-    border: 1px solid ${({ theme }) => theme.primary};
-  }
-`;
-
-const ContactButton = styled.input`
-  width: 100%;
-  text-decoration: none;
-  text-align: center;
-  background: linear-gradient(225deg, hsla(271, 100%, 50%, 1) 0%, hsla(294, 100%, 50%, 1) 100%);
-  padding: 13px 16px;
-  border-radius: 12px;
-  border: none;
-  color: white;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-`;
-
-const ContactInfo = styled.div`
-font-size: 21px;
-  text-align: center;
-  margin-bottom: 20px; /* Space between contact info and social icons */
-  color: #000;
-  @media (max-width: 960px) {
-    font-size: 16px;
-    margin-bottom: 10px; /* Less space on mobile */
-  }
-`;
+import React, { useRef } from "react";
+import "./Contact.css";
+import { FaMapMarkerAlt, FaPhoneAlt, FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import { IoMdMail } from "react-icons/io";
+import { FaClock } from "react-icons/fa6";
+import emailjs from "@emailjs/browser";
 
 const Contact = () => {
   const form = useRef();
-  const [from_name, setFromName] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
-      e.preventDefault();
-    const formData = { from_name, subject, message };
-    try{
-    //   const res = await contact( formData);
-      // console.log(res); 
-    }catch(err) {
-      alert(err);
-    }
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        "service_og7e34f", // Replace with your EmailJS Service ID
+        "template_753xbhi", // Replace with your EmailJS Template ID
+        form.current,
+        "a3lYensrYyYrAdK9n" // Replace with your EmailJS Public Key
+      )
+      .then(
+        (result) => {
+          console.log("Email successfully sent!", result.text);
+          alert("Your message has been sent successfully!");
+        },
+        (error) => {
+          console.log("Failed to send email:", error.text);
+          alert("There was an issue sending your message. Please try again.");
+        }
+      );
+
+    // Clear the form
+    e.target.reset();
   };
 
-
   return (
-    <Container>
-      <Wrapper>
-        {/* Left column for contact information and social media icons */}
-        <LeftColumn>
-        <ContactForm ref={form} onSubmit={handleSubmit}>
-           
-            <ContactInput
-              placeholder="Your Name"
-              name="from_name"
-              value={from_name}
-              onChange={(e) => setFromName(e.target.value)}
-            />
-            <ContactInput
-              placeholder="Subject"
-              name="subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
-            <ContactInputMessage
-              placeholder="Message"
-              name="message"
-              rows={4}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
+    <div className="contact-page">
+      {/* Overlay for transparency */}
+      <div className="contact-overlay"></div>
 
-            <ContactButton type="submit" value="Send" />
-          </ContactForm>
-        
-        </LeftColumn>
+      {/* Main container with flex layout */}
+      <div className="contact-content">
+        {/* Left-side section */}
+        <div className="left-section">
+          <div className="contact-heading">
+            <h2>Get In Touch</h2>
+          </div>
+          <div className="info-item">
+            <div className="info-row">
+              <FaMapMarkerAlt size={30} className="info-icon" />
+              <p className="info-title">Location</p>
+            </div>
+            <p className="info-details">No 121, Galle Road, Moratuwa</p>
+          </div>
 
-        {/* Right column for form */}
-        <RightColumn>
-         
+          <div className="info-item">
+            <div className="info-row">
+              <FaPhoneAlt size={30} className="info-icon" />
+              <p className="info-title">Phone</p>
+            </div>
+            <p className="info-details">0332273580</p>
+          </div>
 
-        <ContactTitle>Contact Us</ContactTitle>
+          <div className="info-item">
+            <div className="info-row">
+              <IoMdMail size={30} className="info-icon" />
+              <p className="info-title">Email</p>
+            </div>
+            <a href="mailto:brdilshanjayaweera@gmail.com" className="info-details">mossamelt@gmail.com</a>
+          </div>
 
-        <ContactInfo>
-            <div>For questions, technical assistance, or collaboration opportunities:</div>
-            
-          </ContactInfo>
+          <div className="info-item">
+            <div className="info-row">
+              <FaClock size={30} className="info-icon" />
+              <p className="info-title">Open Hours</p>
+            </div>
+            <p className="info-details">9.00 am - 12.00 pm</p>
+          </div>
 
-          <SocialIcons>
-            <SocialIcon href="https://wa.me/1234567890" target="_blank">
-             <FaWhatsapp />
-            </SocialIcon>
-            <SocialIcon href="https://www.facebook.com" target="_blank">
-              <FaFacebookF />
-            </SocialIcon>
-            <SocialIcon href="https://www.instagram.com" target="_blank">
-              <FaInstagram />
-            </SocialIcon>
-          </SocialIcons>
-        </RightColumn>
-      </Wrapper>
-    </Container>
+          <div className="social-box">
+            <h3>Follow Us</h3>
+            <div className="social-icons">
+              <a href="https://www.facebook.com/ravindu.dilshan.560/" target="_blank" rel="noopener noreferrer">
+                <FaFacebook size={30} style={{ color: "#4267B2", marginRight: "15px" }} />
+              </a>
+              <a href="https://www.instagram.com/ravindu_jayaweera.1/" target="_blank" rel="noopener noreferrer">
+                <FaInstagram size={30} style={{ color: "#E1306C", marginRight: "15px" }} />
+              </a>
+              <a href="https://twitter.com/fake-profile" target="_blank" rel="noopener noreferrer">
+                <FaTwitter size={30} style={{ color: "#1DA1F2", marginRight: "15px" }} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Contact form container */}
+        <div className="contact-container">
+          <div className="contact-heading">
+            <h2>Contact Us</h2>
+            <p>
+              For inquiries, order issues, or collaboration opportunities, reach out to us!
+            </p>
+          </div>
+          <div className="contact-form">
+            <form ref={form} onSubmit={sendEmail}>
+              <input type="text" name="user_name" placeholder="Your Name" required />
+              <input type="email" name="user_email" placeholder="Your Email" required />
+              <textarea name="message" placeholder="Message" rows="4" required></textarea>
+              <button type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

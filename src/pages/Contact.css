@@ -1,0 +1,156 @@
+.contact-page {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url("../utils/Images/Header.png") no-repeat center center / cover;
+  }
+  
+  .contact-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black overlay with 50% transparency */
+    z-index: 1;
+  }
+  
+  .contact-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 900px;
+    width: 90%;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+  }
+  
+  /* Left-side section */
+  .left-section {
+    flex: 1;
+    max-width: 40%;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    
+  }
+  .info-item {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers the icon and title horizontally */
+    gap: 10px; /* Adds spacing between the icon and title */
+  }
+  
+  .info-icon {
+    color: #18151595;
+    margin-bottom: 5px;
+  }
+  
+  .info-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0;
+    color: #18151595;
+    
+  }
+  
+  .info-details {
+    font-size: 1rem;
+    color: #18151595;
+    margin: 0;
+  }
+  
+  
+  
+  .info-item p {
+    font-size: 1rem;
+    color: #18151595;
+    margin: 0px;
+  }
+  
+  .social-box {
+    display: flex;
+    flex-direction: column; /* Align the heading and icons vertically */
+    justify-content: center; /* Centers content vertically in the parent */
+    align-items: center; /* Centers content horizontally */
+    margin: 0 auto; /* Centers the entire box horizontally */
+  }
+  
+  .social-box h3 {
+    margin-bottom: 5px; /* Space between heading and icons */
+    font-size: 14px; /* Optional: Adjust font size for the heading */
+  }
+  
+  .social-icons a {
+    margin: 0 5px; /* Spacing between icons */
+    size: 5px;
+  }
+  
+  .social-icons a:hover {
+    transform: scale(1.2); /* Optional: Slight zoom effect on hover */
+    transition: transform 0.2s ease;
+  }
+  
+  /* Contact form container */
+  .contact-container {
+    flex: 1;
+    max-width: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .contact-heading {
+    text-align: center;
+    margin-bottom: 20px;
+    
+  }
+  
+  .contact-heading h2 {
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  .contact-heading p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .contact-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #d52710; /* Button color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .contact-form button:hover {
+    background-color: #f11919e1;
+  }
