@@ -25,7 +25,7 @@
   align-items: flex-start;
   max-width: 900px;
   width: 90%;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.5);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -38,7 +38,8 @@
   padding: 20px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  
 }
 .info-item {
   text-align: center;
@@ -53,7 +54,7 @@
 }
 
 .info-icon {
-  color: #333;
+  color: #18151595;
   margin-bottom: 5px;
 }
 
@@ -61,11 +62,13 @@
   font-weight: bold;
   font-size: 1.1rem;
   margin: 0;
+  color: #18151595;
+  
 }
 
 .info-details {
   font-size: 1rem;
-  color: #555;
+  color: #18151595;
   margin: 0;
 }
 
@@ -73,7 +76,7 @@
 
 .info-item p {
   font-size: 1rem;
-  color: #444;
+  color: #18151595;
   margin: 0px;
 }
 
@@ -92,7 +95,7 @@
 
 .social-icons a {
   margin: 0 5px; /* Spacing between icons */
-  size: 10px;
+  size: 5px;
 }
 
 .social-icons a:hover {
@@ -104,7 +107,7 @@
 .contact-container {
   flex: 1;
   max-width: 50%;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -113,6 +116,7 @@
 .contact-heading {
   text-align: center;
   margin-bottom: 20px;
+  
 }
 
 .contact-heading h2 {
@@ -138,14 +142,15 @@
 .contact-form button {
   width: 100%;
   padding: 10px;
-  background-color: #ff5733; /* Button color */
+  background-color: #d52710; /* Button color */
   color: #fff;
   border: none;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .contact-form button:hover {
-  background-color: #ff7849;
+  background-color: #f11919e1;
 }

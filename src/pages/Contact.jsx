@@ -66,7 +66,7 @@ const Contact = () => {
               <IoMdMail size={30} className="info-icon" />
               <p className="info-title">Email</p>
             </div>
-            <p className="info-details">mossamelt@gmail.com</p>
+            <a href="mailto:brdilshanjayaweera@gmail.com" className="info-details">mossamelt@gmail.com</a>
           </div>
 
           <div className="info-item">
@@ -80,13 +80,13 @@ const Contact = () => {
           <div className="social-box">
             <h3>Follow Us</h3>
             <div className="social-icons">
-              <a href="https://facebook.com/your-page" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.facebook.com/ravindu.dilshan.560/" target="_blank" rel="noopener noreferrer">
                 <FaFacebook size={30} style={{ color: "#4267B2", marginRight: "15px" }} />
               </a>
-              <a href="https://instagram.com/your-page" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/ravindu_jayaweera.1/" target="_blank" rel="noopener noreferrer">
                 <FaInstagram size={30} style={{ color: "#E1306C", marginRight: "15px" }} />
               </a>
-              <a href="https://twitter.com/your-page" target="_blank" rel="noopener noreferrer">
+              <a href="https://twitter.com/fake-profile" target="_blank" rel="noopener noreferrer">
                 <FaTwitter size={30} style={{ color: "#1DA1F2", marginRight: "15px" }} />
               </a>
             </div>
