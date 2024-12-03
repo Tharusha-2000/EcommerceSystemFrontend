@@ -24,21 +24,29 @@ const API1 = axios.create({
   baseURL: "https://localhost:7087/api/",
 });
 
+const API5 = axios.create({
+  baseURL: "https://localhost:7242/api/",
+});
 
+const API6 = axios.create({
+  baseURL: "https://localhost:8080/api/",
+});
+
+const API7 = axios.create({
+  baseURL: "https://localhost:7273/api/",
+});
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
 
-
-export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
-
+export const UserSignUp = async (data) =>
+  await API1.post(`Auth/register`, data);
 
 export const UserCreate = async (data) => {
   console.log("Data being sent to UserCreate:", data); // Log the data
 
-
-    try {
+  try {
     const response = await API1.post(`User`, data);
-    console.log('Response from UserCreate:', response); // Log the response
+    console.log("Response from UserCreate:", response); // Log the response
 
     return response;
   } catch (error) {
@@ -48,12 +56,8 @@ export const UserCreate = async (data) => {
 };
 
 export const getUserById = async (id) => {
-  try {
-    const response = await API1.get(`User/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await API6.get(`User/${id}`);
+  return response.data;
 };
 
 //products
@@ -143,86 +147,44 @@ export const getOrders = async (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  
 /////////////// review and rating
 
 //API for fetching product reviews
 export const getProductFeedbacks = async (productId) => {
-  try {
-    const response = await API4.get(
-      `/FeedBack/GetProductFeedback/${productId}`
-    );
-    return response.data.$values; // Extract the $values array from the response
-  } catch (error) {
-    console.error("Error fetching product reviews:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching product reviews"
-    );
-  }
+  const response = await API4.get(`/FeedBack/GetProductFeedback/${productId}`);
+  return response.data.$values; // Extract the $values array from the response
 };
 
 //API for fetching Feedbacks by order Id
 export const GetFeedbackByOrderId = async (orderId) => {
-  try {
-    const response = await API4.get(
-      `/FeedBack/GetFeedbackByOrderId/${orderId}`
-    );
-    return response;
-  } catch (error) {
-    console.error("Error fetching feedback by order id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching feedback by order id"
-    );
-  }
+  const response = await API4.get(`/FeedBack/GetFeedbackByOrderId/${orderId}`);
+  return response;
 };
 
 //API fetching for add product feedback
 export const SaveProductFeedback = async (newFeedback) => {
-  try {
-    const response = await API4.post(
-      `/FeedBack/SaveProductFeedback`,
-      newFeedback
-    );
-  } catch (error) {
-    console.error("Error saving feedback:", error);
-    throw new Error(error.response?.data?.message || "Error saving feedback");
-  }
+  const response = await API4.post(
+    `/FeedBack/SaveProductFeedback`,
+    newFeedback
+  );
+  return response;
 };
 
 //API for feching orders by orderId
 export const fetchOrdersByUserId = async (userId) => {
-  try {
-    const response = await API3.get(`/Order/byUser/${userId}`);
-    return response;
-  } catch (error) {
-    console.error("Error fetching orders by user id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching orders by user id"
-    );
-  }
+  const response = await API5.get(`/Order/byUser/${userId}`);
+  return response;
 };
 
 //API for fetching order included products
 export const getOrderProductByOrderId = async (orderId) => {
-  try {
-    const response = await API3.get(`/OrderProduct/byOrder/${orderId}`);
-    return response;
-  } catch (error) {
-    console.error("Error fetching orders by user id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching orders by user id"
-    );
-  }
+  const response = await API5.get(`/OrderProduct/byOrder/${orderId}`);
+  return response;
 };
 
 //API for get products by product Id
 export const getProductById = async (productId) => {
-  try {
-    const response = await API2.get(`/Product/GetProductById/${productId}`);
-    return response;
-  } catch (error) {
-    console.error("Error fetching orders by user id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching orders by user id"
-    );
-  }
+  const response = await API7.get(`/Product/GetProductById/${productId}`);
+  return response;
 };
