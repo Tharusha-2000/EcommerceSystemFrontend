@@ -6,7 +6,7 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "http://localhost:5114/api/",
+  baseURL: "https://localhost:7273/api/",
 });
 
 // Cart API
