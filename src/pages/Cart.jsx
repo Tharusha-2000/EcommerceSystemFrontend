@@ -9,7 +9,7 @@ import {
   createOrder,
   updateFromCart,
   storeOrderProduct,
-  getUserById
+  getUserById,
 } from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
@@ -160,6 +160,7 @@ const Delivery = styled.div`
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
   const [buttonLoad, setButtonLoad] = useState(false);
@@ -175,17 +176,15 @@ const Cart = () => {
 
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
   const { cart } = useSelector((state) => state.cart);
-
-  const cartIds = [];
+  
+  const [cartIds, setCartIds] = useState([]);
 
   const getProducts = async () => {
     setLoading(true);
 
     if (cart.length > 0) {
-      for (let i = 0; i < cart.length; i++) {
-        cartIds[i] = cart[i].cartId;
-      }
-      console.log(cartIds);
+      const ids = cart.map((item) => item.cartId);
+      setCartIds(ids); // Update state with cartIds
       setLoading(false);
       return;
     } else {
@@ -195,8 +194,7 @@ const Cart = () => {
         dispatch(fetchCartRed(response.data));
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // Handle 404 error by setting an empty cart
-          dispatch(fetchCartRed([])); // Assuming fetchCartRed([]) clears the cart
+          dispatch(fetchCartRed([])); // Clear the cart on 404
         } else {
           console.error("Error fetching cart:", error);
         }
@@ -217,9 +215,10 @@ const Cart = () => {
     return `${addressObj.firstName} ${addressObj.lastName}, ${addressObj.completeAddress}, ${addressObj.phoneNumber}, ${addressObj.emailAddress}`;
   };
 
-  const afterCheckout = () => {
-    PlaceOrder();
-    //handleOpenPaymentDialog();
+  const totalAmount2 = calculateSubtotal().toFixed(2);
+
+  const afterCheckout = async () => {
+    await PlaceOrder();
   };
 
   const PlaceOrder = async () => {
@@ -240,24 +239,23 @@ const Cart = () => {
             severity: "error",
           })
         );
-        return;
+        return 1;
       }
 
       const validateEmail = (email) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(String(email).toLowerCase());
-      }
+      };
 
-      if (!validateEmail(deliveryDetails.email)){
+      if (!validateEmail(deliveryDetails.email)) {
         dispatch(
           openSnackbar({
             message: "Please enter a valid email address",
             severity: "error",
           })
-        )
-        return;
+        );
+        return 1;
       }
-
 
       if (deliveryDetails.postalcode !== "11270") {
         dispatch(
@@ -266,10 +264,8 @@ const Cart = () => {
             severity: "error",
           })
         );
-        return;
+        return 1;
       }
-
-
 
       const totalAmount = calculateSubtotal().toFixed(2);
       console.log("Total Amount:", totalAmount);
@@ -300,26 +296,38 @@ const Cart = () => {
         for (let i = 0; i < cart.length; i++) {
           const cartItem = cart[i];
           const product = {
-            orderId: response.data.orderId,
+            orderId: response.data.orderId, // This should already be set from createOrder
             productId: cartItem.productId,
             pizzaSize: cartItem.pizzaSize,
             count: cartItem.count,
           };
-          console.log("Product:", product);
-          const res = await storeOrderProduct(product);
-          console.log("Product Response:", res);
-        }
-        dispatch(
-          openSnackbar({
-            message: "Order placed",
-            severity: "success",
-          })
-        );
-        
-        navigate("/checkout");
 
-        setButtonLoad(false);
-        setReload(!reload);
+          try {
+            setProduct(product); // Ensure this happens synchronously
+            console.log("Product:", product);
+
+            const res = await storeOrderProduct(product); // Wait for each store operation
+            console.log("Product Response:", res);
+          } catch (error) {
+            console.error(`Error storing product for cart item ${i}:`, error);
+            dispatch(
+              openSnackbar({
+                message: `Failed to store product: ${cartItem.productId}`,
+                severity: "error",
+              })
+            );
+            return; // Exit if there's a critical error
+          }
+        }
+
+        // Only navigate after completing the loop
+        navigate("/checkout", {
+          state: {
+            totalAmount: totalAmount2,
+            cartIds: cartIds,
+            orderId: response.data.orderId, // Safely access this value
+          },
+        });
       }
     } catch (err) {
       console.error("Error placing order:", err);

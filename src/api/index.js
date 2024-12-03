@@ -21,7 +21,7 @@ const API4 = axios.create({
 
 //auth
 const API1 = axios.create({
-  baseURL: "https://localhost:8080/api/",
+  baseURL: "https://localhost:8080/api",
 });
 
 
