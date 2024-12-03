@@ -5,12 +5,9 @@ import {
   TextField,
   Typography,
   IconButton,
-  MenuItem,
   Checkbox,
   FormControlLabel,
   Modal,
-  Snackbar,
-  Alert,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -18,8 +15,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from "../../firebase.js";
-import { updateProduct } from '../../api'; // Import the updateProduct function
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import { updateProduct } from '../../api'; 
+import Swal from 'sweetalert2'; 
 
 function UpdateProduct({ open, onClose, productData, onUpdate }) {
   const [productName, setProductName] = useState(productData.name || '');
@@ -28,14 +25,13 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
   const [imageUrl, setImageUrl] = useState(productData.imageUrl || '');
   const [isAvailable, setIsAvailable] = useState(productData.isAvailable || false);
   const [sizePriceList, setSizePriceList] = useState(productData.sizes || [{ size: '', price: '' }]);
-  const [categories, setCategories] = useState(productData.categories?.join(', ') || ''); // Added categories state
+  const [selectedCategories, setSelectedCategories] = useState(productData.categories || []); // Categories as array
   const [errors, setErrors] = useState({});
-  const [notification, setNotification] = useState({ open: false, type: '', message: '' });
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const selectedSizes = sizePriceList.map((row) => row.size);
+  const allCategories = ['Cheese', 'Sausage', 'Mushroom', 'Chicken','Veg','pizza'];
 
   const validateForm = () => {
     const validationErrors = {};
@@ -50,19 +46,10 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
       }
     });
 
-    if (!categories.trim()) validationErrors.categories = 'Categories are required'; // Validate categories
+    if (selectedCategories.length === 0) validationErrors.categories = 'At least one category must be selected'; 
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
-  };
-
-  const handleAddRow = () => {
-    setSizePriceList([...sizePriceList, { size: '', price: '' }]);
-  };
-
-  const handleRemoveRow = (index) => {
-    const updatedList = sizePriceList.filter((_, i) => i !== index);
-    setSizePriceList(updatedList);
   };
 
   const handleChange = (index, field, value) => {
@@ -83,7 +70,7 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
   
     setSizePriceList(updatedList);
   };
-  
+
   const handleImageChange = (e) => {
     const file = e.target.files[0]; // Get the selected file
     if (file) {
@@ -91,6 +78,14 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
       setImageFile(file); // Store the file in the state
       setImageUrl(imageUrl); // Update the displayed image
     }
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategories((prevSelectedCategories) =>
+      prevSelectedCategories.includes(category)
+        ? prevSelectedCategories.filter((cat) => cat !== category) // Deselect category
+        : [...prevSelectedCategories, category] // Select category
+    );
   };
 
   const handleUpdate = async (e) => {
@@ -105,7 +100,7 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
       isAvailable,
       sizes: sizePriceList,
       imageUrl: imageUrl,
-      categories: categories.split(',').map((cat) => cat.trim()), // Convert categories to array
+      categories: selectedCategories, // Send selected categories as array
     };
 
     // Handle image upload
@@ -150,16 +145,16 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
       <Box
         sx={{
           position: 'absolute',
-          top: '50%',
+          top: '48%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           width: isMobile ? '90%' : '50%',
-          maxWidth: '90vw',
-          maxHeight: '90vh',
+          maxWidth: '80vw',
+          maxHeight: '95vh',
           overflowY: 'auto',
           bgcolor: 'background.paper',
           boxShadow: 24,
-          p: 4,
+          p: 1,
           borderRadius: 2,
         }}
       >
@@ -194,22 +189,31 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
             required
           />
 
-          {/* Categories Input */}
-          <TextField
-            label="Categories (comma separated)"
-            variant="outlined"
-            value={categories}
-            onChange={(e) => setCategories(e.target.value)}
-            error={!!errors.categories}
-            helperText={errors.categories}
-            required
-          />
+          {/* Categories Checkboxes */}
+          <Typography variant="h6" sx={{ mt: 2 }}>Categories</Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+            {allCategories.map((category) => (
+              <FormControlLabel
+                key={category}
+                control={
+                  <Checkbox
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => handleCategoryChange(category)}
+                  />
+                }
+                label={category}
+              />
+            ))}
+          </Box>
+          {errors.categories && (
+            <Typography color="error" variant="body2">{errors.categories}</Typography>
+          )}
 
           {/* Display the current product image */}
           {imageUrl && (
             <Box sx={{ p: 2 }}>
               <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
-                <Box sx={{ p: 1, border: '1px dashed grey', width: '150px', height: '150px', borderRadius: 1 }}>
+                <Box sx={{ p: 1, border: '1px dashed grey', width: '100px', height: '100px', borderRadius: 1 }}>
                   <img
                     src={imageUrl || "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=1024x1024&w=is&k=20&c=5aen6wD1rsiMZSaVeJ9BWM4GGh5LE_9h97haNpUQN5I="}
                     alt="Product Image"
@@ -228,24 +232,12 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
             </Box>
           )}
 
-          {/* Sizes and Prices */}
-          <Typography variant="h6" sx={{ mt: 3 }}>Sizes and Prices</Typography>
+          <Typography variant="h8" sx={{ mt: 1 }}>Sizes and Prices</Typography>
           {sizePriceList.map((row, index) => (
             <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-             <TextField
-                  select
-                  label="Size"
-                  value={row.size}
-                  onChange={(e) => handleChange(index, 'size', e.target.value)}
-                  variant="outlined"
-                  error={!!errors[`size_${index}`]}
-                  helperText={errors[`size_${index}`]}
-                  required
-                >
-                  <MenuItem value="Small" disabled={selectedSizes.includes('Small') && row.size !== 'Small'}>Small</MenuItem>
-                  <MenuItem value="Medium" disabled={selectedSizes.includes('Medium') && row.size !== 'Medium'}>Medium</MenuItem>
-                  <MenuItem value="Large" disabled={selectedSizes.includes('Large') && row.size !== 'Large'}>Large</MenuItem>
-                </TextField>
+              <Typography variant="body1" sx={{ width: '80px' }}>
+                {row.size === 'S' ? 'Small' : row.size === 'M' ? 'Medium' : 'Large'}
+              </Typography>
 
               <TextField
                 label="Price"
@@ -257,8 +249,6 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
                 helperText={errors[`price_${index}`]}
                 required
               />
-              <IconButton onClick={handleAddRow} color="primary"><AddIcon /></IconButton>
-              <IconButton onClick={() => handleRemoveRow(index)} color="error" disabled={sizePriceList.length === 1}><DeleteIcon /></IconButton>
             </Box>
           ))}
 
@@ -268,8 +258,8 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
           />
 
           <Box>
-            <Button variant="contained" color="primary" type="submit">Update Product</Button>
-            <Button variant="contained" color="secondary" onClick={onClose}>Cancel</Button>
+            <Button variant="contained" type="submit" sx={{ background: '#FF3D4D' }}>Update Product</Button>
+            <Button variant="contained" sx={{ background: '#333333', ml:2 }} onClick={onClose}>Cancel</Button>
           </Box>
         </Box>
       </Box>

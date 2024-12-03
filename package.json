@@ -7,11 +7,13 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "lint": "eslint .",
-    "test": "react-scripts test --watchAll=false",
-    "test:mocha": "mocha tests/*.test.js",
+    "test": "npm run test:react && npm run test:mocha",
+    "test:react": "react-scripts test --watchAll=false --passWithNoTests",
+    "test:mocha": "mocha tests/**/*.spec.cjs",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.8",
