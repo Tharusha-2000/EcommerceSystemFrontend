@@ -11,7 +11,7 @@ const Container = styled.div`
   height: 100%;
   overflow-y: scroll;
   display: flex;
-  align-items: center;
+  align-items: start;
   flex-direction: row;
   gap: 30px;
   @media (max-width: 700px) {
@@ -85,7 +85,7 @@ const Selectableitem = styled.div`
 const FoodListing = () => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 1000]); // Default price range
+  const [priceRange, setPriceRange] = useState([500, 2000]); // Default price range
   const [selectedCategories, setSelectedCategories] = useState([]); // Default selected categories
 
   const getFilteredProductsData = async () => {
@@ -112,18 +112,19 @@ const FoodListing = () => {
       <Filters>
         <Menu>
           {filter.map((filters) => (
-            <FilterSection>
+            <FilterSection key={filters.name}>
               <Title>{filters.name}</Title>
               {filters.value === "price" ? (
                 <Slider
                   aria-label="Price"
                   defaultValue={priceRange}
-                  min={0}
-                  max={1000}
+                  min={500}
+                  max={2000}
+                  step={50}
                   valueLabelDisplay="auto"
                   marks={[
-                    { value: 0, label: "$0" },
-                    { value: 1000, label: "$1000" },
+                    { value: 500, label: "LKR 500" },
+                    { value: 2000, label: "LKR 2000" },
                   ]}
                   onChange={(e, newValue) => setPriceRange(newValue)}
                 />

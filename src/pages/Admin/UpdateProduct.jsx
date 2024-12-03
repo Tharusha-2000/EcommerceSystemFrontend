@@ -1,125 +1,143 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import {
   Box,
   Button,
   TextField,
   Typography,
   IconButton,
-  MenuItem,
   Checkbox,
   FormControlLabel,
   Modal,
-  Snackbar,
-  Alert,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import axios from 'axios';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from "../../firebase.js";
+import { updateProduct } from '../../api'; 
+import Swal from 'sweetalert2'; 
 
 function UpdateProduct({ open, onClose, productData, onUpdate }) {
   const [productName, setProductName] = useState(productData.name || '');
   const [description, setDescription] = useState(productData.description || '');
+  const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(productData.imageUrl || '');
   const [isAvailable, setIsAvailable] = useState(productData.isAvailable || false);
   const [sizePriceList, setSizePriceList] = useState(productData.sizes || [{ size: '', price: '' }]);
+  const [selectedCategories, setSelectedCategories] = useState(productData.categories || []); // Categories as array
   const [errors, setErrors] = useState({});
-  const [notification, setNotification] = useState({ open: false, type: '', message: '' });
 
-  const selectedSizes = sizePriceList.map((row) => row.size);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const allCategories = ['Cheese', 'Sausage', 'Mushroom', 'Chicken','Veg','pizza'];
 
   const validateForm = () => {
     const validationErrors = {};
-  
-    if (!productName.trim()) {
-      validationErrors.productName = 'Product Name is required';
-    }
-    if (!description.trim()) {
-      validationErrors.description = 'Description is required';
-    }
-    const urlRegex = /^(https?:\/\/)[^\s$.?#].[^\s]*$/;
-    if (!imageUrl.trim()) {
-      validationErrors.imageUrl = 'Image URL is required';
-    } else if (!urlRegex.test(imageUrl)) {
-      validationErrors.imageUrl = 'Invalid URL format';
-    }
-  
+
+    if (!productName.trim()) validationErrors.productName = 'Product Name is required';
+    if (!description.trim()) validationErrors.description = 'Description is required';
+    
     sizePriceList.forEach((row, index) => {
-      if (!row.size.trim()) {
-        validationErrors[`size_${index}`] = 'Size is required';
-      }
-      if (row.price === '' || row.price == null) {
-        validationErrors[`price_${index}`] = 'Price is required';
-      } else if (isNaN(row.price) || row.price <= 0) {
+      if (!row.size.trim()) validationErrors[`size_${index}`] = 'Size is required';
+      if (!row.price || row.price <= 0 || isNaN(row.price)) {
         validationErrors[`price_${index}`] = 'Price must be a positive number';
       }
     });
-  
+
+    if (selectedCategories.length === 0) validationErrors.categories = 'At least one category must be selected'; 
+
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
-  };
-  
-
-  const handleAddRow = () => {
-    setSizePriceList([...sizePriceList, { size: '', price: '' }]);
-  };
-
-  const handleRemoveRow = (index) => {
-    const updatedList = sizePriceList.filter((_, i) => i !== index);
-    setSizePriceList(updatedList);
   };
 
   const handleChange = (index, field, value) => {
     const updatedList = [...sizePriceList];
-
+    updatedList[index][field] = value;
+  
+    // Handle price validation
     if (field === 'price' && value !== '' && (isNaN(value) || value <= 0)) {
-      setErrors({ ...errors, [`price_${index}`]: 'Price must be a positive number' });
+      setErrors((prevErrors) => ({ ...prevErrors, [`price_${index}`]: 'Price must be a positive number' }));
       return;
     } else {
-      const updatedErrors = { ...errors };
-      delete updatedErrors[`price_${index}`];
-      setErrors(updatedErrors);
+      setErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[`price_${index}`];
+        return updatedErrors;
+      });
     }
-
-    updatedList[index][field] = value;
-
-    if (field === 'size' && value.trim()) {
-      const updatedErrors = { ...errors };
-      delete updatedErrors[`size_${index}`];
-      setErrors(updatedErrors);
-    }
-
+  
     setSizePriceList(updatedList);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]; // Get the selected file
+    if (file) {
+      const imageUrl = URL.createObjectURL(file); // Create a temporary URL for the image
+      setImageFile(file); // Store the file in the state
+      setImageUrl(imageUrl); // Update the displayed image
+    }
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategories((prevSelectedCategories) =>
+      prevSelectedCategories.includes(category)
+        ? prevSelectedCategories.filter((cat) => cat !== category) // Deselect category
+        : [...prevSelectedCategories, category] // Select category
+    );
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
+
+    if (!validateForm()) return;
 
     const updatedProduct = {
+      productId: productData.productId, // Include the productId
       name: productName,
-      description: description,
-      imageUrl: imageUrl,
-      isAvailable: isAvailable,
+      description,
+      isAvailable,
       sizes: sizePriceList,
+      imageUrl: imageUrl,
+      categories: selectedCategories, // Send selected categories as array
     };
 
-    try {
-      await axios.put('http://your-backend-url/api/products', updatedProduct);
-      setNotification({ open: true, type: 'success', message: 'Product updated successfully!' });
-      onUpdate(updatedProduct);
-      setTimeout(() => {
-        setNotification({ open: false, type: '', message: '' });
-        onClose();
-      }, 6000);
-    } catch (error) {
-      setNotification({ open: true, type: 'error', message: 'An error occurred while updating the product.' });
+    // Handle image upload
+    if (imageFile) {
+      const imageRef = ref(storage, `product_images/${imageFile.name}`);
+      const uploadTask = uploadBytesResumable(imageRef, imageFile);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {},
+        (error) => {
+          Swal.fire('Error', 'Error uploading image', 'error');
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            updatedProduct.imageUrl = downloadURL;
+            updateProductData(updatedProduct);
+          });
+        }
+      );
+    } else {
+      // If no image selected, proceed with the existing imageUrl
+      updateProductData(updatedProduct);
     }
   };
 
-  const handleCloseNotification = () => {
-    setNotification({ open: false, type: '', message: '' });
+  const updateProductData = async (updatedProduct) => {
+    console.log(updatedProduct);
+    try {
+      await updateProduct(updatedProduct.productId, updatedProduct); // Use the updateProduct function
+      Swal.fire('Success', 'Product updated successfully!', 'success');
+      onUpdate(updatedProduct);
+      setTimeout(() => {
+        onClose();
+      }, 6000);
+    } catch (error) {
+      Swal.fire('Error', 'An error occurred while updating the product.', 'error');
+    }
   };
 
   return (
@@ -127,17 +145,20 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
       <Box
         sx={{
           position: 'absolute',
-          top: '50%',
+          top: '48%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '50%',
+          width: isMobile ? '90%' : '50%',
+          maxWidth: '80vw',
+          maxHeight: '95vh',
+          overflowY: 'auto',
           bgcolor: 'background.paper',
           boxShadow: 24,
-          p: 4,
+          p: 1,
           borderRadius: 2,
         }}
       >
-        <Typography id="update-product-modal" variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom>
           Update Product
         </Typography>
         <Box
@@ -148,7 +169,6 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
           onSubmit={handleUpdate}
         >
           <TextField
-            id="product-name"
             label="Product Name"
             variant="outlined"
             value={productName}
@@ -158,7 +178,6 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
             required
           />
           <TextField
-            id="description"
             label="Description"
             variant="outlined"
             multiline
@@ -169,50 +188,57 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
             helperText={errors.description}
             required
           />
-          <TextField
-            id="image-url"
-            label="Image URL"
-            variant="outlined"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            error={!!errors.imageUrl}
-            helperText={errors.imageUrl}
-            required
-          />
-          <Typography variant="h6" sx={{ mt: 3 }}>
-            Sizes and Prices
-          </Typography>
+
+          {/* Categories Checkboxes */}
+          <Typography variant="h6" sx={{ mt: 2 }}>Categories</Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+            {allCategories.map((category) => (
+              <FormControlLabel
+                key={category}
+                control={
+                  <Checkbox
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => handleCategoryChange(category)}
+                  />
+                }
+                label={category}
+              />
+            ))}
+          </Box>
+          {errors.categories && (
+            <Typography color="error" variant="body2">{errors.categories}</Typography>
+          )}
+
+          {/* Display the current product image */}
+          {imageUrl && (
+            <Box sx={{ p: 2 }}>
+              <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
+                <Box sx={{ p: 1, border: '1px dashed grey', width: '100px', height: '100px', borderRadius: 1 }}>
+                  <img
+                    src={imageUrl || "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=1024x1024&w=is&k=20&c=5aen6wD1rsiMZSaVeJ9BWM4GGh5LE_9h97haNpUQN5I="}
+                    alt="Product Image"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                </Box>
+                <Box>
+                  <Typography variant="h6">Select product image</Typography>
+                  <input
+                    type="file"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
+                </Box>
+              </Box>
+            </Box>
+          )}
+
+          <Typography variant="h8" sx={{ mt: 1 }}>Sizes and Prices</Typography>
           {sizePriceList.map((row, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                mb: 2,
-              }}
-            >
-              <TextField
-                select
-                label="Size"
-                value={row.size}
-                onChange={(e) => handleChange(index, 'size', e.target.value)}
-                variant="outlined"
-                sx={{ width: '13em' }}
-                error={!!errors[`size_${index}`]}
-                helperText={errors[`size_${index}`]}
-                required
-              >
-                <MenuItem value="Small" disabled={selectedSizes.includes('Small') && row.size !== 'Small'}>
-                  Small
-                </MenuItem>
-                <MenuItem value="Medium" disabled={selectedSizes.includes('Medium') && row.size !== 'Medium'}>
-                  Medium
-                </MenuItem>
-                <MenuItem value="Large" disabled={selectedSizes.includes('Large') && row.size !== 'Large'}>
-                  Large
-                </MenuItem>
-              </TextField>
+            <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+              <Typography variant="body1" sx={{ width: '80px' }}>
+                {row.size === 'S' ? 'Small' : row.size === 'M' ? 'Medium' : 'Large'}
+              </Typography>
+
               <TextField
                 label="Price"
                 type="number"
@@ -223,46 +249,19 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
                 helperText={errors[`price_${index}`]}
                 required
               />
-              <IconButton onClick={handleAddRow} color="primary">
-                <AddIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => handleRemoveRow(index)}
-                color="error"
-                disabled={sizePriceList.length === 1}
-              >
-                <DeleteIcon />
-              </IconButton>
             </Box>
           ))}
+
           <FormControlLabel
-            control={
-              <Checkbox
-                checked={isAvailable}
-                onChange={(e) => setIsAvailable(e.target.checked)}
-              />
-            }
+            control={<Checkbox checked={isAvailable} onChange={(e) => setIsAvailable(e.target.checked)} />}
             label="Available"
           />
+
           <Box>
-            <Button variant="contained" color="primary" type="submit" sx={{ width: '10em', mr: 3 }}>
-              Update Product
-            </Button>
-            <Button variant="contained" color="secondary" onClick={onClose} sx={{ width: '10em' }}>
-              Cancel
-            </Button>
+            <Button variant="contained" type="submit" sx={{ background: '#FF3D4D' }}>Update Product</Button>
+            <Button variant="contained" sx={{ background: '#333333', ml:2 }} onClick={onClose}>Cancel</Button>
           </Box>
         </Box>
-        <Snackbar
-          open={notification.open}
-          autoHideDuration={6000}
-          onClose={handleCloseNotification}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert onClose={handleCloseNotification} severity={notification.type} sx={{ width: '100%' }}>
-            {notification.message}
-          </Alert>
-        </Snackbar>
       </Box>
     </Modal>
   );

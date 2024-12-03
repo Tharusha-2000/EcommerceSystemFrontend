@@ -42,7 +42,7 @@ const TextButton = styled.div`
 
 const Logo = styled.img`
   position: absolute;
-  top: 100px;
+  top: 10px;
   left: 180px;
   z-index: 10;
 `;
@@ -59,7 +59,14 @@ const SignIn = ({ setOpenAuth }) => {
 
   const validateInputs = () => {
     if (!username || !password) {
-      alert("Please fill in all fields");
+      dispatch(
+        openSnackbar({
+          message: "Please fill all the fields",
+          severity: "error",
+        })
+       );
+       setLoading(false);
+       setButtonDisabled(false);
       return false;
     }
     return true;
@@ -103,15 +110,22 @@ const SignIn = ({ setOpenAuth }) => {
         .catch((err) => {
           setLoading(false);
           setButtonDisabled(false);
+          console.log(err.response);
           dispatch(
             openSnackbar({
-              message: err.message,
+              message:  err.response.data,
               severity: "error",
             })
           );
         });
     }
   };
+
+  const handleForgotPasswordClick = () => {
+    setOpenAuth(false);
+    navigate('/forgetPassword');
+  };
+
 
   return (
     <Container>
@@ -126,6 +140,8 @@ const SignIn = ({ setOpenAuth }) => {
           value={username}
           handelChange={(e) => setUserName(e.target.value)}
         />
+
+        
         <TextInput
           label="Password"
           placeholder="Enter your password"
@@ -134,7 +150,7 @@ const SignIn = ({ setOpenAuth }) => {
           handelChange={(e) => setPassword(e.target.value)}
         />
 
-        <TextButton>Forgot Password?</TextButton>
+        <TextButton onClick={handleForgotPasswordClick}>Forgot Password?</TextButton>
         <Button
           text="Sign In"
           onClick={handelSignIn}

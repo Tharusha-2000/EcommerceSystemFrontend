@@ -1,10 +1,10 @@
 import { Modal } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
-import AuthImage from "../utils/Images/AuthImage.jpg";
+import AuthImage from "../../utils/Images/AuthImage.jpg";
 import { Close } from "@mui/icons-material";
-import SignIn from "../components/SignIn";
-import SignUp from "../components/SignUp";
+import SignIn from "../../components/SignIn";
+import SignUp from "../../components/SignUp";
 
 
 

@@ -6,7 +6,7 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "http://localhost:5114/api/",
+  baseURL: "https://localhost:7273/api/",
 });
 
 // Cart API
@@ -14,12 +14,12 @@ const API3 = axios.create({
   baseURL: "http://localhost:5126/api/",
 });
 
+//review and rating
 const API4 = axios.create({
-  baseURL: "https://localhost:7046/api/",
+  baseURL: "http://localhost:5249/api/",
 });
 
 //auth
-
 const API1 = axios.create({
   baseURL: "https://localhost:7087/api/",
 });
@@ -32,40 +32,74 @@ const API6 = axios.create({
   baseURL: "https://localhost:8080/api/",
 });
 
-const API7 = axios.create({
-  baseURL: "https://localhost:7273/api/",
-});
+
+
+//auth
 
 export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
+export const UserSignUp = async (data) => await API1.post(`Auth/register`, data);
 
-export const UserSignUp = async (data) =>
-  await API1.post(`Auth/register`, data);
+export const SendEmail = async (data) => await API1.post(`Auth/forgot-password`, data);
+
+
+export const PasswordChange = async (data) => await API1.post(`Auth/reset-password`, data);
+
+
+
+
 
 export const UserCreate = async (data) => {
-  console.log("Data being sent to UserCreate:", data); // Log the data
-
-  try {
-    const response = await API1.post(`User`, data);
-    console.log("Response from UserCreate:", response); // Log the response
-
+      const response = await API1.post(`User`, data);
     return response;
-  } catch (error) {
-    console.error("Error in UserCreate:", error); // Log any error
-    throw error;
-  }
 };
 
 export const getUserById = async (id) => {
-  const response = await API6.get(`User/${id}`);
+
+
+  const token = localStorage.getItem('Mossa-Melt-token');
+  console.log(token);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  };
+  const response = await API1.get(`User/${id}`,config);
   return response.data;
 };
 
+export const updateUser = async (data) => {
+  const response = await API1.put(`User`, data);
+  return response;
+
+};
+
+
+
+
+
+
+
 //products
 export const getAllProducts = async (filter) =>
-  await API2.get(`Product/GetAllProducts`);
+  await API2.get(`Product/GetAllProducts?${filter}`);
 
 export const getProductDetails = async (id) =>
   await API2.get(`Product/GetProductById/${id}`);
+
+export const createProduct = async (productData) =>
+  await API2.post("Product/CreateProductAsync", productData);
+
+
+export const updateProduct = async (id, productData) =>
+  await API2.put(`Product/UpdateProductAsync/${id}`, productData);
+
+export const deleteProduct = async (productId) => {
+    const response = await API2.delete(`Product/${productId}`);
+    return response;
+ 
+};
+
+
 
 //Cart
 // export const getCart = async (token) =>
@@ -73,17 +107,11 @@ export const getProductDetails = async (id) =>
 //     headers: { Authorization: `Bearer ${token}` },
 //   });
 
-export const getCart = async () =>
-  await axios.get("http://localhost:5126/api/Cart");
 
-export const addToCart = async (token, data) =>
-  await API.post(`/user/cart/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 
-export const getCart2 = async () => await API3.get("Cart");
-
-export const addToCart2 = async (token, data) => await API3.post(`Cart/`, data);
+export const getCartByUserId = async (userId) => await API3.get(`Cart/byUser/${userId}`);
+export const getCart = async () => await API3.get("Cart");
+export const addToCart = async ( data) => await API3.post(`Cart/`, data);
 
 // export const deleteFromCart = async (token, data) =>
 //   await API.patch(`/user/cart/`, data, {
@@ -91,50 +119,25 @@ export const addToCart2 = async (token, data) => await API3.post(`Cart/`, data);
 //   });
 
 export const updateFromCart = async ({ cartId, count }) => {
-  try {
     const data = { count: count > 0 ? count : 0 }; // If count is <= 0, treat as removal (count = 0)
-    const response = await axios.put(
-      `https://localhost:7242/api/Cart/${cartId}?count=${count}`
-    );
+    const response = await API3.put(`Cart/${cartId}?count=${count}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Error updating cart");
-  }
+ 
 };
 
-export const updateItemOnCart = async (token, data) =>
+export const updateItemOnCart = async (data) =>
   await API3.put(`Cart/${data.cartId}`, data);
 
 export const deleteFromCart = async (cartId) => {
-  try {
-    console.log(cartId);
-    const response = await axios.delete(
-      `https://localhost:7242/api/Cart/${cartId}`
-    );
+    const response = await API3.delete(`Cart/${cartId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Error deleting from cart"
-    );
-  }
+ 
 };
 
-//favorites
 
-export const getFavourite = async (token) =>
-  await API.get(`/user/favorite`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 
-export const addToFavourite = async (token, data) =>
-  await API.post(`/user/favorite/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 
-export const deleteFromFavourite = async (token, data) =>
-  await API.patch(`/user/favorite/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+
 
 //Orders
 export const placeOrder = async (token, data) =>
@@ -142,10 +145,15 @@ export const placeOrder = async (token, data) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const getOrders = async (token) =>
-  await API.get(`/user/order/`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// export const getOrders = async (token) =>
+//   await API.get(`Order`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
+
+export const getOrders = async () => await API3.get(`Order`);
+export const handelViewOrder = async ( orderId ) => await API3.get(`OrderProduct/byOrder/${orderId}`);
+export const updateOrder = async (orderId, updatedOrder)  => await API3.put(`Order/${orderId}`, updatedOrder);
+
 
   
 /////////////// review and rating
@@ -188,3 +196,26 @@ export const getProductById = async (productId) => {
   const response = await API7.get(`/Product/GetProductById/${productId}`);
   return response;
 };
+
+
+//users-dilum
+export const getAllUsers = async () =>
+  await API1.get(`User`);
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await API1.delete(`User/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Error deleting user");
+  }
+};
+//get all orders -dilum
+export const getAllOrders = async () =>
+  await API3.get(`Order`);
+//get all feedback -dilum
+export const getAllFeedback = async () =>
+  await API4.get(`Feedback/GetAllFeedbacks`);
+//get order details -dilum
+export const getallOrderDetails = async (id) =>
+  await API3.get(`OrderProduct`);

@@ -21,15 +21,20 @@ const Button = styled.div`
   }
 
   ${({ type, theme }) =>
-    type === "secondary"
-      ? `
-  background: ${theme.secondary};
-border: 1px solid ${({ theme }) => theme.secondary};
-  `
-      : `
-  background: ${theme.primary};
+  type === "secondary"
+    ? `
+background: ${theme.secondary};
+border: 1px solid ${theme.secondary};
+&:hover {
+  background: ${theme.secondaryDark};
+}
+`
+    : `
+background: ${theme.primary};
+&:hover {
+  background: ${theme.primaryDark};
+}
 `}
-
   ${({ isDisabled }) =>
     isDisabled &&
     `

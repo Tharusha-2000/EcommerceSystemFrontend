@@ -5,8 +5,7 @@ import Button from "../components/Button";
 import {
   addToCart,
   deleteFromCart,
-  getCart,
-  getCart2,
+  getCartByUserId,
   placeOrder,
   updateFromCart,
 } from "../api";
@@ -18,6 +17,7 @@ import { DeleteOutline } from "@mui/icons-material";
 import PaymentDialog from "./Checkout";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+
 
 import {
   fetchCartRed,
@@ -171,6 +171,8 @@ const Cart = () => {
     completeAddress: "",
   });
 
+  const { currentUser } = useSelector((state) => state.user);
+
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
   const { cart } = useSelector((state) => state.cart);
 
@@ -184,19 +186,29 @@ const Cart = () => {
 
   const getProducts = async () => {
     setLoading(true);
-    // const token = localStorage.getItem("krist-app-token");
+  
     if (cart.length > 0) {
       setLoading(false);
       return;
     } else {
-      await getCart2().then((res) => {
-        // setProducts(res.data);
-        dispatch(fetchCartRed(res.data));
-        console.log();
+      try {
+        const userid = currentUser.id;
+        const response = await getCartByUserId(userid);
+        dispatch(fetchCartRed(response.data));
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          // Handle 404 error by setting an empty cart
+          dispatch(fetchCartRed([])); // Assuming fetchCartRed([]) clears the cart
+        } else {
+          console.error("Error fetching cart:", error);
+        }
+      } finally {
         setLoading(false);
-      });
+      }
     }
   };
+
+  
 
   const calculateSubtotal = () => {
     return cart.reduce(
@@ -265,11 +277,13 @@ const Cart = () => {
 
   const updateQuntity = async (id, count) => {
     let updatedCount = count > 0 ? count : 0;
+    console.log(id, count);
     try {
       const res = await updateFromCart({
         cartId: id,
         count: updatedCount,
       });
+
       dispatch(updateCartRed(res));
       setReload(!reload);
     } catch (err) {
