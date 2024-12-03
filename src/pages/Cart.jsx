@@ -8,14 +8,14 @@ import {
   getCartByUserId,
   createOrder,
   updateFromCart,
-  storeOrderProduct
+  storeOrderProduct,
+  getUserById
 } from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { DeleteOutline } from "@mui/icons-material";
-import PaymentDialog from "./Checkout";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 
@@ -176,18 +176,16 @@ const Cart = () => {
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
   const { cart } = useSelector((state) => state.cart);
 
-  const handleOpenPaymentDialog = () => {
-    setOpenPaymentDialog(true);
-  };
-
-  const handleClosePaymentDialog = () => {
-    setOpenPaymentDialog(false);
-  };
+  const cartIds = [];
 
   const getProducts = async () => {
     setLoading(true);
 
     if (cart.length > 0) {
+      for (let i = 0; i < cart.length; i++) {
+        cartIds[i] = cart[i].cartId;
+      }
+      console.log(cartIds);
       setLoading(false);
       return;
     } else {
@@ -244,15 +242,34 @@ const Cart = () => {
         );
         return;
       }
-      // if (deliveryDetails.postalcode !== 11270) {
-      //   dispatch(
-      //     openSnackbar({
-      //       message: "We are currently not delivering to your area",
-      //       severity: "error",
-      //     })
-      //   );
-      //   return;
-      // }
+
+      const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+      }
+
+      if (!validateEmail(deliveryDetails.email)){
+        dispatch(
+          openSnackbar({
+            message: "Please enter a valid email address",
+            severity: "error",
+          })
+        )
+        return;
+      }
+
+
+      if (deliveryDetails.postalcode !== "11270") {
+        dispatch(
+          openSnackbar({
+            message: "We are currently not delivering to your area",
+            severity: "error",
+          })
+        );
+        return;
+      }
+
+
 
       const totalAmount = calculateSubtotal().toFixed(2);
       console.log("Total Amount:", totalAmount);
@@ -267,7 +284,7 @@ const Cart = () => {
         email: deliveryDetails.email,
         phoneNum: deliveryDetails.phoneNo,
         address: deliveryDetails.address,
-        paymentStatus: true,
+        paymentStatus: false,
         orderStatus: "new",
         date: new Date().toDateString(),
         totalPrice: totalAmount,
@@ -299,6 +316,8 @@ const Cart = () => {
           })
         );
         
+        navigate("/checkout");
+
         setButtonLoad(false);
         setReload(!reload);
       }
@@ -584,10 +603,6 @@ const Cart = () => {
                       />
                     </div>
                   </Delivery>
-                  <PaymentDialog
-                    open={openPaymentDialog}
-                    onClose={handleClosePaymentDialog}
-                  />
                   <Button text="Checkout" small onClick={afterCheckout} />
                 </Right>
               </Wrapper>

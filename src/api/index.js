@@ -6,22 +6,22 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "http://localhost:5114/api/",
+  baseURL: "https://localhost:7273/api/",
 });
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "http://localhost:5126/api/",
+  baseURL: "https://localhost:7242/api/",
 });
 
 //review and rating
 const API4 = axios.create({
-  baseURL: "http://localhost:5249/api/",
+  baseURL: "https://localhost:7046/api/",
 });
 
 //auth
 const API1 = axios.create({
-  baseURL: "https://localhost:7087/api/",
+  baseURL: "https://localhost:8080/api/",
 });
 
 
@@ -130,7 +130,11 @@ export const deleteFromCart = async (cartId) => {
   }
 };
 
-
+//cart
+export const getUserById2 = async (id) => {
+  const response = await API1.get(`User/${id}`);
+  return response;
+};
 
 
 
