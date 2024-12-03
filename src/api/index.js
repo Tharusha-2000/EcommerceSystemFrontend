@@ -44,7 +44,15 @@ export const UserCreate = async (data) => {
 };
 
 export const getUserById = async (id) => {
-  const response = await API1.get(`User/${id}`);
+
+  const token = localStorage.getItem('Mossa-Melt-token');
+  console.log(token);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  };
+  const response = await API1.get(`User/${id}`,config);
   return response.data;
 };
 
@@ -78,8 +86,6 @@ export const deleteProduct = async (productId) => {
     return response;
  
 };
-
-
 //Cart
 //Cart
 // export const getCart = async (token) =>
