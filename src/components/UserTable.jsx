@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { Box, Button } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { getAllUsers, deleteUser } from '../api'; // Import the API functions
 import Swal from 'sweetalert2'; // Import SweetAlert2
 
@@ -90,14 +91,13 @@ const UsersTable = () => {
         size: 150,
         Cell: ({ row }) => (
           <Box display="flex" gap="8px">
-            <Button
-              variant="contained"
+            <IconButton
               color="error"
               size="small"
               onClick={() => handleDelete(row.original.id)}
             >
-              Delete
-            </Button>
+              <DeleteIcon />
+            </IconButton>
           </Box>
         ),
       },

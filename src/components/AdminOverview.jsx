@@ -12,6 +12,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  useMediaQuery,
 } from "@mui/material";
 import {
   PieChart,
@@ -30,6 +31,7 @@ function AdminOverview() {
   const [orders, setOrders] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -178,6 +180,7 @@ function AdminOverview() {
             letterSpacing: '1px',
             textTransform: 'uppercase',
             textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
+            fontSize: isMobile ? '1.5rem' : '3rem', // Adjust font size for mobile
           }}
         >
           Admin Dashboard Overview
@@ -195,7 +198,7 @@ function AdminOverview() {
             <JoyCard
               variant="outlined"
               sx={{
-                minHeight: 220, // Set the desired minimum height for the card
+                minHeight: 250, // Set the desired minimum height for the card
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center', // Center content vertically
@@ -204,10 +207,10 @@ function AdminOverview() {
               }}
             >
               <JoyCardContent>
-                <JoyTypography level="h6" gutterBottom sx={{ fontSize: '2rem', textAlign: 'center' }}>
+                <JoyTypography level="h6" gutterBottom sx={{ fontSize: isMobile ? '1rem' : '2rem', textAlign: 'center' }}>
                   {metric.title}
                 </JoyTypography>
-                <JoyTypography level="h4" fontWeight="bold" sx={{ fontSize: '4.5rem', textAlign: 'center' }}>
+                <JoyTypography level="h4" fontWeight="bold" sx={{ fontSize: isMobile ? '2rem' : '4.5rem', textAlign: 'center' }}>
                   {metric.value}
                 </JoyTypography>
               </JoyCardContent>

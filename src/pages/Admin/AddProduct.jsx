@@ -6,74 +6,61 @@ import {
   Grid,
   TextField,
   Button,
-  IconButton,
   Typography,
-  MenuItem,
   Checkbox,
   FormControlLabel,
+  Grid as MuiGrid,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../../firebase.js";
 import { createProduct } from "../../api"; // Import the createProduct function
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 function AddProduct() {
-  const [sizePriceList, setSizePriceList] = useState([{ size: "", price: "" }]);
+  const [sizePriceList, setSizePriceList] = useState([
+    { size: "Small", price: "" },
+    { size: "Medium", price: "" },
+    { size: "Large", price: "" },
+  ]);
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState(""); // Store the image URL
   const [isAvailable, setIsAvailable] = useState(false);
   const [categories, setCategories] = useState(""); // New state for categories
-
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [imageUrls, setImageUrls] = useState([]);
   const [errors, setErrors] = useState({});
-
-  const selectedSizes = sizePriceList.map((row) => row.size);
 
   const validateForm = () => {
     const validationErrors = {};
-
+  
     if (!productName.trim()) {
       validationErrors.productName = "Product Name is required";
     }
-
+  
     if (!description.trim()) {
       validationErrors.description = "Description is required";
     }
-
+  
     if (!imageUrl.trim()) {
       validationErrors.imageUrl = "Image URL is required";
     }
-
+  
     sizePriceList.forEach((row, index) => {
-      if (!row.size.trim()) {
-        validationErrors[`size_${index}`] = "Size is required";
-      }
       if (!row.price.trim()) {
         validationErrors[`price_${index}`] = "Price is required";
       }
     });
-
-    if (!categories.trim()) {
-      validationErrors.categories = "Categories are required";
+  
+    if (categories.length === 0) {
+      validationErrors.categories = "At least one category must be selected";
     }
-
+  
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
-
-  const handleAddRow = () => {
-    setSizePriceList([...sizePriceList, { size: "", price: "" }]);
-  };
-
-  const handleRemoveRow = (index) => {
-    const updatedList = sizePriceList.filter((_, i) => i !== index);
-    setSizePriceList(updatedList);
-  };
+  
 
   const handleChange = (index, field, value) => {
     const updatedList = [...sizePriceList];
@@ -94,12 +81,6 @@ function AddProduct() {
 
     updatedList[index][field] = value;
 
-    if (field === "size" && value.trim()) {
-      const updatedErrors = { ...errors };
-      delete updatedErrors[`size_${index}`];
-      setErrors(updatedErrors);
-    }
-
     setSizePriceList(updatedList);
   };
 
@@ -108,38 +89,51 @@ function AddProduct() {
     if (!validateForm()) {
       return;
     }
-
-    // Categories should be stored as an array (assuming backend stores as an array of strings)
+  
+    // Convert the size names to "S", "M", "L"
+    const updatedSizeList = sizePriceList.map((row) => ({
+      size: row.size === "Small" ? "S" : row.size === "Medium" ? "M" : "L",
+      price: row.price,
+    }));
+  
     const productData = {
       name: productName,
       description: description,
-      imageUrl: imageUrl,
+      imageUrl: imageUrl,  // Send image URL as is
       isAvailable: isAvailable,
-      sizes: sizePriceList,
-      categories: categories.split(",").map((cat) => cat.trim()), // Convert categories string to array
+      sizes: updatedSizeList, // Use the updated size list
+      categories: categories, // Send the categories array directly
     };
-
+  
     try {
       const response = await createProduct(productData); // Use the createProduct function
       console.log("Product added successfully:", response.data);
-      alert("Product added successfully!");
-
+      Swal.fire('Success', 'Product added successfully!', 'success');
+  
       // Reset form
       setProductName("");
       setDescription("");
       setImageUrl("");
       setIsAvailable(false);
-      setSizePriceList([{ size: "", price: "" }]);
-      setCategories(""); // Reset categories
+      setSizePriceList([
+        { size: "Small", price: "" },
+        { size: "Medium", price: "" },
+        { size: "Large", price: "" },
+      ]);
+      setCategories([]); // Reset categories
       setErrors({});
     } catch (error) {
       console.error("Error adding product:", error);
-      alert("An error occurred while adding the product.");
+      Swal.fire('Error', 'An error occurred while adding the product.', 'error');
     }
   };
+  
+
+    
 
   const upload = () => {
     if (!image) {
+      alert('Please select an image to upload.');
       return;
     }
     const imagePath = `product/${image.name + uuidv4()}`;
@@ -156,13 +150,14 @@ function AddProduct() {
       },
       (err) => {
         console.log("error while uploading file", err);
+        alert('Error uploading image.');
       },
       () => {
         setTimeout(() => {
           setProgress(0);
         }, 2000);
         getDownloadURL(uploadFile.snapshot.ref).then((downloadURL) => {
-          setImageUrl(downloadURL);
+          setImageUrl(downloadURL); // Save the image URL after upload
         });
         setImage(null);
       }
@@ -177,8 +172,8 @@ function AddProduct() {
           <Box height={60} />
           <Box sx={{ display: "flex" }}>
             <AdminSidebar />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-              <Typography variant="h4" gutterBottom>
+            <Box component="main" sx={{ flexGrow: 1, p: 3}}>
+              <Typography variant="h4"  >
                 Add New Product
               </Typography>
 
@@ -269,29 +264,30 @@ function AddProduct() {
                   disabled={!productName.trim()} // Disabled until Product Name is filled
                 />
 
-                <TextField
-                  id="image-url"
-                  label="Image URL"
-                  variant="outlined"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  error={!!errors.imageUrl}
-                  helperText={errors.imageUrl}
-                  disabled={!description.trim()} // Disabled until Description is filled
-                  sx={{ width: "400em" }}
-                />
-
-                {/* Categories Input */}
-                <TextField
-                  id="categories"
-                  label="Categories (comma separated)"
-                  variant="outlined"
-                  value={categories}
-                  onChange={(e) => setCategories(e.target.value)}
-                  error={!!errors.categories}
-                  helperText={errors.categories}
-                  sx={{ width: "400em" }}
-                />
+                {/* Categories Input using checkboxes */}
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                  Select Categories
+                </Typography>
+                <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                  {["Cheese", "Sausage", "Mushroom", "Chicken","Veg","pizza"].map((category) => (
+                    <FormControlLabel
+                      key={category}
+                      control={
+                        <Checkbox
+                          checked={categories.includes(category)}
+                          onChange={(e) => {
+                            setCategories((prevCategories) =>
+                              e.target.checked
+                                ? [...prevCategories, category]
+                                : prevCategories.filter((item) => item !== category)
+                            );
+                          }}
+                        />
+                      }
+                      label={category}
+                    />
+                  ))}
+                </Box>
 
                 <Typography variant="h8" sx={{ mt: 3 }}>
                   Sizes and Prices
@@ -306,52 +302,7 @@ function AddProduct() {
                       mb: 2,
                     }}
                   >
-                    <TextField
-                      select
-                      label="Size"
-                      value={row.size}
-                      onChange={(e) => {
-                        handleChange(index, "size", e.target.value);
-                        const updatedErrors = { ...errors };
-                        delete updatedErrors[`size_${index}`];
-                        setErrors(updatedErrors);
-                      }}
-                      variant="outlined"
-                      sx={{ width: "13em" }}
-                      error={!!errors[`size_${index}`]}
-                      helperText={errors[`size_${index}`]}
-                      required
-                    >
-                      <MenuItem
-                        value="Small"
-                        disabled={
-                          selectedSizes.includes("Small") &&
-                          row.size !== "Small"
-                        }
-                      >
-                        Small
-                      </MenuItem>
-                      <MenuItem
-                        value="Medium"
-                        disabled={
-                          selectedSizes.includes("Medium") &&
-                          row.size !== "Medium"
-                        }
-                      >
-                        Medium
-                      </MenuItem>
-                      <MenuItem
-                        value="Large"
-                        disabled={
-                          selectedSizes.includes("Large") &&
-                          row.size !== "Large"
-                        }
-                      >
-                        Large
-                      </MenuItem>
-                    </TextField>
-
-                    {/* Price Field */}
+                    <Typography sx={{ width: "13em" }}>{row.size}</Typography>
                     <TextField
                       label="Price"
                       type="number"
@@ -359,30 +310,11 @@ function AddProduct() {
                       value={row.price}
                       onChange={(e) => {
                         handleChange(index, "price", e.target.value);
-                        const updatedErrors = { ...errors };
-                        delete updatedErrors[`price_${index}`];
-                        setErrors(updatedErrors);
                       }}
                       error={!!errors[`price_${index}`]}
                       helperText={errors[`price_${index}`]}
-                      disabled={!row.size.trim()} // Disabled until Size is selected
                       required
                     />
-
-                    <IconButton
-                      onClick={handleAddRow}
-                      color="primary"
-                      disabled={!row.price.trim()}
-                    >
-                      <AddIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleRemoveRow(index)}
-                      color="error"
-                      disabled={sizePriceList.length === 1}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
                   </Box>
                 ))}
 
@@ -415,7 +347,11 @@ function AddProduct() {
                       setDescription("");
                       setImageUrl("");
                       setIsAvailable(false);
-                      setSizePriceList([{ size: "", price: "" }]);
+                      setSizePriceList([
+                        { size: "Small", price: "" },
+                        { size: "Medium", price: "" },
+                        { size: "Large", price: "" },
+                      ]);
                       setCategories(""); // Reset categories
                       setErrors({});
                     }}

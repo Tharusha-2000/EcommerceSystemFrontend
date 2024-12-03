@@ -12,16 +12,20 @@ import Swal from 'sweetalert2';
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/reducers/UserSlice";
 import { useNavigate } from "react-router-dom";
-import Logo from '../../utils/Images/Logo1.png'; // Adjust the path to your logo image
+import Logo from '../../utils/Images/Logo1.png'; 
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  background: 'linear-gradient(45deg, #f0f0f0, #e0e0e0)', // Very low tone white gradient
+  background: 'linear-gradient(45deg, #f0f0f0, #e0e0e0)',
 }));
 
 export default function Header() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isMobileMoreOpen = Boolean(mobileMoreAnchorEl);
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const theme = useTheme();
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -30,6 +34,7 @@ export default function Header() {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -46,8 +51,6 @@ export default function Header() {
       if (result.value) {
         dispatch(logout());
         navigate('/'); 
-        // Add your logout logic here
-        console.log('User logged out');
       }
     });
   }
@@ -56,17 +59,11 @@ export default function Header() {
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       id={mobileMenuId}
       keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMobileMenuOpen}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMoreOpen}
       onClose={handleMobileMenuClose}
     >
       <MenuItem onClick={userLogout}>
@@ -80,72 +77,57 @@ export default function Header() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-  <AppBar position="fixed">
-    <Toolbar sx={{ justifyContent: 'space-between', minHeight: '80px' }}> {/* Adjust the minHeight value as needed */}
-      {/* Box for Logo on the left */}
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <img src={Logo} alt="Logo" style={{ height: '70px', marginRight: '1200px' }} />
-      </Box>
+      <AppBar position="fixed">
+      <Toolbar sx={{ justifyContent: 'space-between', minHeight: '80px', px: 2, width: '100%' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <img src={Logo} alt="Logo" style={{ height: '70px', marginLeft: isMobile ? '10px' : '0' }} />
+          </Box>
 
-      {/* Box for Admin Panel text */}
-                      <Box
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 10 } }}>
+            {!isMobile && (
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexGrow: 1,
-                  justifyContent: 'center',
-                  background: 'linear-gradient(135deg, #B40614, #FF4D4D)', // Gradient background
-                  padding: '5px 15px', // Smaller padding
-                  borderRadius: '16px', // Rounder corners
-                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)', // Subtle shadow
-                  marginX: 2, // Add horizontal margin
+                  fontSize: { xs: '1rem', sm: '1.5rem' },
+                  fontWeight: 'bold',
+                  color: '#ffffff',
+                  background: 'linear-gradient(135deg, #B40614, #FF4D4D)',
+                  padding: { xs: '3px 10px', sm: '5px 15px' },
+                  borderRadius: '16px',
+                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                  textShadow: '0 0 10px rgba(255, 255, 255, 0.5)',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
                 }}
               >
-                <Typography
-                  variant="h6" // Smaller variant
-                  noWrap
-                  component="div"
-                  sx={{
-                    fontSize: '1.5rem', // Smaller font size
-                    color: '#ffffff',
-                    fontWeight: 'bold',
-                    textShadow: '0 0 10px rgba(255, 255, 255, 0.5)', // Glowing text effect
-                    letterSpacing: '1px', // Reduced letter spacing
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Admin Panel
-                </Typography>
-              </Box>
-              {/* Box for Logout Icon */}
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton
-                  size="large"
-                  edge="end"
-                  color="inherit"
-                  aria-label="account of current user"
-                  aria-controls={mobileMenuId}
-                  aria-haspopup="true"
-                  onClick={userLogout}
-                  sx={{
-                    color: 'black',
-                    fontSize: '2.5rem',
-                    ml: 0,
-                    backgroundColor: '#f0f0f0',
-                    borderRadius: '50%',
-                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-                    '&:hover': {
-                      backgroundColor: '#e0e0e0',
-                      boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-                    },
-                  }} // Adjust the font size and add left margin
-                >
-                  <LogoutRoundedIcon fontSize="inherit" />
-                </IconButton>
-              </Box>
-    </Toolbar>
-  </AppBar>
-  {renderMobileMenu}
-</Box>
+                Admin Panel
+              </Typography>
+            )}
+
+            <IconButton
+              size="large"
+              edge="end"
+              color="inherit"
+              onClick={isMobile ? handleMobileMenuOpen : userLogout}
+              sx={{
+                color: 'black',
+                backgroundColor: '#f0f0f0',
+                borderRadius: '50%',
+                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                '&:hover': {
+                  backgroundColor: '#e0e0e0',
+                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                },
+              }}
+            >
+              <LogoutRoundedIcon fontSize="inherit" />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      {renderMobileMenu}
+    </Box>
   );
 }
