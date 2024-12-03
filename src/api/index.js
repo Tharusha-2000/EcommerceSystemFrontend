@@ -24,6 +24,13 @@ const API1 = axios.create({
   baseURL: "https://localhost:7087/api/",
 });
 
+const API5 = axios.create({
+  baseURL: "https://localhost:7242/api/",
+});
+
+const API6 = axios.create({
+  baseURL: "https://localhost:8080/api/",
+});
 
 
 
@@ -34,7 +41,10 @@ export const UserSignUp = async (data) => await API1.post(`Auth/register`, data)
 
 export const SendEmail = async (data) => await API1.post(`Auth/forgot-password`, data);
 
+
 export const PasswordChange = async (data) => await API1.post(`Auth/reset-password`, data);
+
+
 
 
 
@@ -44,6 +54,7 @@ export const UserCreate = async (data) => {
 };
 
 export const getUserById = async (id) => {
+
 
   const token = localStorage.getItem('Mossa-Melt-token');
   console.log(token);
@@ -59,6 +70,7 @@ export const getUserById = async (id) => {
 export const updateUser = async (data) => {
   const response = await API1.put(`User`, data);
   return response;
+
 };
 
 
@@ -143,88 +155,46 @@ export const handelViewOrder = async ( orderId ) => await API3.get(`OrderProduct
 export const updateOrder = async (orderId, updatedOrder)  => await API3.put(`Order/${orderId}`, updatedOrder);
 
 
+  
 /////////////// review and rating
 
 //API for fetching product reviews
 export const getProductFeedbacks = async (productId) => {
-  try {
-    const response = await API4.get(
-      `/FeedBack/GetProductFeedback/${productId}`
-    );
-    return response.data.$values; // Extract the $values array from the response
-  } catch (error) {
-    console.error("Error fetching product reviews:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching product reviews"
-    );
-  }
+  const response = await API4.get(`/FeedBack/GetProductFeedback/${productId}`);
+  return response.data.$values; // Extract the $values array from the response
 };
 
 //API for fetching Feedbacks by order Id
 export const GetFeedbackByOrderId = async (orderId) => {
-  try {
-    const response = await API4.get(
-      `/FeedBack/GetFeedbackByOrderId/${orderId}`
-    );
-    return response;
-  } catch (error) {
-    console.error("Error fetching feedback by order id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching feedback by order id"
-    );
-  }
+  const response = await API4.get(`/FeedBack/GetFeedbackByOrderId/${orderId}`);
+  return response;
 };
 
 //API fetching for add product feedback
 export const SaveProductFeedback = async (newFeedback) => {
-  try {
-    const response = await API4.post(
-      `/FeedBack/SaveProductFeedback`,
-      newFeedback
-    );
-  } catch (error) {
-    console.error("Error saving feedback:", error);
-    throw new Error(error.response?.data?.message || "Error saving feedback");
-  }
+  const response = await API4.post(
+    `/FeedBack/SaveProductFeedback`,
+    newFeedback
+  );
+  return response;
 };
 
 //API for feching orders by orderId
 export const fetchOrdersByUserId = async (userId) => {
-  try {
-    const response = await API3.get(`/Order/byUser/${userId}`);
-    return response;
-  } catch (error) {
-    console.error("Error fetching orders by user id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching orders by user id"
-    );
-  }
+  const response = await API5.get(`/Order/byUser/${userId}`);
+  return response;
 };
 
 //API for fetching order included products
 export const getOrderProductByOrderId = async (orderId) => {
-  try {
-    const response = await API3.get(`/OrderProduct/byOrder/${orderId}`);
-    return response;
-  } catch (error) {
-    console.error("Error fetching orders by user id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching orders by user id"
-    );
-  }
+  const response = await API5.get(`/OrderProduct/byOrder/${orderId}`);
+  return response;
 };
 
 //API for get products by product Id
 export const getProductById = async (productId) => {
-  try {
-    const response = await API2.get(`/Product/GetProductById/${productId}`);
-    return response;
-  } catch (error) {
-    console.error("Error fetching orders by user id:", error);
-    throw new Error(
-      error.response?.data?.message || "Error fetching orders by user id"
-    );
-  }
+  const response = await API7.get(`/Product/GetProductById/${productId}`);
+  return response;
 };
 
 
