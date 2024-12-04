@@ -16,7 +16,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from "../../firebase.js";
 import { updateProduct } from '../../api'; 
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
+import PropTypes from 'prop-types';
 
 function UpdateProduct({ open, onClose, productData, onUpdate }) {
   const [productName, setProductName] = useState(productData.name || '');
@@ -266,5 +267,24 @@ function UpdateProduct({ open, onClose, productData, onUpdate }) {
     </Modal>
   );
 }
+UpdateProduct.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  productData: PropTypes.shape({
+    productId: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    imageUrl: PropTypes.string,
+    isAvailable: PropTypes.bool,
+    sizes: PropTypes.arrayOf(
+      PropTypes.shape({
+        size: PropTypes.string,
+        price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      })
+    ),
+    categories: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
+  onUpdate: PropTypes.func.isRequired,
+};
 
 export default UpdateProduct;

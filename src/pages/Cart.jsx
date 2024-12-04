@@ -194,6 +194,7 @@ const Cart = () => {
       try {
         const userid = currentUser.id;
         const response = await getCartByUserId(userid);
+      
         dispatch(fetchCartRed(response.data));
       } catch (error) {
         if (error.response && error.response.status === 404) {
