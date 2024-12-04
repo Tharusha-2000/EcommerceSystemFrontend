@@ -6,7 +6,7 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "https://localhost:7273/api/",
+  baseURL: "http://localhost:5114/api/",
 });
 
 // Cart API
@@ -191,10 +191,10 @@ export const deleteFromCart = async (cartId) => {
 };
 
 //Orders
-export const placeOrder = async (token, data) =>
-  await API.post(`/user/order/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const createOrder = async (data) => await API3.post(`Order`, data);
+
+export const storeOrderProduct = async (data) =>
+  await API3.post(`OrderProduct`, data);
 
 // export const getOrders = async (token) =>
 //   await API.get(`Order`, {
