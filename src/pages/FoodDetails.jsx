@@ -180,7 +180,16 @@ const FoodDetails = () => {
 
   const addCart = async () => {
     setCartLoading(true);
-
+    if (!currentUser){
+      setCartLoading(false);
+      dispatch(
+        openSnackbar({
+          message: "you must login first ",
+          severity: "error",
+        })
+      );
+      return;
+    }
     if (selectedSize === "") {
       setCartLoading(false);
       dispatch(
@@ -342,7 +351,7 @@ const FoodDetails = () => {
                 </IconButton>
               </Items>
             </Div>
-
+      
             <ButtonWrapper>
               <Button
                 text="Add to Cart"
@@ -355,6 +364,7 @@ const FoodDetails = () => {
                onClick={() => addCart()}
               />
             </ButtonWrapper>
+      
           </Details>
         </Wrapper>
       )}

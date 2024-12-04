@@ -1,27 +1,32 @@
 import axios from "axios";
 
+
 const API = axios.create({
   baseURL: "https://fooddelivery-mern.onrender.com/api/",
 });
 
+
 // Product API
 const API2 = axios.create({
-  baseURL: "https://localhost:7273/api/",
+  baseURL: "http://localhost:5114/api/",
 });
+
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "http://localhost:5126/api/",
+  baseURL: "https://localhost:7242/api/",
 });
+
 
 //review and rating
 const API4 = axios.create({
-  baseURL: "http://localhost:5249/api/",
+  baseURL: "https://localhost:7046/api/",
 });
+
 
 //auth
 const API1 = axios.create({
-  baseURL: "https://localhost:7087/api/",
+  baseURL: "https://localhost:8080/api",
 });
 
 const API5 = axios.create({
@@ -55,7 +60,6 @@ export const UserCreate = async (data) => {
 
 export const getUserById = async (id) => {
 
-
   const token = localStorage.getItem('Mossa-Melt-token');
   console.log(token);
   const config = {
@@ -63,11 +67,13 @@ export const getUserById = async (id) => {
       Authorization: `Bearer ${token}`
     }
   };
+
   const response = await API1.get(`User/${id}`,config);
   return response.data;
 };
 
 export const updateUser = async (data) => {
+
   const response = await API1.put(`User`, data);
   return response;
 
@@ -134,16 +140,21 @@ export const deleteFromCart = async (cartId) => {
  
 };
 
-
+//cart
+export const getUserById2 = async (id) => {
+  const response = await API1.get(`User/${id}`);
+  return response;
+};
 
 
 
 
 //Orders
-export const placeOrder = async (token, data) =>
-  await API.post(`/user/order/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const createOrder = async (data) =>
+  await API3.post(`Order`, data);
+
+export const storeOrderProduct = async (data) =>
+  await API3.post(`OrderProduct`, data);
 
 // export const getOrders = async (token) =>
 //   await API.get(`Order`, {
