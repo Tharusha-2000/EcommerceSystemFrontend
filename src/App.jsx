@@ -22,6 +22,7 @@ import ForgetPassword from "./pages/Auth/ForgetPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import Feedbacks from "./pages/Admin/Feedbacks";
 import Contact from "./pages/Contact";
+import Checkout from "./pages/Checkout";
 
 const Container = styled.div``;
 
@@ -52,6 +53,7 @@ function App() {
             <Route path="/reset-password" exact element={<ResetPassword/>} />
             <Route path="/orders" exact element={<Order />} />
             <Route path="/contact" exact element={<Contact />} />
+            <Route path="/checkout" exact element={<Checkout />} />
             
             <Route
               path="/admin/dashboard"
