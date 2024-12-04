@@ -14,19 +14,19 @@ const API2 = axios.create({
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "http://localhost:5126/api/",
+  baseURL: "https://localhost:7242/api/",
 });
 
 
 //review and rating
 const API4 = axios.create({
-  baseURL: "http://localhost:5249/api/",
+  baseURL: "https://localhost:7046/api/",
 });
 
 
 //auth
 const API1 = axios.create({
-  baseURL: "https://localhost:7087/api/",
+  baseURL: "https://localhost:8080/api",
 });
 
 
@@ -224,13 +224,18 @@ export const deleteFromCart = async (cartId) => {
  
 };
 
-
+//cart
+export const getUserById2 = async (id) => {
+  const response = await API1.get(`User/${id}`);
+  return response;
+};
 
 //Orders
-export const placeOrder = async (token, data) =>
-  await API.post(`/user/order/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const createOrder = async (data) =>
+  await API3.post(`Order`, data);
+
+export const storeOrderProduct = async (data) =>
+  await API3.post(`OrderProduct`, data);
 
 // export const getOrders = async (token) =>
 //   await API.get(`Order`, {
