@@ -325,29 +325,29 @@ function AddProduct() {
                       helperText={errors[`size_${index}`]}
                       required
                     >
-                      <MenuItem
-                        value="Small"
+                                           <MenuItem
+                        value="S"
                         disabled={
-                          selectedSizes.includes("Small") &&
-                          row.size !== "Small"
+                          selectedSizes.includes("S") &&
+                          row.size !== "S"
                         }
                       >
                         Small
                       </MenuItem>
                       <MenuItem
-                        value="Medium"
+                        value="M"
                         disabled={
-                          selectedSizes.includes("Medium") &&
-                          row.size !== "Medium"
+                          selectedSizes.includes("M") &&
+                          row.size !== "M"
                         }
                       >
                         Medium
                       </MenuItem>
                       <MenuItem
-                        value="Large"
+                        value="L"
                         disabled={
-                          selectedSizes.includes("Large") &&
-                          row.size !== "Large"
+                          selectedSizes.includes("L") &&
+                          row.size !== "L"
                         }
                       >
                         Large
