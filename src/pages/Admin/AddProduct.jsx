@@ -84,10 +84,12 @@ function AddProduct() {
     setSizePriceList(updatedList);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+
+ 
     if (!validateForm()) {
       return;
+
     }
   
     // Convert the size names to "S", "M", "L"
@@ -106,6 +108,7 @@ function AddProduct() {
     };
   
     try {
+      console.log("hihgjf djkfnvkdf");
       const response = await createProduct(productData); // Use the createProduct function
       console.log("Product added successfully:", response.data);
       Swal.fire('Success', 'Product added successfully!', 'success');
@@ -128,6 +131,7 @@ function AddProduct() {
     }
   };
   
+
 
     
 

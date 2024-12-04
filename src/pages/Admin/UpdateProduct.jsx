@@ -15,7 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from "../../firebase.js";
-import { updateProduct } from '../../api'; 
+import { updateProduct } from '../../api/index.js'; 
 import Swal from 'sweetalert2'; 
 
 function UpdateProduct({ open, onClose, productData, onUpdate }) {
