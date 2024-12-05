@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { openSnackbar } from "../../redux/reducers/SnackbarSlice";
 import axios from "axios";
 import RatingSelect from "./RatingSelect";
 import Card from "./Card";
 import "./Style.css";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
-import { GetFeedbackByOrderId,SaveProductFeedback } from "../../api";
+import { GetFeedbackByOrderId, SaveProductFeedback } from "../../api";
 
 const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
   const [text, setText] = useState("");
@@ -13,6 +15,7 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [message, setMessage] = useState("");
   const [hasFeedback, setHasFeedback] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const checkFeedback = async () => {
@@ -57,7 +60,12 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
 
       try {
         await SaveProductFeedback(newFeedback);
-        toast.success("Feedback saved successfully");
+        dispatch(
+          openSnackbar({
+            message: "Feedback saved successfully",
+            severity: "success",
+          })
+        );
         onClose();
         onSave(newFeedback);
         setText("");
@@ -66,7 +74,12 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
         console.log("New FeedBack:", newFeedback);
       } catch (error) {
         console.error("Error submitting feedback:", error);
-        console.log(error);
+        dispatch(
+          openSnackbar({
+            message: error.message || "Error submitting feedback",
+            severity: "error",
+          })
+        );
       }
     } else {
       console.log("Feedback should be at least 10 characters long");
@@ -103,7 +116,9 @@ const FeedbackForm = ({ userId, orderId, onClose, onSave }) => {
         </div>
         {message && <div className="message">{message}</div>}
         {hasFeedback && (
-          <div className="message">Your feedback already given for this order.</div>
+          <div className="message">
+            Your feedback already given for this order.
+          </div>
         )}
       </form>
     </Card>
