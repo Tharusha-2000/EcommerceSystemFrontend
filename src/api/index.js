@@ -6,27 +6,29 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "https://localhost:7273/api/",
+  baseURL: "https://localhost:7000/api/",
 });
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "https://localhost:7242/api/",
+  baseURL: "https://localhost:7000/api/",
 });
 
 //review and rating
 const API4 = axios.create({
-  baseURL: "https://localhost:7046/api/",
+  baseURL: "https://localhost:7000/api/",
 });
 
 //auth
 const API1 = axios.create({
-  baseURL: "http://localhost:8080/api/",
+  baseURL: "https://localhost:7000/api/",
 });
 
 //auth
 
-export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
+export const UserSignIn = async (data) => {
+  return await API1.post(`Auth/login`, data);
+}
 export const UserSignUp = async (data) =>
   await API1.post(`Auth/register`, data);
 
@@ -73,6 +75,8 @@ export const getAllProducts = async (filter) =>
 export const getProductDetails = async (id) =>
   await API2.get(`Product/GetProductById/${id}`);
 
+
+
 export const createProduct = async (productData) => {
   const token = localStorage.getItem("Mossa-Melt-token");
   console.log(token);
@@ -84,6 +88,7 @@ export const createProduct = async (productData) => {
 
   return await API2.post("Product/CreateProductAsync", productData, config);
 };
+
 export const updateProduct = async (id, productData) => {
   const token = localStorage.getItem("Mossa-Melt-token");
   console.log(token);
@@ -177,6 +182,7 @@ export const updateItemOnCart = async (data) => {
   return await API3.put(`Cart/${data.cartId}`, data, config);
 };
 
+
 export const deleteFromCart = async (cartId) => {
   const token = localStorage.getItem("Mossa-Melt-token");
   console.log(token);
@@ -218,7 +224,9 @@ export const storeOrderProduct = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.post(`OrderProduct`, data, config);
+  const res= await API3.post(`OrderProduct`, data, config);
+  console.log(res);
+  return res;
 };
 
 export const getOrders = async () => {
@@ -253,6 +261,22 @@ export const updateOrder = async (orderId, updatedOrder) => {
   };
   return await API3.put(`Order/${orderId}`, updatedOrder, config);
 };
+
+
+export const getClientSecret = async (amount) =>{
+  const res = API3.post(`Payment/create-payment-intent`,amount);
+  return res;
+}
+
+export const updatePaymentState = async (data) => {
+  try {
+    await API3.put(`Order/byOrderId/${data}?paymentStatus=true`);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
 
 /////////////// review and rating
 
@@ -373,25 +397,16 @@ export const getAllFeedback = async () => {
   return await API4.get(`Feedback/GetAllFeedbacks`, config);
 };
 //get order details -dilum
-export const getallOrderDetails = async () => {
+export const getallOrderDetails = async (id) => {
   const token = localStorage.getItem("Mossa-Melt-token");
-
+  console.log(token);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-
-  try {
-    const response = await API3.get(`OrderProduct`, config);
-    if (response && response.data) {
-      return response;
-    } else {
-      console.error("Invalid response for order details:", response);
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching order details:", error);
-    return null;
-  }
+  return await API3.get(`OrderProduct`, config);
 };
+
+
+

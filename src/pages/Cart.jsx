@@ -292,6 +292,7 @@ const Cart = () => {
       console.log("Order Details:", orderDetails);
 
       const response = await createOrder(orderDetails);
+      
       console.log("Order Response:", response);
       if (response.status === 201) {
         console.log(response.data.orderId);
@@ -389,7 +390,9 @@ const Cart = () => {
   // Fetch user profile data from localStorage or API (simulate fetching)
   const getUserProfile = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/User/${userId}`);
+
+      const response = await fetch(`https://localhost:7000/api/User/${userId}`);
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
