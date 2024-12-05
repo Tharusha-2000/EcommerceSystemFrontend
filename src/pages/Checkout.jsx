@@ -18,7 +18,9 @@ import{
   updatePaymentState,
 } from "../api";
 import axios from "axios";
+
 import bgImg from "../utils/Images/Header.png";
+
 
 const stripePromise = loadStripe(
   "pk_test_51QLb3dCtgNr9CP7sSpK2xhyHNZ9GXIdaX90sOFF67neyqDekhdG201u6vuEDdFjoNr13TqlXN7B7YvylE0rA0cty00Ch4ol5nw"
@@ -86,7 +88,9 @@ const PaymentForm = (props) => {
 
       for (let i = 0; i < cartIds.length; i++) {
         console.log(cartIds[i]);
+
         await deleteFromCart(cartIds[i]);
+
       }
 
       dispatch(clearCart());

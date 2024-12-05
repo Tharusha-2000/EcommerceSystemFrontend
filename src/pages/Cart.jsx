@@ -191,6 +191,7 @@ const Cart = () => {
       try {
         const userid = currentUser.id;
         const response = await getCartByUserId(userid);
+      
         dispatch(fetchCartRed(response.data));
       } catch (error) {
         if (error.response && error.response.status === 404) {
@@ -257,7 +258,8 @@ const Cart = () => {
         return 1;
       }
 
-      if (deliveryDetails.postalcode !== "11270") {
+      const allowedPostalCodes = ["11270", "11271", "11272", "11273"];
+      if (!allowedPostalCodes.includes(deliveryDetails.postalcode)) {
         dispatch(
           openSnackbar({
             message: "We are currently not delivering to your area",
@@ -388,7 +390,9 @@ const Cart = () => {
   // Fetch user profile data from localStorage or API (simulate fetching)
   const getUserProfile = async (userId) => {
     try {
+
       const response = await fetch(`https://localhost:7000/api/User/${userId}`);
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
