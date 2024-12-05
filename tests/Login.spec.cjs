@@ -1,7 +1,7 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 
-(async function VerifyAndLogin() {
+(async function VerifyLoginAndDeleteFromCart() {
   let driver = new Builder()
     .forBrowser('chrome')
     .setChromeOptions(new chrome.Options())
@@ -9,50 +9,50 @@ const chrome = require('selenium-webdriver/chrome');
 
   try {
     console.log("Launching browser...");
-    // Navigate to the home page
+
+    // Step 1: Navigate to the home page
     await driver.get('http://localhost:5173/');
     console.log("Navigated to home page.");
 
-    // Wait for the "Sign In" button on the home page and click it
+    // Step 2: Navigate to the login page by clicking the "Sign In" button
     console.log("Waiting for sign-in button...");
     const homeSignInButtonSelector = By.className('sc-blHHSb Rsved'); // Adjust based on your button class
     await driver.wait(until.elementLocated(homeSignInButtonSelector), 10000);
     const homeSignInButton = await driver.findElement(homeSignInButtonSelector);
-    await driver.wait(until.elementIsVisible(homeSignInButton), 5000); // Ensure visibility
+    await driver.wait(until.elementIsVisible(homeSignInButton), 5000);
     await homeSignInButton.click();
     console.log("Clicked Sign In button.");
 
-    // Verify navigation to the sign-in page
-    console.log("Verifying navigation to sign-in page...");
-    await driver.wait(until.urlContains('http://localhost:5173/'), 10000); // Replace `/signin` with the actual path if different
-    console.log("Navigation verified! URL contains '/signin'.");
+    // Step 3: Verify navigation to the login page
+    console.log("Verifying navigation to login page...");
+    await driver.wait(until.urlContains('http://localhost:5173/'), 10000); // Replace with your sign-in URL fragment
+    console.log("Navigation verified!");
 
-    // Wait for the login fields to appear
+    // Step 4: Log in with valid credentials
     console.log("Waiting for login fields...");
-    const emailFieldSelector = By.className('sc-eMwmJz pOMuW');
-    const passwordFieldSelector = By.className('sc-eMwmJz pOMuW');
+    const emailFieldSelector = By.css('input[placeholder="Enter your email address"]');
+    const passwordFieldSelector = By.css('input[placeholder="Enter your password"]');
+    const loginButtonSelector = By.className('sc-blHHSb eseLmy'); // Adjust based on your button class
 
     await driver.wait(until.elementLocated(emailFieldSelector), 10000);
     const emailField = await driver.findElement(emailFieldSelector);
-    await driver.wait(until.elementLocated(passwordFieldSelector), 10000);
     const passwordField = await driver.findElement(passwordFieldSelector);
 
-    console.log("Login fields are visible. Entering credentials...");
-
-    // Enter email and password
+    console.log("Entering credentials...");
     await emailField.sendKeys('sanugidivi@gmail.com');
-    console.log("Entered email.");
-    await passwordField.sendKeys('Sanu@2001');
-    console.log("Entered password.");
+    await passwordField.sendKeys('Sanugi@123');
+    console.log("Credentials entered.");
 
-    // Wait for and click the "Login" button
-    const loginButtonSelector = By.className('sc-blHHSb eseLmy'); // Adjust based on your button class
-    console.log("Waiting for login button...");
-    await driver.wait(until.elementLocated(loginButtonSelector), 10000);
+    console.log("Clicking login button...");
     const loginButton = await driver.findElement(loginButtonSelector);
-    await driver.wait(until.elementIsVisible(loginButton), 5000); // Ensure visibility
+    await driver.wait(until.elementIsVisible(loginButton), 5000);
     await loginButton.click();
-    console.log("Clicked Login button.");
+
+    // Step 5: Verify successful login
+console.log("Verifying successful login...");
+const nextPageElementSelector = By.id('root'); // Replace with actual class name of a unique element on the next page
+await driver.wait(until.elementLocated(nextPageElementSelector), 10000); // Wait until the element is present
+console.log("Successfully loggedin.");
 
     // Wait for a unique element or URL to verify successful login
     console.log("Verifying successful login...");

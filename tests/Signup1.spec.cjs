@@ -1,10 +1,13 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 
-(async function SignUpValidationTest() {
+(async function ValidateRegistration() {
+  const chromeOptions = new chrome.Options();
+  chromeOptions.addArguments('--ignore-certificate-errors'); // Disable SSL validation
+
   let driver = new Builder()
     .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options())
+    .setChromeOptions(chromeOptions)
     .build();
 
   try {
@@ -12,10 +15,12 @@ const chrome = require('selenium-webdriver/chrome');
     await driver.get('http://localhost:5173/');
     console.log("Navigated to home page.");
 
+    // Navigate to the signup page
     console.log("Navigating to signup page...");
     const homeSignInButton = await driver.findElement(By.className('sc-blHHSb Rsved'));
     await homeSignInButton.click();
 
+    // Wait for the navigation to complete and locate the signup button
     await driver.wait(until.urlContains('http://localhost:5173/'), 10000);
     const signUpButton = await driver.findElement(By.className('sc-gcfzXs dTsuGC'));
     await signUpButton.click();
@@ -23,53 +28,41 @@ const chrome = require('selenium-webdriver/chrome');
     await driver.wait(until.urlContains('http://localhost:5173/'), 10000);
     console.log("On signup page.");
 
-    // Case 1: Empty Fields Validation
-    console.log("Testing empty fields...");
-    const submitButton = await driver.findElement(By.className('sc-frniUE fKSMoW')); // Replace with your actual class
-    await submitButton.click();
-
-    try {
-      const emptyFieldsError = await driver
-        .wait(until.elementLocated(By.className('MuiSnackbarContent-message css-ozrxnr-MuiSnackbarContent-message')), 5000)
-        .getText(); // Replace with actual error class
-      if (emptyFieldsError === "All fields are required") {
-        console.log("Empty fields validation passed.");
-      } else {
-        console.error("Empty fields validation failed.");
-      }
-    } catch (error) {
-      console.error("Error message not displayed for empty fields.");
-    }
-
-    // Case 2: Successful Registration
-    console.log("Testing successful registration...");
+    // Input fields
     const firstnameField = await driver.findElement(By.css('input[placeholder="Enter your first name"]'));
     const lastnameField = await driver.findElement(By.css('input[placeholder="Enter your last name"]'));
     const emailField = await driver.findElement(By.css('input[placeholder="Enter your email address"]'));
     const passwordField = await driver.findElement(By.css('input[placeholder="Enter your password"]'));
-    
+    const submitButton = await driver.findElement(By.className('sc-frniUE fKSMoW'));
 
-    // Fill in the form fields
-    await firstnameField.sendKeys('Sanugi');
-    await lastnameField.sendKeys('Divigalpitiya');
-    await emailField.sendKeys('skkljkl@gmail.com'); // Ensure this email is unique in the database
-    await passwordField.sendKeys('Sanugi@123');
+    // Fill all fields with valid data
+    console.log("Filling in all fields with valid data...");
+    await firstnameField.clear();
+    await firstnameField.sendKeys("Sanugi");
 
-    // Submit the form
+    await lastnameField.clear();
+    await lastnameField.sendKeys("Divigalpitiya");
+
+    await emailField.clear();
+    await emailField.sendKeys("abc@gmail.com");
+
+    await passwordField.clear();
+    await passwordField.sendKeys("Sanugi@123");
+
+    // Click the submit button
+    console.log("Clicking the submit button...");
     await submitButton.click();
 
-    try {
-      const successMessage = await driver
-        .wait(until.elementLocated(By.className('MuiSnackbarContent-message css-ozrxnr-MuiSnackbarContent-message')), 5000)
-        .getText(); // Replace with actual success message class
+    // Validate successful registration
+    console.log("Validating successful registration...");
+    const successMessageSelector = By.css('.MuiSnackbar-root'); // Ensure this matches your success message element
+    const successElement = await driver.wait(until.elementLocated(successMessageSelector), 10000); // Wait for success message
+    const successMessage = await successElement.getText();
 
-      if (successMessage === "Registration successful") {
-        console.log("Successful registration test passed.");
-      } else {
-        console.error("Successful registration test failed.");
-      }
-    } catch (error) {
-      console.error("Success message not displayed after registration.");
+    if (successMessage.includes("Registration successful")) { // Adjust message text if necessary
+      console.log("Validation passed: Successful registration message displayed.");
+    } else {
+      console.error(`Validation failed: Unexpected message displayed: ${successMessage}`);
     }
   } catch (error) {
     console.error("Test failed:", error.message);

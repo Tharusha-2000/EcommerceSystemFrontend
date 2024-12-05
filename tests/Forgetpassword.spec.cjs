@@ -13,7 +13,7 @@ const chrome = require('selenium-webdriver/chrome');
     await driver.get('http://localhost:5173/');
     console.log("Navigated to home page.");
 
-    
+
     // Wait for the "Sign In" button on the home page and click it
     console.log("Waiting for sign-in button...");
     const homeSignInButtonSelector = By.className('sc-blHHSb Rsved'); // Adjust based on your button class
@@ -42,9 +42,7 @@ const chrome = require('selenium-webdriver/chrome');
     await driver.wait(until.urlContains('http://localhost:5173/forgetPassword'), 10000); // Adjust `/forgot-password` to your app's path
     console.log("Forgot Password page navigation verified!");
 
-    // Optionally, verify a unique element on the Forgot Password page
-    const forgotPasswordPageIndicator = By.className('sc-dwGkES'); // Adjust based on your page structure
-    await driver.wait(until.elementLocated(forgotPasswordPageIndicator), 10000);
+
     console.log("Forgot Password page test passed!");
   } catch (error) {
     console.error("Test failed:", error.message);

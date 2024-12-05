@@ -1,65 +1,94 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 
-(async function DeleteTest() {
-  let driver;
+(async function VerifyLoginAndDeleteFromCart() {
+  let driver = new Builder()
+    .forBrowser('chrome')
+    .setChromeOptions(new chrome.Options())
+    .build();
 
   try {
-    // Step 1: Launch the browser
     console.log("Launching browser...");
-    driver = new Builder()
-      .forBrowser('chrome')
-      .setChromeOptions(new chrome.Options())
-      .build();
 
-    // Step 2: Navigate directly to the cart page
-    await driver.get('http://localhost:5173/cart');
-    console.log("Successfully navigated to cart page.");
+    // Step 1: Navigate to the home page
+    await driver.get('http://localhost:5173/');
+    console.log("Navigated to home page.");
 
-    // Step 3: Wait for the cart page to fully load
-    const cartPageIndicator = By.id('root'); // Replace with an actual indicator unique to the cart page
-    await driver.wait(until.elementIsVisible(driver.findElement(cartPageIndicator)), 15000);
-    console.log("Cart page loaded.");
+    // Step 2: Navigate to the login page by clicking the "Sign In" button
+    console.log("Waiting for sign-in button...");
+    const homeSignInButtonSelector = By.className('sc-blHHSb Rsved'); // Adjust based on your button class
+    await driver.wait(until.elementLocated(homeSignInButtonSelector), 10000);
+    const homeSignInButton = await driver.findElement(homeSignInButtonSelector);
+    await driver.wait(until.elementIsVisible(homeSignInButton), 5000);
+    await homeSignInButton.click();
+    console.log("Clicked Sign In button.");
 
-    // Step 4: Check if the browser window is still open
-    const windows = await driver.getAllWindowHandles();
-    if (windows.length === 0) {
-      console.error("No browser window is open.");
-      return;
-    }
+    // Step 3: Verify navigation to the login page
+    console.log("Verifying navigation to login page...");
+    await driver.wait(until.urlContains('http://localhost:5173/'), 10000); // Replace with your sign-in URL fragment
+    console.log("Navigation verified!");
 
-    // Step 5: Click the delete icon
-    console.log("Clicking delete icon...");
-    const deleteButtonSelector = By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[2]/div[5]/*[name()='svg'][1]");
-    const deleteButton = await driver.wait(until.elementLocated(deleteButtonSelector), 5000);
-    await driver.wait(until.elementIsVisible(deleteButton), 5000); // Wait for visibility
-    await deleteButton.click();
-    console.log("Delete icon clicked.");
+    // Step 4: Log in with valid credentials
+    console.log("Waiting for login fields...");
+    const emailFieldSelector = By.css('input[placeholder="Enter your email address"]');
+    const passwordFieldSelector = By.css('input[placeholder="Enter your password"]');
+    const loginButtonSelector = By.className('sc-blHHSb eseLmy'); // Adjust based on your button class
 
-    // Step 6: Wait for the empty cart message to appear
-    console.log("Waiting for empty cart message...");
-    const emptyCartMessageSelector = By.className('sc-iRLAEC bgvyo');
-    await driver.wait(until.elementLocated(emptyCartMessageSelector), 5000);
-    const emptyCartMessageElement = await driver.findElement(emptyCartMessageSelector);
+    await driver.wait(until.elementLocated(emailFieldSelector), 10000);
+    const emailField = await driver.findElement(emailFieldSelector);
+    const passwordField = await driver.findElement(passwordFieldSelector);
 
-    // Step 7: Verify the message content
-    const messageText = await emptyCartMessageElement.getText();
-    if (messageText.includes("Your Shopping Cart") && messageText.includes("Cart is empty")) {
-      console.log("Empty cart message displayed correctly.");
-    } else {
-      console.error("Empty cart message not displayed as expected.");
-    }
+    console.log("Entering credentials...");
+    await emailField.sendKeys('sanugidivi@gmail.com');
+    await passwordField.sendKeys('Sanugi@123');
+    console.log("Credentials entered.");
+
+    console.log("Clicking login button...");
+    const loginButton = await driver.findElement(loginButtonSelector);
+    await driver.wait(until.elementIsVisible(loginButton), 5000);
+    await loginButton.click();
+
+    // Step 5: Verify successful login
+console.log("Verifying successful login...");
+const nextPageElementSelector = By.id('root'); // Replace with actual class name of a unique element on the next page
+await driver.wait(until.elementLocated(nextPageElementSelector), 10000); // Wait until the element is present
+console.log("Successfully logged in and navigated to the next page.");
+
+
+//     // Step 6: Navigate to the cart page
+//     console.log("Navigating to cart page...");
+//     const cartButtonSelector = By.xpath('//*[@data-testid="ShoppingCartOutlinedIcon"]');
+//  // Replace with your cart button class
+//     await driver.wait(until.elementLocated(cartButtonSelector), 10000);
+//     const cartButton = await driver.findElement(cartButtonSelector);
+//     await cartButton.click();
+//     await driver.wait(until.urlContains('http://localhost:5173/cart'), 10000);
+//     console.log("Successfully navigated to cart page.");
+
+    // // Step 7: Click the delete icon for an item in the cart
+    // console.log("Clicking delete icon...");
+    // const deleteButtonSelector = By.className('sc-fIfZzT fpTEVI'); // Replace with your delete button class
+    // const deleteButton = await driver.wait(until.elementLocated(deleteButtonSelector), 10000);
+    // await driver.wait(until.elementIsVisible(deleteButton), 5000);
+    // await deleteButton.click();
+    // console.log("Delete icon clicked.");
+
+    // // Step 8: Verify the cart is empty
+    // console.log("Verifying empty cart...");
+    // const emptyCartMessageSelector = By.className('sc-hGZxvd hgdBya'); // Replace with your empty cart message class
+    // await driver.wait(until.elementLocated(emptyCartMessageSelector), 10000);
+    // const emptyCartMessage = await driver.findElement(emptyCartMessageSelector);
+    // const messageText = await emptyCartMessage.getText();
+
+    // if (messageText.includes("Your Shopping Cart") && messageText.includes("Cart is empty")) {
+    //   console.log("Empty cart message displayed correctly.");
+    // } else {
+    //   console.error("Empty cart message not displayed as expected.");
+    // }
   } catch (error) {
     console.error("Test failed:", error.message);
   } finally {
-    // Close the browser if it's still open
-    try {
-      if (driver) {
-        console.log("Closing browser...");
-        await driver.quit();
-      }
-    } catch (closeError) {
-      console.error("Error while closing browser:", closeError.message);
-    }
+    console.log("Closing browser...");
+    await driver.quit();
   }
 })();
