@@ -20,10 +20,10 @@ const MyOrders = ({ userId }) => {
   const [products, setProducts] = useState({});
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrders = async () => {
-      
       try {
         const response = await fetchOrdersByUserId(userId);
         const userOrders = response.data
@@ -41,7 +41,9 @@ const MyOrders = ({ userId }) => {
         setOrders(userOrders);
         Swal.close();
       } catch (error) {
-        
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -105,12 +107,17 @@ const MyOrders = ({ userId }) => {
 
   const handleSaveFeedback = (feedback) => {
     console.log("Feedback saved:", feedback);
-    // Update state or perform any necessary actions with the saved feedback
   };
 
   return (
     <>
-      {orders.length > 0 ? (
+      {loading ? (
+        <div className="row p-4 rounded-4 sec shadow bg-grey mt-4 mb-4 ml-4 mr-4">
+          <div className="col-lg-12 mt-5 mb-4">
+            <p className="text-center fs-10 font-family-Inter">Loading...</p>
+          </div>
+        </div>
+      ) :orders.length > 0 ? (
         orders.map((order) => (
           <div
             key={order.orderId}
