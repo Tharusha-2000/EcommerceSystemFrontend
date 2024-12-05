@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { clearCart} from "../redux/reducers/cartSlice";
+import { clearCart } from "../redux/reducers/cartSlice";
 import { openSnackbar } from "../redux/reducers/SnackbarSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -12,6 +12,7 @@ import {
   CardCvcElement,
 } from "@stripe/react-stripe-js";
 import axios from "axios";
+import bgImg from "../utils/Images/paymentBG.jpg";
 
 const stripePromise = loadStripe(
   "pk_test_51QLb3dCtgNr9CP7sSpK2xhyHNZ9GXIdaX90sOFF67neyqDekhdG201u6vuEDdFjoNr13TqlXN7B7YvylE0rA0cty00Ch4ol5nw"
@@ -30,7 +31,7 @@ const PaymentForm = (props) => {
   const navigate = useNavigate();
 
   const cartIds = props.cartIds;
-  
+
   const [paymentId, setPaymentId] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
 
@@ -88,8 +89,7 @@ const PaymentForm = (props) => {
         console.log(cartIds[i]);
         try {
           axios.delete(`https://localhost:7242/api/Cart/${cartIds[i]}`);
-        }
-        catch(e){
+        } catch (e) {
           console.log(e);
         }
       }
@@ -106,11 +106,10 @@ const PaymentForm = (props) => {
       // Set the paymentId state here
       setPaymentId(paymentIntent.id);
 
-      setTimeout(()=>{
+      setTimeout(() => {
         navigate("/orders");
-      },2000);
-      
-      
+        window.location.reload(); // Reload the orders page
+      }, 3000);
     }
   };
   const CARD_ELEMENT_OPTIONS1 = {
@@ -195,7 +194,7 @@ const PaymentForm = (props) => {
     border: "1px solid #ccc",
     borderRadius: "6px",
     marginBottom: "1%",
-    width: "60%",
+    width: "100%",
     alignItems: "center",
   };
 
@@ -205,14 +204,14 @@ const PaymentForm = (props) => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-6">
-          <form onSubmit={handleSubmit}>
+    <div className="container-fluid" style={{ height: "100vh" }}>
+      <div className="row" style={{ height: "100%" }}>
+        <div className="col-md-6 d-flex align-items-center justify-content-center k-20">
+          <form onSubmit={handleSubmit} className="p-5 shadow w-100 mx-5">
             <div style={wrapperStyle}>
               <input
                 type="text"
-                style={inputStyle}
+                style={{ ...inputStyle }}
                 value={cardHolderName}
                 onChange={handleCardHolderNameChange}
                 placeholder="John Doe"
@@ -388,7 +387,7 @@ const PaymentForm = (props) => {
               <button
                 className="btn mt-5"
                 type="submit"
-                style={buttonStyle}
+                style={{...buttonStyle, width: "100%", background:"red"}}
                 disabled={!stripe}
               >
                 Pay Now
@@ -398,7 +397,15 @@ const PaymentForm = (props) => {
           </form>
         </div>
 
-        <div className="col-6 mt-5"></div>
+        <div
+          className="col-6"
+          style={{
+            backgroundImage: `url(${bgImg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "100%",
+          }}
+        ></div>
       </div>
     </div>
   );
@@ -411,7 +418,6 @@ const Checkout = (prop1) => {
   const { totalAmount } = location.state || {};
   const { cartIds } = location.state || {};
   const { orderId } = location.state || {};
-
 
   const LkrValue = parseInt(totalAmount, 10);
   const usdValue = LkrValue / 296.75;
@@ -434,7 +440,13 @@ const Checkout = (prop1) => {
 
   return (
     <Elements stripe={stripePromise}>
-      {clientSecret && <PaymentForm clientSecret={clientSecret} OrderId={orderId} cartIds={cartIds}/>}
+      {clientSecret && (
+        <PaymentForm
+          clientSecret={clientSecret}
+          OrderId={orderId}
+          cartIds={cartIds}
+        />
+      )}
     </Elements>
   );
 };
