@@ -1,38 +1,40 @@
-import * as React from 'react'
-import { styled } from '@mui/material/styles'
-import Box from '@mui/material/Box'
-import Toolbar from '@mui/material/Toolbar'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import MenuItem from '@mui/material/MenuItem'
-import Menu from '@mui/material/Menu'
-import MenuIcon from '@mui/icons-material/Menu'
-import MoreIcon from '@mui/icons-material/MoreVert'
-import MuiAppBar from '@mui/material/AppBar'
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
-import Swal from 'sweetalert2'
+import * as React from 'react';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import MuiAppBar from '@mui/material/AppBar';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import Swal from 'sweetalert2';
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/reducers/UserSlice";
-import { useNavigate } from 'react-router-dom'
-
-
+import { useNavigate } from "react-router-dom";
+import Logo from '../../utils/Images/Logo1.png'; 
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  background: 'linear-gradient(45deg, #333, #555)', // Gradient background
-}))
+  background: 'linear-gradient(45deg, #f0f0f0, #e0e0e0)',
+}));
 
 export default function Header() {
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const isMobileMoreOpen = Boolean(mobileMoreAnchorEl);
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const theme = useTheme();
 
   const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null)
-  }
+    setMobileMoreAnchorEl(null);
+  };
 
   const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget)
-  }
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -49,27 +51,19 @@ export default function Header() {
       if (result.value) {
         dispatch(logout());
         navigate('/'); 
-        // Add your logout logic here
-        console.log('User logged out')
       }
-    })
+    });
   }
 
-  const mobileMenuId = 'primary-search-account-menu-mobile'
+  const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       id={mobileMenuId}
       keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMobileMenuOpen}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMoreOpen}
       onClose={handleMobileMenuClose}
     >
       <MenuItem onClick={userLogout}>
@@ -79,39 +73,61 @@ export default function Header() {
         <p>Logout</p>
       </MenuItem>
     </Menu>
-  )
+  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h4" noWrap component="div" sx={{ flexGrow: 1 }}>
-          Mozza Melt
-          </Typography>
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+      <Toolbar sx={{ justifyContent: 'space-between', minHeight: '80px', px: 2, width: '100%' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <img src={Logo} alt="Logo" style={{ height: '70px', marginLeft: isMobile ? '10px' : '0' }} />
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 10 } }}>
+            {!isMobile && (
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1.5rem' },
+                  fontWeight: 'bold',
+                  color: '#ffffff',
+                  background: 'linear-gradient(135deg, #B40614, #FF4D4D)',
+                  padding: { xs: '3px 10px', sm: '5px 15px' },
+                  borderRadius: '16px',
+                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                  textShadow: '0 0 10px rgba(255, 255, 255, 0.5)',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Admin Panel
+              </Typography>
+            )}
+
             <IconButton
               size="large"
               edge="end"
               color="inherit"
-              aria-label="account of current user"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
+              onClick={isMobile ? handleMobileMenuOpen : userLogout}
+              sx={{
+                color: 'black',
+                backgroundColor: '#f0f0f0',
+                borderRadius: '50%',
+                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                '&:hover': {
+                  backgroundColor: '#e0e0e0',
+                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                },
+              }}
             >
-              <MoreIcon />
+              <LogoutRoundedIcon fontSize="inherit" />
             </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
     </Box>
-  )
+  );
 }

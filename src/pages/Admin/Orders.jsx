@@ -20,8 +20,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import Modal from "@mui/material/Modal";
-import axios from "axios";
-import {getOrders,updateOrder,handelViewOrder} from "../../api/index"
+import { getOrders, updateOrder, handelViewOrder } from "../../api/index";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -36,7 +35,7 @@ function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-       const response=await getOrders();
+        const response = await getOrders();
         setOrders(response.data);
         setLoading(false);
       } catch (error) {
@@ -50,7 +49,6 @@ function Orders() {
   const handleSave = async (orderId, index) => {
     try {
       const updatedOrder = { ...orders[index], orderStatus: selectedStatus };
-      
       await updateOrder(orderId, updatedOrder);
 
       // Update local state
@@ -70,7 +68,7 @@ function Orders() {
     setLoadingProducts(true);
     setModalOpen(true);
     try {
-      const response= await handelViewOrder(orderId);
+      const response = await handelViewOrder(orderId);
       setProductDetails(response.data);
       setLoadingProducts(false);
     } catch (error) {
@@ -95,88 +93,99 @@ function Orders() {
   };
 
   return (
-    <Grid>
-      <Header />
-      <Box height={60} />
-      <Box sx={{ display: "flex" }}>
+    <Grid container>
+      <Grid item xs={12}>
+        <Header />
+      </Grid>
+      <Grid item xs={12} sm={2}>
+        {" "}
+        {/* Adjusted width of AdminSidebar */}
         <AdminSidebar />
-        <Stack justifyContent={"center"} alignItems={"center"} mt={5} mb={3}>
-          {loading ? (
-            <Typography>Loading orders...</Typography>
-          ) : orders.length ? (
-            <TableContainer component={Paper} elevation={2}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Order</TableCell>
-                    <TableCell>Id</TableCell>
-                    <TableCell>Total Amount</TableCell>
-                    <TableCell>Shipping Address</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Actions</TableCell>
-                    <TableCell>Products</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {orders.map((order, index) => (
-                    <TableRow key={order.orderId}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{order.orderId}</TableCell>
-                      <TableCell>{order.totalPrice}</TableCell>
-                      <TableCell>
-                        {order.street}, {order.city}, {order.province},{" "}
-                        {order.postalcode}
-                      </TableCell>
-                      <TableCell>
-                        {editIndex === index ? (
-                          <Select
-                            value={selectedStatus}
-                            onChange={(e) => setSelectedStatus(e.target.value)}
-                            fullWidth
-                          >
-                            {editOptions.map((option) => (
-                              <MenuItem key={option} value={option}>
-                                {option}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        ) : (
-                          <Chip
-                            label={order.orderStatus}
-                            sx={getStatusColor(order.orderStatus)}
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {editIndex === index ? (
-                          <IconButton
-                            onClick={() => handleSave(order.orderId, index)}
-                          >
-                            <CheckCircleOutlinedIcon />
-                          </IconButton>
-                        ) : (
-                          <IconButton onClick={() => setEditIndex(index)}>
-                            <EditOutlinedIcon />
-                          </IconButton>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          onClick={() => handleViewProducts(order.orderId)}
-                        >
-                          <VisibilityOutlinedIcon />
-                        </IconButton>
-                      </TableCell>
+      </Grid>
+      <Grid item xs={12} sm={10}>
+        <Box sx={{ p: 3, pl: 2, mt: 5 }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+            Orders Management
+          </Typography>
+          <Box sx={{ mt: 3 }}>
+            {loading ? (
+              <Typography>Loading orders...</Typography>
+            ) : orders.length ? (
+              <TableContainer component={Paper} elevation={2}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Order</TableCell>
+                      <TableCell>Id</TableCell>
+                      <TableCell>Total Amount</TableCell>
+                      <TableCell>Shipping Address</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Actions</TableCell>
+                      <TableCell>Products</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Typography>No orders available</Typography>
-          )}
-        </Stack>
-      </Box>
+                  </TableHead>
+                  <TableBody>
+                    {orders.map((order, index) => (
+                      <TableRow key={order.orderId}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{order.orderId}</TableCell>
+                        <TableCell>{order.totalPrice}</TableCell>
+                        <TableCell>
+                          {order.address}, {order.postalcode}
+                        </TableCell>
+                        <TableCell>
+                          {editIndex === index ? (
+                            <Select
+                              value={selectedStatus}
+                              onChange={(e) =>
+                                setSelectedStatus(e.target.value)
+                              }
+                              fullWidth
+                            >
+                              {editOptions.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  {option}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          ) : (
+                            <Chip
+                              label={order.orderStatus}
+                              sx={getStatusColor(order.orderStatus)}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editIndex === index ? (
+                            <IconButton
+                              onClick={() => handleSave(order.orderId, index)}
+                            >
+                              <CheckCircleOutlinedIcon />
+                            </IconButton>
+                          ) : (
+                            <IconButton onClick={() => setEditIndex(index)}>
+                              <EditOutlinedIcon />
+                            </IconButton>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() => handleViewProducts(order.orderId)}
+                          >
+                            <VisibilityOutlinedIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Typography>No orders available</Typography>
+            )}
+          </Box>
+        </Box>
+      </Grid>
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
         <Box
           sx={{

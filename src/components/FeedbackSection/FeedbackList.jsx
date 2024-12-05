@@ -29,7 +29,7 @@ const FeedbackList = ({ userId, orderId }) => {
     }
   }, [userId, orderId]);
 
-  console.log("FeedBack", feedback);
+ 
 
   return (
     <div className="feedback-list rounded-2">

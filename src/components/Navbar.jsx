@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import styled from "styled-components";
 import { Link as LinkR, NavLink } from "react-router-dom";
-import LogoImg from "../utils/Images/Logo.png";
+import LogoImg from "../utils/Images/Logo1.png";
 import {
   FavoriteBorder,
   MenuRounded,
@@ -263,6 +264,11 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
                <NameTag >
                  {currentUser?.FirstName ? currentUser.FirstName : ''}
               </NameTag>
+
+                {currentUser.role === 'Admin' && (
+                  <TextButton onClick={() => navigate('/admin/dashboard')}>Admin</TextButton>
+                 )}
+
               <TextButton onClick={handleLogout}>Logout</TextButton>
             </>
           ) : (
@@ -275,5 +281,11 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
     </Nav>
   );
 };
+Navbar.propTypes = {
+  setOpenAuth: PropTypes.func.isRequired,
+  openAuth: PropTypes.bool.isRequired,
+  currentUser: PropTypes.object,
+};
+
 
 export default Navbar;
