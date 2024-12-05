@@ -6,15 +6,15 @@ import { MaterialReactTable } from 'material-react-table';
 import { Box, Button, IconButton, Typography, useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import UpdateProduct from './UpdateProduct';
-import { getAllProducts, deleteProduct } from '../../api'; // Import the API functions
+import { getAllProducts, deleteProduct } from '../../api'; 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; 
 
 const Products = () => {
-  const [data, setData] = useState([]); // State to store product data
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
-  const [selectedProduct, setSelectedProduct] = useState(null); // State to store selected product
+  const [data, setData] = useState([]); 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [selectedProduct, setSelectedProduct] = useState(null); 
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 600px)');
 
@@ -24,7 +24,7 @@ const Products = () => {
       try {
         const response = await getAllProducts();
         if (response.status === 200) {
-          setData(response.data); // Set fetched data
+          setData(response.data); 
           console.log('Fetched products:', response.data);
         }
       } catch (error) {
@@ -52,7 +52,6 @@ const Products = () => {
           const response = await deleteProduct(productId);
           if (response.status === 200) {
             Swal.fire('Deleted!', 'Product has been deleted.', 'success');
-            // Fetch the updated list of products after deletion
             const updatedProducts = await getAllProducts();
             setData(updatedProducts.data);
           }
@@ -70,13 +69,12 @@ const Products = () => {
     setIsModalOpen(true);
   };
 
-  // Close the modal
+ 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedProduct(null); // Reset selected product
   };
 
-  // Update the product data in the table
   const handleUpdateProduct = (updatedProduct) => {
     setData((prevData) =>
       prevData.map((product) =>
@@ -194,7 +192,7 @@ const Products = () => {
     <Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
         <Header />
-        <Box height={40}  /> {/* Reduced top padding */}
+        <Box height={40}  /> 
         <Box sx={{ display: 'flex' }}>
           <AdminSidebar />
           <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
@@ -224,21 +222,21 @@ const Products = () => {
                 enableRowVirtualization
                 muiTableBodyProps={{
                   sx: {
-                    height: '400px', // Reduce the height of the table
+                    height: '400px', 
                     overflowY: 'auto',
-                    fontSize: '0.75rem', // Reduce font size
+                    fontSize: '0.75rem', 
                   },
                 }}
                 muiTableHeadCellProps={{
                   sx: {
-                    padding: '2px', // Reduce padding in header cells
-                    fontSize: '0.75rem', // Reduce font size in header cells
+                    padding: '2px', 
+                    fontSize: '0.75rem', 
                   },
                 }}
                 muiTableBodyCellProps={{
                   sx: {
-                    padding: '3px', // Reduce padding in body cells
-                    fontSize: '0.75rem', // Reduce font size in body cells
+                    padding: '3px', 
+                    fontSize: '0.75rem', 
                   },
                 }}
                 state={{
