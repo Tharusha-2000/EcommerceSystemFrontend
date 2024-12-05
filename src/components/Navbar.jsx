@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import styled from "styled-components";
 import { Link as LinkR, NavLink } from "react-router-dom";
 import LogoImg from "../utils/Images/Logo1.png";
@@ -280,5 +281,11 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
     </Nav>
   );
 };
+Navbar.propTypes = {
+  setOpenAuth: PropTypes.func.isRequired,
+  openAuth: PropTypes.bool.isRequired,
+  currentUser: PropTypes.object,
+};
+
 
 export default Navbar;
