@@ -33,7 +33,7 @@ const chrome = require('selenium-webdriver/chrome');
         until.elementLocated(By.xpath("//input[@type='password']")),
         10000
       );
-      await passwordField.sendKeys("shanuka2001");
+      await passwordField.sendKeys("shanuka21");
   
       const loginButton = await driver.wait(
         until.elementLocated(By.className("sc-blHHSb eseLmy")),
@@ -54,10 +54,9 @@ const chrome = require('selenium-webdriver/chrome');
       console.log("Navigating to Admin feedbacks page...");
       await driver.get("http://localhost:5173/admin/feedbacks");
       await driver.wait(until.urlContains("/admin/feedbacks"), 40000);
-      console.log("Navigated to Admin feedbacks.");
+      console.log("Sccessfull");
   
       // Stay on the products page for 1 minute
-      console.log("Staying on the Admin feedbacks page for 1 minute...");
       await new Promise((resolve) => setTimeout(resolve, 10000)); 
   
     } catch (error) {
