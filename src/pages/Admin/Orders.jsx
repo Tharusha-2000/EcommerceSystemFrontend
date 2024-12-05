@@ -97,15 +97,17 @@ function Orders() {
       <Grid item xs={12}>
         <Header />
       </Grid>
-      <Grid item xs={12} sm={2}> {/* Adjusted width of AdminSidebar */}
+      <Grid item xs={12} sm={2}>
+        {" "}
+        {/* Adjusted width of AdminSidebar */}
         <AdminSidebar />
       </Grid>
-      <Grid item xs={12} sm={10}> {/* Adjusted width of main content */}
-        <Box sx={{ p: 3, pl: 2, mt: 5 }}> {/* Adjusted left padding */}
+      <Grid item xs={12} sm={10}>
+        <Box sx={{ p: 3, pl: 2, mt: 5 }}>
           <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
             Orders Management
           </Typography>
-          <Box sx={{ mt: 3 }}> {/* Added margin-top to move the table down */}
+          <Box sx={{ mt: 3 }}>
             {loading ? (
               <Typography>Loading orders...</Typography>
             ) : orders.length ? (
@@ -129,14 +131,15 @@ function Orders() {
                         <TableCell>{order.orderId}</TableCell>
                         <TableCell>{order.totalPrice}</TableCell>
                         <TableCell>
-                          {order.street}, {order.city}, {order.province},{" "}
-                          {order.postalcode}
+                          {order.address}, {order.postalcode}
                         </TableCell>
                         <TableCell>
                           {editIndex === index ? (
                             <Select
                               value={selectedStatus}
-                              onChange={(e) => setSelectedStatus(e.target.value)}
+                              onChange={(e) =>
+                                setSelectedStatus(e.target.value)
+                              }
                               fullWidth
                             >
                               {editOptions.map((option) => (

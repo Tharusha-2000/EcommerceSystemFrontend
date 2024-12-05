@@ -6,22 +6,22 @@ const API = axios.create({
 
 // Product API
 const API2 = axios.create({
-  baseURL: "https://localhost:7000/api/",
+  baseURL: "https://localhost:7273/api/",
 });
 
 // Cart API
 const API3 = axios.create({
-  baseURL: "https://localhost:7000/api/",
+  baseURL: "https://localhost:7242/api/",
 });
 
 //review and rating
 const API4 = axios.create({
-  baseURL: "https://localhost:7000/api/",
+  baseURL: "https://localhost:7046/api/",
 });
 
 //auth
 const API1 = axios.create({
-  baseURL: "https://localhost:7000/api/",
+  baseURL: "http://localhost:8080/api/",
 });
 
 //auth
@@ -373,13 +373,25 @@ export const getAllFeedback = async () => {
   return await API4.get(`Feedback/GetAllFeedbacks`, config);
 };
 //get order details -dilum
-export const getallOrderDetails = async (id) => {
+export const getallOrderDetails = async () => {
   const token = localStorage.getItem("Mossa-Melt-token");
-  console.log(token);
+
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.get(`OrderProduct`, config);
+
+  try {
+    const response = await API3.get(`OrderProduct`, config);
+    if (response && response.data) {
+      return response;
+    } else {
+      console.error("Invalid response for order details:", response);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    return null;
+  }
 };

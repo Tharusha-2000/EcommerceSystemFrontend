@@ -1,7 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { MaterialReactTable } from 'material-react-table';
-import { Box, Typography } from '@mui/material';
-import { getAllFeedback, getAllUsers, getAllOrders, getAllProducts, getallOrderDetails } from '../api'; // Import the API functions
+import React, { useEffect, useMemo, useState } from "react";
+import { MaterialReactTable } from "material-react-table";
+import { Box, Typography } from "@mui/material";
+import {
+  getAllFeedback,
+  getAllUsers,
+  getAllOrders,
+  getAllProducts,
+  getallOrderDetails,
+} from "../api"; // Import the API functions
 
 const FeedbackTable = () => {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -55,8 +61,12 @@ const FeedbackTable = () => {
     const fetchOrderDetails = async () => {
       try {
         const response = await getallOrderDetails();
-        setOrderDetails(response.data);
-        console.log("Fetched order details:", response.data);
+        if (response && response.data) {
+          setOrderDetails(response.data);
+          console.log("Fetched order details:", response.data);
+        } else {
+          console.error("Invalid response for order details:", response);
+        }
       } catch (error) {
         console.error("Error fetching order details:", error);
       }
@@ -73,7 +83,7 @@ const FeedbackTable = () => {
   // Create a mapping of user IDs to user names
   const userIdToNameMap = useMemo(() => {
     const map = {};
-    users.forEach(user => {
+    users.forEach((user) => {
       map[user.id] = `${user.firstName} ${user.lastName}`;
     });
     return map;
@@ -82,7 +92,7 @@ const FeedbackTable = () => {
   // Create a mapping of order IDs to product IDs
   const orderIdToProductIdMap = useMemo(() => {
     const map = {};
-    orderDetails.forEach(orderDetail => {
+    orderDetails.forEach((orderDetail) => {
       map[orderDetail.orderId] = orderDetail.productId;
     });
     return map;
@@ -91,7 +101,7 @@ const FeedbackTable = () => {
   // Create a mapping of product IDs to product names
   const productIdToNameMap = useMemo(() => {
     const map = {};
-    products.forEach(product => {
+    products.forEach((product) => {
       map[product.productId] = product.name;
     });
     return map;
@@ -100,89 +110,17 @@ const FeedbackTable = () => {
   // Create a mapping of order IDs to user IDs
   const orderIdToUserIdMap = useMemo(() => {
     const map = {};
-    orders.forEach(order => {
+    orders.forEach((order) => {
       map[order.orderId] = order.userId;
     });
     return map;
   }, [orders]);
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'feedbackId',
-        header: 'Feedback ID',
-        size: 50,
-      },
-      {
-        accessorKey: 'productId',
-        header: 'Product Name',
-        size: 150,
-        Cell: ({ row }) => productIdToNameMap[orderIdToProductIdMap[row.original.orderId]] || 'Unknown',
-      },
-      {
-        accessorKey: 'userId',
-        header: 'User Name',
-        size: 150,
-        Cell: ({ row }) => userIdToNameMap[orderIdToUserIdMap[row.original.orderId]] || 'Unknown',
-      },
-      {
-        accessorKey: 'feedbackMessage',
-        header: 'Feedback Message',
-        size: 300,
-      },
-      {
-        accessorKey: 'rate',
-        header: 'Rating',
-        size: 100,
-      },
-      {
-        accessorKey: 'givenDate',
-        header: 'Date',
-        size: 150,
-        Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
-      },
-    ],
-    [userIdToNameMap, orderIdToProductIdMap, productIdToNameMap, orderIdToUserIdMap]
-  );
-
-  return (
-    <Box sx={{ width: '95%', margin: 'auto' }}>
-       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
-           All Feedbacks
-          </Typography>
-      {/* Feedback Table */}
-      <MaterialReactTable
-        columns={columns}
-        data={feedbacks}
-        enableRowVirtualization
-        muiTableBodyProps={{
-          sx: {
-            height: '500px', // Fixed height for virtualization
-            overflowY: 'auto',
-          },
-        }}
-        state={{
-          isLoading: loading,
-        }}
-      />
-      <AverageRatingTable feedbacks={feedbacks} products={products} />
-    </Box>
-  );
-};
-
-const AverageRatingTable = ({ feedbacks, products }) => {
-  const productIdToNameMap = useMemo(() => {
-    const map = {};
-    products.forEach(product => {
-      map[product.productId] = product.name;
-    });
-    return map;
-  }, [products]);
-
+  // Calculate average ratings by product
   const averageRatings = useMemo(() => {
     const ratingsMap = {};
-    feedbacks.forEach(feedback => {
-      const productId = feedback.productId;
+    feedbacks.forEach((feedback) => {
+      const productId = orderIdToProductIdMap[feedback.orderId];
       if (!ratingsMap[productId]) {
         ratingsMap[productId] = { totalRating: 0, count: 0 };
       }
@@ -190,56 +128,148 @@ const AverageRatingTable = ({ feedbacks, products }) => {
       ratingsMap[productId].count += 1;
     });
 
-    products.forEach(product => {
+    // Ensure all products are included
+    products.forEach((product) => {
       if (!ratingsMap[product.productId]) {
         ratingsMap[product.productId] = { totalRating: 0, count: 0 };
       }
     });
 
-    return Object.keys(ratingsMap).map(productId => ({
-      productId,
-      productName: productIdToNameMap[productId] || 'Unknown',
-      averageRating: ratingsMap[productId].count > 0 ? (ratingsMap[productId].totalRating / ratingsMap[productId].count).toFixed(2) : 'No Ratings',
+    return products.map((product) => ({
+      productId: product.productId,
+      productName: product.name,
+      averageRating:
+        ratingsMap[product.productId].count > 0
+          ? (
+              ratingsMap[product.productId].totalRating /
+              ratingsMap[product.productId].count
+            ).toFixed(2)
+          : "No Ratings",
     }));
-  }, [feedbacks, products, productIdToNameMap]);
+  }, [feedbacks, orderIdToProductIdMap, productIdToNameMap, products]);
 
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'productId',
-        header: 'Product ID',
+        accessorKey: "feedbackId",
+        header: "Feedback ID",
         size: 50,
       },
       {
-        accessorKey: 'productName',
-        header: 'Product Name',
+        accessorKey: "productId",
+        header: "Product Name",
+        size: 150,
+        Cell: ({ row }) => {
+          const productId = orderIdToProductIdMap[row.original.orderId];
+          return productIdToNameMap[productId] || "Unknown";
+        },
+      },
+      {
+        accessorKey: "userId",
+        header: "User Name",
+        size: 150,
+        Cell: ({ row }) => {
+          const userId = orderIdToUserIdMap[row.original.orderId];
+          return userIdToNameMap[userId] || "Unknown";
+        },
+      },
+      {
+        accessorKey: "feedbackMessage",
+        header: "Feedback Message",
+        size: 300,
+      },
+      {
+        accessorKey: "rate",
+        header: "Rating",
+        size: 100,
+      },
+      {
+        accessorKey: "givenDate",
+        header: "Date",
+        size: 150,
+        Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
+      },
+    ],
+    [
+      userIdToNameMap,
+      orderIdToProductIdMap,
+      productIdToNameMap,
+      orderIdToUserIdMap,
+    ]
+  );
+
+  const averageRatingColumns = useMemo(
+    () => [
+      {
+        accessorKey: "productId",
+        header: "Product ID",
+        size: 50,
+      },
+      {
+        accessorKey: "productName",
+        header: "Product Name",
         size: 150,
       },
       {
-        accessorKey: 'averageRating',
-        header: 'Average Rating',
+        accessorKey: "averageRating",
+        header: "Average Rating",
         size: 100,
+        Cell: ({ cell }) => (
+          <span
+            style={
+              cell.getValue() === "No Ratings"
+                ? { fontStyle: "italic", color: "#888" }
+                : {}
+            }
+          >
+            {cell.getValue()}
+          </span>
+        ),
       },
     ],
     []
   );
 
   return (
-    <Box sx={{ width: '95%', margin: 'auto', marginTop: '20px' }}>
-      {/* <Typography variant="h5" gutterBottom>
-        Ratings by Product
+    <Box sx={{ width: "95%", margin: "auto" }}>
+      <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+        All Feedbacks
       </Typography>
+      {/* Feedback Table */}
       <MaterialReactTable
         columns={columns}
+        data={feedbacks}
+        enableRowVirtualization
+        muiTableBodyProps={{
+          sx: {
+            height: "500px",
+            overflowY: "auto",
+          },
+        }}
+        state={{
+          isLoading: loading,
+        }}
+      />
+
+      {/* Average Ratings Table */}
+      <Typography variant="h4" fontWeight="bold" sx={{ mt: 4, mb: 2 }}>
+        Average Ratings by Product
+      </Typography>
+
+      <MaterialReactTable
+        columns={averageRatingColumns}
         data={averageRatings}
         enableRowVirtualization
         muiTableBodyProps={{
           sx: {
-            height: '500px', // Fixed height for virtualization
-            overflowY: 'auto',
+            height: "500px",
+            overflowY: "auto",
           },
         }}
-      /> */}
+        state={{
+          isLoading: loading,
+        }}
+      />
     </Box>
   );
 };
