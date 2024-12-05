@@ -48,7 +48,7 @@ const UpdateProfile = ({ open, onClose, userdata, onUpdate }) => {
           })
         );
         onClose();
-        onUpdate(formData);
+        onUpdate([formData]);
       } else {
         console.log('Error updating profile:', response.statusText);
         dispatch(

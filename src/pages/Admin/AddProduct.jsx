@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/common/AdminSidebar";
 import Header from "../../components/common/Header";
 import {
@@ -32,6 +33,8 @@ function AddProduct() {
   const [progress, setProgress] = useState(0);
   const [errors, setErrors] = useState({});
 
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+
   const validateForm = () => {
     const validationErrors = {};
   
@@ -60,7 +63,6 @@ function AddProduct() {
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
-  
 
   const handleChange = (index, field, value) => {
     const updatedList = [...sizePriceList];
@@ -84,12 +86,10 @@ function AddProduct() {
     setSizePriceList(updatedList);
   };
 
-  const handleSubmit = async () => {
-
- 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!validateForm()) {
       return;
-
     }
   
     // Convert the size names to "S", "M", "L"
@@ -103,13 +103,13 @@ function AddProduct() {
       description: description,
       imageUrl: imageUrl,  // Send image URL as is
       isAvailable: isAvailable,
-      sizes: updatedSizeList, // Use the updated size list
+      sizes: updatedSizeList, 
       categories: categories, // Send the categories array directly
     };
   
     try {
-      console.log("hihgjf djkfnvkdf");
       const response = await createProduct(productData); // Use the createProduct function
+      console.log("SSSSSS", response);
       console.log("Product added successfully:", response.data);
       Swal.fire('Success', 'Product added successfully!', 'success');
   
@@ -123,17 +123,16 @@ function AddProduct() {
         { size: "Medium", price: "" },
         { size: "Large", price: "" },
       ]);
-      setCategories([]); // Reset categories
+      setCategories([]); 
       setErrors({});
+
+      
+      navigate('/admin/products');
     } catch (error) {
       console.error("Error adding product:", error);
       Swal.fire('Error', 'An error occurred while adding the product.', 'error');
     }
   };
-  
-
-
-    
 
   const upload = () => {
     if (!image) {
@@ -238,6 +237,11 @@ function AddProduct() {
                             <progress value={progress} max="100" />
                             {progress}%
                           </div>
+                        )}
+                        {errors.imageUrl && (
+                          <Typography color="error" variant="body2">
+                            {errors.imageUrl}
+                          </Typography>
                         )}
                       </div>
                     </Box>
@@ -356,7 +360,7 @@ function AddProduct() {
                         { size: "Medium", price: "" },
                         { size: "Large", price: "" },
                       ]);
-                      setCategories(""); // Reset categories
+                      setCategories(""); 
                       setErrors({});
                     }}
                   >

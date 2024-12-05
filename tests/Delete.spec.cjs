@@ -7,50 +7,67 @@ const chrome = require('selenium-webdriver/chrome');
   try {
     // Step 1: Launch the browser
     console.log("Launching browser...");
+    const chromeOptions = new chrome.Options();
+    // chromeOptions.headless(); // Uncomment for headless mode if needed.
+    chromeOptions.addArguments('--disable-dev-shm-usage'); // Avoid shared memory issues
+    chromeOptions.addArguments('--no-sandbox'); // Add sandboxing for CI environments
+
     driver = new Builder()
       .forBrowser('chrome')
-      .setChromeOptions(new chrome.Options())
+      .setChromeOptions(chromeOptions)
       .build();
+
+    console.log("Browser launched successfully.");
 
     // Step 2: Navigate directly to the cart page
     await driver.get('http://localhost:5173/cart');
     console.log("Successfully navigated to cart page.");
 
-    // Step 3: Wait for the cart page to fully load
-    const cartPageIndicator = By.id('root'); // Replace with an actual indicator unique to the cart page
-    await driver.wait(until.elementIsVisible(driver.findElement(cartPageIndicator)), 15000);
-    console.log("Cart page loaded.");
-
-    // Step 4: Check if the browser window is still open
+    // Step 3: Verify the browser session is still active
     const windows = await driver.getAllWindowHandles();
     if (windows.length === 0) {
-      console.error("No browser window is open.");
-      return;
+      throw new Error("No browser window is open.");
     }
 
-    // Step 5: Click the delete icon
+    // Step 4: Click the delete icon
     console.log("Clicking delete icon...");
-    const deleteButtonSelector = By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[2]/div[5]/*[name()='svg'][1]");
-    const deleteButton = await driver.wait(until.elementLocated(deleteButtonSelector), 5000);
-    await driver.wait(until.elementIsVisible(deleteButton), 5000); // Wait for visibility
-    await deleteButton.click();
-    console.log("Delete icon clicked.");
+    const deleteButtonSelector = By.className('sc-fIfZzT fpTEVI');
 
-    // Step 6: Wait for the empty cart message to appear
+    try {
+      const deleteButton = await driver.wait(until.elementLocated(deleteButtonSelector), 5000);
+      await driver.wait(until.elementIsVisible(deleteButton), 5000); // Wait for visibility
+      await deleteButton.click();
+      console.log("Delete icon clicked.");
+    } catch (error) {
+      throw new Error(`Failed to locate or click the delete icon: ${error.message}`);
+    }
+
+    // Step 5: Wait for the empty cart message to appear
     console.log("Waiting for empty cart message...");
-    const emptyCartMessageSelector = By.className('sc-iRLAEC bgvyo');
-    await driver.wait(until.elementLocated(emptyCartMessageSelector), 5000);
-    const emptyCartMessageElement = await driver.findElement(emptyCartMessageSelector);
+    const emptyCartMessageSelector = By.className('sc-hGZxvd hgdBya');
 
-    // Step 7: Verify the message content
-    const messageText = await emptyCartMessageElement.getText();
-    if (messageText.includes("Your Shopping Cart") && messageText.includes("Cart is empty")) {
-      console.log("Empty cart message displayed correctly.");
-    } else {
-      console.error("Empty cart message not displayed as expected.");
+    try {
+      await driver.wait(until.elementLocated(emptyCartMessageSelector), 5000);
+      const emptyCartMessageElement = await driver.findElement(emptyCartMessageSelector);
+
+      // Step 6: Verify the message content
+      const messageText = await emptyCartMessageElement.getText();
+      if (messageText.includes("Your Shopping Cart") && messageText.includes("Cart is empty")) {
+        console.log("Empty cart message displayed correctly.");
+      } else {
+        console.error("Empty cart message not displayed as expected.");
+      }
+    } catch (error) {
+      throw new Error(`Failed to verify empty cart message: ${error.message}`);
     }
   } catch (error) {
     console.error("Test failed:", error.message);
+
+    if (error.message.includes("no such window")) {
+      console.error("Browser window was unexpectedly closed. Please ensure the browser remains open during the test.");
+    } else if (error.message.includes("web view not found")) {
+      console.error("Check ChromeDriver and browser versions for compatibility.");
+    }
   } finally {
     // Close the browser if it's still open
     try {

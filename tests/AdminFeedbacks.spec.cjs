@@ -33,7 +33,7 @@ const chrome = require('selenium-webdriver/chrome');
         until.elementLocated(By.xpath("//input[@type='password']")),
         10000
       );
-      await passwordField.sendKeys("shanuka2001");
+      await passwordField.sendKeys("shanuka21");
   
       const loginButton = await driver.wait(
         until.elementLocated(By.className("sc-blHHSb eseLmy")),
