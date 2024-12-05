@@ -88,9 +88,8 @@ const PaymentForm = (props) => {
 
       for (let i = 0; i < cartIds.length; i++) {
         console.log(cartIds[i]);
-
         await deleteFromCart(cartIds[i]);
-
+      
       }
 
       dispatch(clearCart());
@@ -107,7 +106,7 @@ const PaymentForm = (props) => {
 
       setTimeout(() => {
         navigate("/orders");
-        window.location.reload(); // Reload the orders page
+      //  window.location.reload(); // Reload the orders page
       }, 3000);
     }
   };
