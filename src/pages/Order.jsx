@@ -10,56 +10,51 @@ import { useSelector } from "react-redux";
 import { getUserById } from "../api";
 
 const Order = () => {
-    const [divWidth, setDivWidth] = useState(0);
-    const [openDialog, setOpenDialog] = useState(false);
-    const { currentUser } = useSelector((state) => state.user);
-    const userId = currentUser.id;
-    const [userdata, setUserData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    
-    const buttonStyle = {
-      backgroundColor: "rgba(217, 217, 217, 1)",
-      color: "black", 
-    };
-
-
-    useEffect(() => {
-        fetchUserData(); 
-    }, [userdata]);
-
-
-    const fetchUserData = async () => {
-      try {
-        const data = await getUserById(userId);
-        setUserData(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setLoading(false);
-      }
-    };
-
-    useEffect(() => {
-
-      function handleResize() {
-        const width = document.getElementById("getWidth")?.offsetWidth;
-        setDivWidth(width || 0);
-      }
-
-      handleResize(); 
-      window.addEventListener("resize", handleResize);
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-      
-    }, []);
-
-
-  const handleUpdate = (updatedData) => {
-    setUserdata(updatedData); 
+  const [divWidth, setDivWidth] = useState(0);
+  const [openDialog, setOpenDialog] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const userId = currentUser.id;
+  const [userdata, setUserData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const buttonStyle = {
+    backgroundColor: "rgba(217, 217, 217, 1)",
+    color: "black", 
   };
 
-   
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    fetchUserData(); 
+  }, [userdata]);  // Run whenever userdata changes to get the updated data
+
+  const fetchUserData = async () => {
+    try {
+      const data = await getUserById(userId);
+      setUserData(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    function handleResize() {
+      const width = document.getElementById("getWidth")?.offsetWidth;
+      setDivWidth(width || 0);
+    }
+
+    handleResize(); 
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Handle updating the userdata state
+  const handleUpdate = (updatedData) => {
+    setUserData(updatedData);  // Update userdata with the new data from UpdateProfile
+  };
 
   return (
     <div className="user-page">
@@ -75,31 +70,29 @@ const Order = () => {
               <div className="col-lg-4 col-sm-6 p-4">
                 <div className="">
                   <p className="text-dark">
-                     {userdata[0] ? (
-                            <>
-                              {userdata[0].firstName} &nbsp; {userdata[0].lastName}
-                              <br />
-                              {userdata[0].email}
-                              <br />
-                              {userdata[0].address}
-                            </>
-                          ) : (
-                            "Loading..."
-                          )}
-
-                   </p>
+                    {userdata[0] ? (
+                      <>
+                        {userdata[0].firstName} &nbsp; {userdata[0].lastName}
+                        <br />
+                        {userdata[0].email}
+                        <br />
+                        {userdata[0].address}
+                      </>
+                    ) : (
+                      "Loading..."
+                    )}
+                  </p>
                 </div>
                 <UpdateProfile
-                     open={openDialog}
-                     onClose={() => setOpenDialog(false)} // Close dialog
-                     userdata={userdata}
-                     onUpdate={handleUpdate}
+                  open={openDialog}
+                  onClose={() => setOpenDialog(false)} // Close dialog
+                  userdata={userdata}
+                  onUpdate={handleUpdate}  // Pass handleUpdate to UpdateProfile
                 />
-
                 <Button
                   text="Update"
                   type="third"
-                   onClick={() => setOpenDialog(true)}
+                  onClick={() => setOpenDialog(true)}  // Open dialog on button click
                 />
               </div>
             </div>
@@ -117,7 +110,7 @@ const Order = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Order
+export default Order;

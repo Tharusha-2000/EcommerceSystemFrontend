@@ -7,8 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "lint": "eslint .",
-    "test": "react-scripts test --watchAll=false",
-    "test:mocha": "mocha tests/*.test.js",
+    "test": "npm run test:react && npm run test:mocha",
+    "test:react": "react-scripts test --watchAll=false --passWithNoTests",
+    "test:mocha": "mocha tests/**/*.spec.cjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,6 +20,8 @@
     "@mui/joy": "^5.0.0-beta.48",
     "@mui/material": "^6.1.9",
     "@reduxjs/toolkit": "^2.3.0",
+    "@stripe/react-stripe-js": "^3.0.0",
+    "@stripe/stripe-js": "^5.2.0",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "chromedriver": "^131.0.1",
