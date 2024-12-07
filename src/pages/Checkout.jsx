@@ -10,9 +10,17 @@ import {
   CardNumberElement,
   CardExpiryElement,
   CardCvcElement,
+  
 } from "@stripe/react-stripe-js";
+import{
+  getClientSecret,
+  deleteFromCart,
+  updatePaymentState,
+} from "../api";
 import axios from "axios";
-import bgImg from "../utils/Images/paymentBG.jpg";
+
+import bgImg from "../utils/Images/Header.png";
+
 
 const stripePromise = loadStripe(
   "pk_test_51QLb3dCtgNr9CP7sSpK2xhyHNZ9GXIdaX90sOFF67neyqDekhdG201u6vuEDdFjoNr13TqlXN7B7YvylE0rA0cty00Ch4ol5nw"
@@ -76,22 +84,12 @@ const PaymentForm = (props) => {
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       console.log("Payment succeeded!", paymentIntent);
 
-      try {
-        axios.put(
-          `https://localhost:7242/api/Order/byOrderId/${props.OrderId}?paymentStatus=true`
-        );
-        console.log("Cart IDs:", cartIds);
-      } catch (e) {
-        console.log(e);
-      }
+      updatePaymentState(props.OrderId);
 
       for (let i = 0; i < cartIds.length; i++) {
         console.log(cartIds[i]);
-        try {
-          axios.delete(`https://localhost:7242/api/Cart/${cartIds[i]}`);
-        } catch (e) {
-          console.log(e);
-        }
+        await deleteFromCart(cartIds[i]);
+      
       }
 
       dispatch(clearCart());
@@ -108,7 +106,7 @@ const PaymentForm = (props) => {
 
       setTimeout(() => {
         navigate("/orders");
-        window.location.reload(); // Reload the orders page
+      //  window.location.reload(); // Reload the orders page
       }, 3000);
     }
   };
@@ -423,19 +421,24 @@ const Checkout = (prop1) => {
   const usdValue = LkrValue / 296.75;
   console.log(usdValue);
 
-  const [clientSecret, setClientSecret] = React.useState("");
+  const [clientSecret, setClientSecret] = useState(null);
   const total1 = prop1.totalPaymentAmount;
   React.useEffect(() => {
-    axios
-      .post("https://localhost:7242/api/Payment/create-payment-intent", {
-        amount: LkrValue,
-        currency: "usd",
-        paymentMethodTypes: ["card"],
-      })
-      .then((response) => {
-        setClientSecret(response.data.clientSecret);
-        console.log(response.data.clientSecret);
-      });
+      const fetchClientSecret = async () => {
+        try{
+          const response = await getClientSecret({amount : LkrValue, currency: "usd", paymentMethodTypes: ["card"]});
+          if(response && response.data){
+            setClientSecret(response.data.clientSecret);
+            console.log(response.data.clientSecret);
+          }else{
+            console.log("Error fetching client secret");
+          }
+        }
+        catch(error){
+          console.log("Error fetching client secret", error);
+      }
+    };
+    fetchClientSecret();
   }, []);
 
   return (

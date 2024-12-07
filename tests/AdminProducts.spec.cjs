@@ -33,7 +33,7 @@ const chrome = require('selenium-webdriver/chrome');
         until.elementLocated(By.xpath("//input[@type='password']")),
         10000
       );
-      await passwordField.sendKeys("shanuka2001");
+      await passwordField.sendKeys("shanuka21");
   
       const loginButton = await driver.wait(
         until.elementLocated(By.className("sc-blHHSb eseLmy")),
@@ -57,7 +57,7 @@ const chrome = require('selenium-webdriver/chrome');
       console.log("Navigated to Admin Products.");
   
       // Stay on the products page for 1 minute
-      console.log("Staying on the Admin Products page for 1 minute...");
+      console.log("Successfull");
       await new Promise((resolve) => setTimeout(resolve, 10000)); // 60 seconds
   
     } catch (error) {

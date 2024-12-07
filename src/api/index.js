@@ -1,43 +1,26 @@
 import axios from "axios";
 
+
 const API = axios.create({
-  baseURL: "https://fooddelivery-mern.onrender.com/api/",
-});
-
-// Product API
-const API2 = axios.create({
   baseURL: "https://localhost:7000/api/",
 });
 
-// Cart API
-const API3 = axios.create({
-  baseURL: "https://localhost:7000/api/",
-});
 
-//review and rating
-const API4 = axios.create({
-  baseURL: "https://localhost:7000/api/",
-});
 
-//auth
-const API1 = axios.create({
-  baseURL: "https://localhost:7000/api/",
-});
-
-//auth
-
-export const UserSignIn = async (data) => await API1.post(`Auth/login`, data);
+export const UserSignIn = async (data) => {
+  return await API.post(`Auth/login`, data);
+}
 export const UserSignUp = async (data) =>
-  await API1.post(`Auth/register`, data);
+  await API.post(`Auth/register`, data);
 
 export const SendEmail = async (data) =>
-  await API1.post(`Auth/forgot-password`, data);
+  await API.post(`Auth/forgot-password`, data);
 
 export const PasswordChange = async (data) =>
-  await API1.post(`Auth/reset-password`, data);
+  await API.post(`Auth/reset-password`, data);
 
 export const UserCreate = async (data) => {
-  const response = await API1.post(`User`, data);
+  const response = await API.post(`User`, data);
   return response;
 };
 
@@ -50,7 +33,7 @@ export const getUserById = async (id) => {
     },
   };
 
-  const response = await API1.get(`User/${id}`, config);
+  const response = await API.get(`User/${id}`, config);
   return response.data;
 };
 
@@ -62,16 +45,18 @@ export const updateUser = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API1.put(`User`, data, config);
+  const response = await API.put(`User`, data, config);
   return response;
 };
 
 //products
 export const getAllProducts = async (filter) =>
-  await API2.get(`Product/GetAllProducts?${filter}`);
+  await API.get(`Product/GetAllProducts?${filter}`);
 
 export const getProductDetails = async (id) =>
-  await API2.get(`Product/GetProductById/${id}`);
+  await API.get(`Product/GetProductById/${id}`);
+
+
 
 export const createProduct = async (productData) => {
   const token = localStorage.getItem("Mossa-Melt-token");
@@ -82,8 +67,9 @@ export const createProduct = async (productData) => {
     },
   };
 
-  return await API2.post("Product/CreateProductAsync", productData, config);
+  return await API.post("Product/CreateProductAsync", productData, config);
 };
+
 export const updateProduct = async (id, productData) => {
   const token = localStorage.getItem("Mossa-Melt-token");
   console.log(token);
@@ -93,7 +79,7 @@ export const updateProduct = async (id, productData) => {
     },
   };
 
-  return await API2.put(
+  return await API.put(
     `Product/UpdateProductAsync/${id}`,
     productData,
     config
@@ -108,15 +94,11 @@ export const deleteProduct = async (productId) => {
     },
   };
 
-  const response = await API2.delete(`Product/${productId}`, config);
+  const response = await API.delete(`Product/${productId}`, config);
   return response;
 };
 
-//Cart
-// export const getCart = async (token) =>
-//   await API.get(`/user/cart`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
+
 
 export const getCartByUserId = async (userId) => {
   const token = localStorage.getItem("Mossa-Melt-token");
@@ -126,7 +108,7 @@ export const getCartByUserId = async (userId) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.get(`Cart/byUser/${userId}`, config);
+  return await API.get(`Cart/byUser/${userId}`, config);
 };
 
 export const getCart = async () => {
@@ -138,7 +120,7 @@ export const getCart = async () => {
     },
   };
 
-  return await API3.get(`Cart`, config);
+  return await API.get(`Cart`, config);
 };
 
 export const addToCart = async (data) => {
@@ -149,7 +131,7 @@ export const addToCart = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await API3.post(`Cart/`, data, config);
+  const res = await API.post(`Cart/`, data, config);
   return res;
 };
 
@@ -162,7 +144,7 @@ export const updateFromCart = async ({ cartId, count }) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API3.put(`Cart/${cartId}?count=${count}`, config);
+  const response = await API.put(`Cart/${cartId}?count=${count}`, config);
   return response.data;
 };
 
@@ -174,8 +156,9 @@ export const updateItemOnCart = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.put(`Cart/${data.cartId}`, data, config);
+  return await API.put(`Cart/${data.cartId}`, data, config);
 };
+
 
 export const deleteFromCart = async (cartId) => {
   const token = localStorage.getItem("Mossa-Melt-token");
@@ -185,13 +168,13 @@ export const deleteFromCart = async (cartId) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API3.delete(`Cart/${cartId}`, config);
+  const response = await API.delete(`Cart/${cartId}`, config);
   return response.data;
 };
 
 //cart
 export const getUserById2 = async (id) => {
-  const response = await API1.get(`User/${id}`);
+  const response = await API.get(`User/${id}`);
   return response;
 };
 
@@ -205,7 +188,7 @@ export const createOrder = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API3.post(`Order`, data, config);
+  const response = await API.post(`Order`, data, config);
   return response;
 };
 
@@ -218,7 +201,9 @@ export const storeOrderProduct = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.post(`OrderProduct`, data, config);
+  const res= await API.post(`OrderProduct`, data, config);
+  console.log(res);
+  return res;
 };
 
 export const getOrders = async () => {
@@ -229,7 +214,7 @@ export const getOrders = async () => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.get(`Order`, config);
+  return await API.get(`Order`, config);
 };
 
 export const handelViewOrder = async (orderId) => {
@@ -240,7 +225,7 @@ export const handelViewOrder = async (orderId) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.get(`OrderProduct/byOrder/${orderId}`, config);
+  return await API.get(`OrderProduct/byOrder/${orderId}`, config);
 };
 
 export const updateOrder = async (orderId, updatedOrder) => {
@@ -251,14 +236,30 @@ export const updateOrder = async (orderId, updatedOrder) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.put(`Order/${orderId}`, updatedOrder, config);
+  return await API.put(`Order/${orderId}`, updatedOrder, config);
 };
+
+
+export const getClientSecret = async (amount) =>{
+  const res = API.post(`Payment/create-payment-intent`,amount);
+  return res;
+}
+
+export const updatePaymentState = async (data) => {
+  try {
+    await API.put(`Order/byOrderId/${data}?paymentStatus=true`);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
 
 /////////////// review and rating
 
 //API for fetching product reviews
 export const getProductFeedbacks = async (productId) => {
-  const response = await API4.get(`/FeedBack/GetProductFeedback/${productId}`);
+  const response = await API.get(`/FeedBack/GetProductFeedback/${productId}`);
   return response.data.$values; // Extract the $values array from the response
 };
 
@@ -271,7 +272,7 @@ export const GetFeedbackByOrderId = async (orderId) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API4.get(
+  const response = await API.get(
     `/FeedBack/GetFeedbackByOrderId/${orderId}`,
     config
   );
@@ -287,7 +288,7 @@ export const SaveProductFeedback = async (newFeedback) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API4.post(
+  const response = await API.post(
     `/FeedBack/SaveProductFeedback`,
     newFeedback,
     config
@@ -304,7 +305,7 @@ export const fetchOrdersByUserId = async (userId) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API3.get(`/Order/byUser/${userId}`, config);
+  const response = await API.get(`/Order/byUser/${userId}`, config);
   return response;
 };
 
@@ -317,13 +318,13 @@ export const getOrderProductByOrderId = async (orderId) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API3.get(`/OrderProduct/byOrder/${orderId}`, config);
+  const response = await API.get(`/OrderProduct/byOrder/${orderId}`, config);
   return response;
 };
 
 //API for get products by product Id
 export const getProductById = async (productId) => {
-  const response = await API2.get(`/Product/GetProductById/${productId}`);
+  const response = await API.get(`/Product/GetProductById/${productId}`);
   return response;
 };
 
@@ -336,7 +337,7 @@ export const getAllUsers = async () => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API1.get(`User`, config);
+  return await API.get(`User`, config);
 };
 export const deleteUser = async (id) => {
   const token = localStorage.getItem("Mossa-Melt-token");
@@ -346,7 +347,7 @@ export const deleteUser = async (id) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await API1.delete(`User/${id}`, config);
+  const response = await API.delete(`User/${id}`, config);
   return response.data;
 };
 
@@ -359,7 +360,7 @@ export const getAllOrders = async () => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.get(`Order`, config);
+  return await API.get(`Order`, config);
 };
 //get all feedback -dilum
 export const getAllFeedback = async () => {
@@ -370,7 +371,7 @@ export const getAllFeedback = async () => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API4.get(`Feedback/GetAllFeedbacks`, config);
+  return await API.get(`Feedback/GetAllFeedbacks`, config);
 };
 //get order details -dilum
 export const getallOrderDetails = async (id) => {
@@ -381,5 +382,8 @@ export const getallOrderDetails = async (id) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await API3.get(`OrderProduct`, config);
+  return await API.get(`OrderProduct`, config);
 };
+
+
+
